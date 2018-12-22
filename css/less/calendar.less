@@ -1,0 +1,102 @@
+/* Calendar */
+
+.agenda {  }
+
+/* Dates */
+.agenda .agenda-date { width: 170px; }
+.agenda .agenda-date .dayofmonth {
+  width: 50px;
+  font-size: 2.5em;
+  line-height: 1;
+  float: left;
+  text-align: right;
+  margin-right: 10px; 
+}
+.agenda .agenda-date .shortdate {
+  font-size: 0.75em; 
+}
+
+
+/* Times */
+.agenda .agenda-time { width: 160px; } 
+
+
+/* Events */
+.agenda .agenda-events {  } 
+.agenda .agenda-events .agenda-event {  }
+.agenda .agenda-event-button {
+	margin-left: 1em;
+}
+.agenda .agenda-event-button:first-of-type {
+	margin-left: 0;
+}
+.agenda .agenda-form {
+	display: inline-block;
+}
+
+/* Camper Calendars */
+.week-view {
+	margin-bottom: 2em;
+}
+.dayname {
+	text-transform: capitalize;	
+}
+.nicedate {
+	font-size: 0.66em;
+	font-weight: 300;
+}
+.period {
+	min-height: 25%;
+	padding-bottom: 1em;
+}
+.period h6 {
+	font-weight: 400;
+	font-weight: 400;
+	font-size: 0.75em;
+}
+
+input[type='submit'] {
+	cursor: pointer;
+}
+input[type='submit'].event {
+	border: none;
+	white-space: normal !important;
+	height: auto;
+	box-shadow: none;
+}
+input[type='submit'].d-block {
+	display: block !important;
+	width: 100% !important;
+	min-width: 100% !important;
+	float: none !important;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+}
+.scheduled-activity .waves-input-wrapper {
+	display: block !important;
+	width: 100% !important;
+	min-width: 100% !important;
+	float: none !important;
+}
+
+@media (max-width:575px) {
+    .display-4 {
+        font-size: 1.5rem;
+    }
+    .day h5 {
+        background-color: #f8f9fa;
+        padding: 3px 5px 5px;
+        margin: -8px -8px 8px -8px;
+    }
+    .date {
+        padding-left: 4px;
+    }
+}
+
+@media (min-width: 576px) {
+    .day {
+		height: auto;
+        //min-height: 14.2857vw;
+		min-height: 12vw;
+    }
+}

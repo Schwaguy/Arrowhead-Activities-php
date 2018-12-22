@@ -1,0 +1,108 @@
+/* Variables */
+
+// Colors
+@brandcolor: #336600; 
+@brandcolor-rgb: rgb(51,102,0); /* Olive Green */
+.brandcolor {
+	color: @brandcolor;
+	color: @brandcolor-rgb;
+}
+.brandcolor-bg {
+	background-color: @brandcolor;
+	background-color: @brandcolor-rgb;
+}
+.primary-color {
+ 	.brandcolor-bg !important;	
+}
+@brandcolor-hover: #7d993e;
+@brandcolor-rgb-hover: rgb(125,153,62);
+.brandcolor-hover {
+	color: @brandcolor-hover;
+	color: @brandcolor-rgb-hover;
+}
+.brandcolor-bg-hover {
+	background: @brandcolor-hover;
+	background: @brandcolor-rgb-hover;
+}
+
+@grey: #c8c8c8;
+@grey-rgb: rgb(200,200,200);
+.grey {
+	color: @grey;
+	color: @grey-rgb;
+}
+@grey-rgb-trans: rgba(200,200,200,0.5);
+.grey-trans {
+	color: @grey-rgb-trans;
+} 
+
+@dark-grey: #282828;
+@dark-grey-rgb: rgb(40,40,40);
+.dark-grey {
+	color: @dark-grey;
+	color: @dark-grey-rgb;
+}
+
+@lite-grey: #ccc;
+@lite-grey-rgb: rgb(204,204,204);
+.lite-grey {
+	color: @lite-grey !important;
+	color: @lite-grey-rgb !important;
+}
+
+.greyborder {
+	border: 1px solid #4e4e4e;
+	border: 1px solid rgba(255,255,255,0.25);
+}
+
+// Base Font 
+.basefont {
+	font-family: "Roboto", sans-serif;
+  	.dark-grey !important;
+	font-size: 20px;
+	font-weight: 300;
+  	line-height: 1.25 !important;
+}
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
+/* Animations */
+.animate-quick {
+	  -webkit-transition: all 0.20s ease-in-out;
+	   -moz-transition: all 0.20s ease-in-out;
+	    -ms-transition: all 0.20s ease-in-out;
+	     -o-transition: all 0.20s ease-in-out;
+	        transition: all 0.20s ease-in-out;
+}
+.animate-slower {
+	  -webkit-transition: all 0.50s ease-in-out;
+	   -moz-transition: all 0.50s ease-in-out;
+	    -ms-transition: all 0.50s ease-in-out;
+	     -o-transition: all 0.50s ease-in-out;
+	        transition: all 0.50s ease-in-out;
+}
+
+.opaque {
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	-moz-opacity: 1;
+	-khtml-opacity: 1;
+	opacity: 1;
+}
+.semi-transparent {
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+	filter: alpha(opacity=10);
+	-moz-opacity: 0.10;
+	-khtml-opacity: 0.10;
+	opacity: 0.10;
+}
+.transparent {
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	-moz-opacity: 0;
+	-khtml-opacity: 0;
+	opacity: 0;
+}

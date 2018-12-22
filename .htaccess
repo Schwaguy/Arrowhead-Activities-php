@@ -1,0 +1,20 @@
+
+RewriteEngine on
+
+RewriteCond %{REQUEST_FILENAME} -f [NC,OR] 
+RewriteCond %{REQUEST_FILENAME} -d [NC] 
+RewriteRule .* - [L]
+RewriteBase /
+
+RewriteRule ^([a-zA-Z\_\-]+)$ index.php?pg=$1 [NC]
+RewriteRule ^([a-zA-Z\_\-]+)/$ index.php?pg=$1 [NC]
+
+RewriteRule ^([a-zA-Z\_\-]+)/([a-zA-Z0-9\_\-]+)$ index.php?pg=$1&sp=$2 [NC]
+RewriteRule ^([a-zA-Z\_\-]+)/([a-zA-Z0-9\_\-]+)/$ index.php?pg=$1&sp=$2 [NC]
+
+RewriteRule ^([a-zA-Z\_\-]+)/([a-zA-Z0-9\_\-]+)/([a-zA-Z0-9\_\-]+)$ index.php?pg=$1&sp=$2&tp=$3 [NC]
+RewriteRule ^([a-zA-Z\_\-]+)/([a-zA-Z0-9\_\-]+)/([a-zA-Z0-9\_\-]+)/$ index.php?pg=$1&sp=$2&tp=$3 [NC]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?/$1 [L]

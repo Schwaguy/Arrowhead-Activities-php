@@ -1,0 +1,44 @@
+// Buttons
+.btn-primary,
+.btn-default {
+	.brandcolor-bg !important;
+}
+.quick-buttons {
+	float: right;
+	padding: 0.5em 0 0 0;
+}
+
+// Activity Selection Form
+.activity-signup-buttons {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.activity-signup-buttons li {
+	display: inline-block;
+	position: relative;
+	margin: 0;
+	padding: 0;
+}
+.activity-signup-buttons input {
+    display:block;
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+	line-height: 0;
+}
+.activity-signup-buttons input[type="radio"] {
+    opacity:0.011;
+    z-index:100;
+}
+.activity-signup-buttons input[type="radio"]:checked + label {
+    .brandcolor-bg !important;
+	color: #fff !important;
+}
+.activity-signup-buttons label {
+     cursor:pointer;
+    z-index:90;
+}
