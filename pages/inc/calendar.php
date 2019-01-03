@@ -1,143 +1,68 @@
 <?php
 
 $periods = getPeriods('',false,false,'array',$con);
+$weeks = getWeeks(false,'',false,false,$con);
 
-$query = "SELECT * FROM weeks WHERE active=1 ORDER BY name ASC";
-if($result = $con->query($query)) {
-	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
-		$days = array(
-			array(
-				'number'=>1,
-				'name'=>'monday',
-				'date'=>$row['startDate'],
-				'nicedate'=>date_format(date_create($row['startDate']),'F jS')
-			),
-			array(
-				'number'=>2,
-				'name'=>'tuesday',
-				'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 1 days')),
-				'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 1 days'))
-			),
-			array(
-				'number'=>3,
-				'name'=>'wednesday',
-				'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 2 days')),
-				'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 2 days'))
-			),
-			array(
-				'number'=>4,
-				'name'=>'thursday',
-				'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 3 days')),
-				'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 3 days'))
-			),
-			array(
-				'number'=>5,
-				'name'=>'friday',
-				'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 4 days')),
-				'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 4 days'))
-			)
-		);
-		
-		/*$sql= 'SELECT s.id, s.week, s.day, s.period, s.activity, a.name FROM activity_signups s LEFT JOIN activities a ON (s.activity = a.id) WHERE s.week='. $row['id'] .' AND s.user='. $_SESSION['userID'] .' AND s.active=1 AND a.active=1';
-		if ($res = $con->query($sql)) {
-			while ($r=$res->fetch_array(MYSQLI_ASSOC)) {
-				switch ($r['day']) {
-					case 'Monday':
-						$mon[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name']);
-						break;
-					case 'Tuesday':
-						$tues[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name']);
-						break;
-					case 'Wednesday':
-						$wed[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name']);
-						break;
-					case 'Thursday':
-						$thurs[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name']);
-						break;
-					case 'Friday':
-						$fri[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name']);
-						break;
+foreach ($weeks as $week) {
+	$scheduledActivities = showScheduledActivities($week['id'],$_SESSION['userID'],$con);
+	$weekdays = '';
+
+	// For Testing
+	/*$test = ''; 
+	if (isset($scheduledActivities)) {
+		$test = '<div>'; 
+		$i = 1;
+		foreach ($scheduledActivities as $scheduled) {
+			$test .= '<p>$scheduledActivities[Day: '. $i .'] = array(<br>';
+			foreach($periods as $period) {
+				if (isset($scheduled[$period['id']])) {
+					$test .= 'Period: '. $period['id'] .'=> activity '. $scheduled[$period['id']]['id'] .':'. $scheduled[$period['id']]['name'] .',<br>';
 				}
 			}
-			$scheduledActivities = array(
-				1=>(isset($mon) && count($mon>0)) ? $mon : '',
-				2=>(isset($tues) && count($tues>0)) ? $tues : '',
-				3=>(isset($wed) && count($wed>0)) ? $wed : '',
-				4=>(isset($thurs) && count($thurs>0)) ? $thurs : '',
-				5=>(isset($fri) && count($fri>0)) ? $fri : ''
-			);
-			unset($mon);
-			unset($tues);
-			unset($wed);
-			unset($thurs);
-			unset($fri);
-		} else {
-			$scheduledActivities = array(1=>'',2=>'',3=>'',4=>'',5=>'',); 
-		}*/
-		$scheduledActivities = showScheduledActivities($row['id'],$_SESSION['userID'],$con);
-		$weekdays = '';
-		
-		// For Testing
-		/*$test = ''; 
-		if (isset($scheduledActivities)) {
-			$test = '<div>'; 
-			$i = 1;
-			foreach ($scheduledActivities as $scheduled) {
-				$test .= '<p>$scheduledActivities[Day: '. $i .'] = array(<br>';
-				foreach($periods as $period) {
-					if (isset($scheduled[$period['id']])) {
-						$test .= 'Period: '. $period['id'] .'=> activity '. $scheduled[$period['id']]['id'] .':'. $scheduled[$period['id']]['name'] .',<br>';
-					}
-				}
-				$test .= ')</p>';
-				$i++;
-			}
-			$test .= '</div>'; 
+			$test .= ')</p>';
+			$i++;
 		}
-		$weekdays .= $test;*/
+		$test .= '</div>'; 
+	}
+	$weekdays .= $test;*/
 					
-		$header = '<header><h4 class="display-4 mb-1 text-center">'. $row['name'] .'</h4><div class="row d-none d-sm-flex p-1 bg-dark text-white">';
-		$weekdays .= '<div class="row border border-right-0 border-bottom-0">';
-		$d = 1;
-		foreach ($days as $day) {
-			$schActivity = ((isset($scheduledActivities)) ? $scheduledActivities[$d] : '');
-			$header .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</div></h5>'; 
-			$weekdays .= '<div class="day col-sm p-2 border border-left-0 border-top-0 text-truncate">
+	$header = '<header><h4 class="display-4 mb-1 text-center">'. $week['name'] .'</h4><div class="row d-none d-sm-flex p-1 bg-dark text-white">';
+	$weekdays .= '<div class="row border border-right-0 border-bottom-0">';
+	$d = 1;
+	foreach ($week['days'] as $day) {
+		$schActivity = ((isset($scheduledActivities)) ? $scheduledActivities[$d] : '');
+		$header .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</div></h5>'; 
+		$weekdays .= '<div class="day col-sm p-2 border border-left-0 border-top-0 text-truncate">
 						<h5 class="row align-items-center">
 							<span class="date col-1 d-sm-none nicedate">'. $day['nicedate'] .'</span>
 							<small class="col d-sm-none text-center text-muted dayname">'. $day['name'] .'</small>
 							<span class="col-1"></span>
 						</h5>';
 			
-			foreach ($periods as $period) {
-				
-				if ((isset($_SESSION['bunkInfo'])) && (in_array($_SESSION['bunkInfo']['group'],$period['groups']))) {
-				
-					if ($period['days'][$day['number']]==1) {
-						$weekdays .= '<div class="period"><h6>'. $period['name'] .'</h6>';
-						$activityScheduled = false; 						
-						if (!empty($schActivity[$period['id']])) {
-							$disable = ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"');
-							$disable = ''; 
-							$weekdays .= '<form method="post" class="scheduled-activity" action="/schedule-activities/"><input type="hidden" name="weekID" value="'. $row['id'] .'"><input type="hidden" name="scheduleOp" value="edit"><input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $period['id'] .'"><input type="hidden" name="startDate" value="'. $days[0]['date'] .'"><input type="submit" class="event btn btn-block btn-light-green agenda-event-button d-block" value="'. $schActivity[$period['id']]['name'] .'" '. $disable .'></form>';
-						} else {
-							$weekdays .= '<form method="post" action="/schedule-activities/"><input type="hidden" name="weekID" value="'. $row['id'] .'"><input type="hidden" name="scheduleOp" value="add"><input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $period['id'] .'"><input type="hidden" name="startDate" value="'. $days[0]['date'] .'"><input type="submit" class="btn btn-light agenda-event-button" value="Click to Schedule Activities"></form>';
-						}
-						$weekdays .= '</div>';
+		foreach ($periods as $period) {
+			if ((isset($_SESSION['bunkInfo'])) && (in_array($_SESSION['bunkInfo']['group'],$period['groups']))) {
+				if ($period['days'][$day['number']]==1) {
+					$weekdays .= '<div class="period"><h6>'. $period['name'] .'</h6>';
+					$activityScheduled = false; 						
+					if (!empty($schActivity[$period['id']])) {
+						$disable = ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"');
+						$disable = ''; 
+						$weekdays .= '<form method="post" class="scheduled-activity" action="/schedule-activities/"><input type="hidden" name="weekID" value="'. $week['id'] .'"><input type="hidden" name="scheduleOp" value="edit"><input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $period['id'] .'"><input type="hidden" name="startDate" value="'. $week['days'][0]['date'] .'"><input type="submit" class="event btn btn-block btn-light-green agenda-event-button d-block" value="'. $schActivity[$period['id']]['name'] .'" '. $disable .'></form>';
+					} else {
+						$weekdays .= '<form method="post" action="/schedule-activities/"><input type="hidden" name="weekID" value="'. $row['id'] .'"><input type="hidden" name="scheduleOp" value="add"><input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $period['id'] .'"><input type="hidden" name="startDate" value="'. $week['days'][0]['date'] .'"><input type="submit" class="btn btn-light agenda-event-button" value="Click to Schedule Activities"></form>';
 					}
+					$weekdays .= '</div>';
 				}
 			}
-			$weekdays .= '</div>';
-			$d++;
 		}
-		$header .= '</div></header>'; 
 		$weekdays .= '</div>';
-		
-		$content .= '<div class="container-fluid week-view">'. $header . $weekdays .'</div><!-- /week-view -->';
+		$d++;
 	}
-	
-} 
-
+	$header .= '</div></header>'; 
+	$weekdays .= '</div>';
+		
+	$content .= '<div class="container-fluid week-view">'. $header . $weekdays .'</div><!-- /week-view -->';
+}
 
 /*$content .= '<div class="container-fluid">
 									<header>

@@ -9,7 +9,6 @@ $content .= '<div class="container main">';
 //include('dashboard/task.php');
 //include('dashboard/timeline.php');
 
-
 $content .= '
         	<div class="row">
                 <div class="col-lg-3 col-md-6">
@@ -103,7 +102,6 @@ $content .= '
             </div>
             <!-- /.row -->';
 			
-			
 $content .= '<div class="row">
                 <div class="col-lg-8">
                     main
@@ -139,78 +137,4 @@ $content .= '<!--Card-->
 </div>
 <!--/.Card-->'; 
 
-/*$docReady .= "
-			// Update Panel Content
-			$(document).on('click', '.timechange', function (e) {
-				var admintype = $(this).data('admintype');
-				var filter = $(this).data('filter');
-				var page = $(this).data('page');
-				var section = $(this).data('section');
-				var updateLink = 'pages/dashboard/ajax/' + section +'.php';
-				$.ajax({
-					type: 'POST',
-					url: updateLink,
-					data: 'admintype=' + admintype + '&filter=' + filter + '&page=' + page + '&section=' + section,
-					dataType: 'json',
-					async: false,
-					cache: false,
-					timeout: 10000,
-					success: function(data) {
-						if ((data.output.updateOP === 'update') && (data.output.updateString)) {
-							if (data.output.updateTitle) {
-								$('#' + data.output.section + ' .title-dynamic').html(data.output.updateTitle);	
-							}
-							$('#' + data.output.section + ' .content-dynamic').html(data.output.updateString);	
-						}
-					},
-					error: function() {
-						console.log('ERROR');
-					}
-				});
-				e.preventDefault();
-			});
-			
-			// To-Do Updates
-			$('#todoForm').submit(function(e) {
-				var url = 'admin/process/todo.php';
-				var deleteItems = []; 
-				if(confirm('Are you sure these items are complete?  They will be removed from your to-do list.')) {
-					$.ajax({
-						type: 'POST',
-						url: url,
-						data: $('#todoForm').serialize(),
-						dataType: 'json',
-						async: false,
-						cache: false,
-						timeout: 10000,
-						success: function(data) {
-							console.log('DELETE ARR: ' + data.output.update);
-							if ($.isArray(data.output.update)) {
-								console.log('Its an array!');
-								$.each(data.output.update, function(key, value){
-									console.log('DELETE: ' + value);
-									deleteItems.push('todo-' + value);
-								});
-							} else {
-								console.log('NOT an array!');
-								console.log('DELETE: ' + value);
-								deleteItems.push('todo-' + value);
-							}
-							$.each(deleteItems, function(key, value){
-								console.log(value);
-								var deleteme = '#' + value;
-								console.log('DELETE ME: ' + deleteme);
-								$(deleteme).animate({ backgroundColor: '#fbc7c7' }, 'fast').animate({ opacity: 'hide' }, 'slow');
-							});
-						},
-						error: function() {
-							console.log('ERROR');
-						}
-					});
-					e.preventDefault();
-				};
-			});";*/
 $content .= '</div><!-- /container-fluid -->'; 
-
-//include('inc/scripts-modal-form.php');
-//include('inc/modal.php');

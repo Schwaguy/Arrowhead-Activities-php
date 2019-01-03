@@ -120,25 +120,72 @@ function getBunks($selected,$con) {
 }
 
 // Get Weeks
-function getWeeks($selected,$multi,$required,$con) {
-	if ($multi) {
-		$multiple = 'multiple="multiple"';
-		$option1 = '';
-	} else {
-		$multiple = '';
-		$option1 = '<option value="">&lt; select week &gt;</option>';
-	}
-	$req = ($required ? 'true' : 'false');
-	$output = '<select name="week" class="form-control browser-default custom-select" data-rule-required="'. $req .'" data-msg-required="Week is Required" '. $multiple .'>'. $option1;
+function getWeeks($admin,$selected,$multi,$required,$con) {
 	$query = 'SELECT * FROM weeks WHERE active=1 ORDER BY name ASC, startDate ASC';
 	$result = $con->query($query);
-	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
-		$output .= '<option value="'. $row['id'] .'"';
-		if ($row['id'] == $selected)
-			$output .= ' selected';
-		$output .= '>'. $row['name'] .'</option>';
+	if ($admin) {
+		if ($multi) {
+			$multiple = 'multiple="multiple"';
+			$option1 = '';
+		} else {
+			$multiple = '';
+			$option1 = '<option value="">&lt; select week &gt;</option>';
+		}
+		$req = ($required ? 'true' : 'false');
+		$output = '<select name="week" class="form-control browser-default custom-select" data-rule-required="'. $req .'" data-msg-required="Week is Required" '. $multiple .'>'. $option1;
+
+		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+			$output .= '<option value="'. $row['id'] .'"';
+			if ($row['id'] == $selected)
+				$output .= ' selected';
+			$output .= '>'. $row['name'] .'</option>';
+		}
+		$output .= '</select>';
+	} else {
+		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+			$week['id'] = $row['id'];
+			$week['name'] = $row['name'];
+			$week['startDate'] = $row['startDate'];
+			$week['endDate'] = $row['endDate'];
+			$week['signupStartDate'] = $row['signupStartDate'];
+			$week['signupEndDate'] = $row['signupEndDate'];
+			$week['days'] = array(
+				array(
+					'number'=>1,
+					'name'=>'monday',
+					'date'=>$row['startDate'],
+					'nicedate'=>date_format(date_create($row['startDate']),'F jS')
+				),
+				array(
+					'number'=>2,
+					'name'=>'tuesday',
+					'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 1 days')),
+					'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 1 days'))
+				),
+				array(
+					'number'=>3,
+					'name'=>'wednesday',
+					'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 2 days')),
+					'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 2 days'))
+				),
+				array(
+					'number'=>4,
+					'name'=>'thursday',
+					'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 3 days')),
+					'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 3 days'))
+				),
+				array(
+					'number'=>5,
+					'name'=>'friday',
+					'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 4 days')),
+					'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 4 days'))
+				)
+			);
+			$weeks[$row['id']] = $week;
+			unset($week);
+		}
+		$output = $weeks;
 	}
-	$output .= '</select>';
 	return $output;
 }
 
@@ -208,6 +255,75 @@ function getBunkInfo($bunkID,$con) {
 	}
 	$output = $outputArray;
 	return $output;
+}
+
+// Get Activity Info
+function getActivityinfo($actID,$con) {
+	$query = 'SELECT a.*, w.startDate FROM activities a LEFT JOIN weeks w ON (a.week = w.id) WHERE a.id='. $actID .' LIMIT 1';  
+	if($result = $con->query($query)) {
+		while ($act=$result->fetch_array(MYSQLI_ASSOC)) {
+			$activity = array(
+				'id'=>$act['id'],
+				'name'=>$act['name'],
+				'description'=>$act['description'],
+				'location'=>$act['location'],
+				'capacity'=>$act['capacity'],
+				'groups'=>explode(',',$act['groups']),
+				'week'=>$act['week'],
+				'startDate'=>$act['startDate'],
+				'period'=>$act['period'],
+				'days'=>array(
+					'monday'=>$act['monday'],
+					'tuesday'=>$act['tuesday'],
+					'wednesday'=>$act['wednesday'],
+					'thursday'=>$act['thursday'],
+					'friday'=>$act['friday']
+				),
+				'prerequisites'=>$act['prerequisites']
+			);
+		}
+	}
+	return $activity;
+}
+
+// Get Activity Signups
+function getActivitySignups($actID,$con) {
+	$query = 'SELECT a.id AS sID, a.user, a.day, u.firstName, u.lastName, b.id AS bID, b.name FROM activity_signups a LEFT JOIN users u ON (a.user = u.id) LEFT JOIN bunks b ON (u.bunk = b.id) WHERE a.activity='. $actID .' AND a.active=1 AND u.active=1 ORDER BY a.id';  
+	if($result = $con->query($query)) {
+		while ($sup=$result->fetch_array(MYSQLI_ASSOC)) {
+			$signup = array(
+				'id'=>$sup['sID'],
+				'user'=>array('id'=>$sup['user'],'firstName'=>$sup['firstName'],'lastName'=>$sup['lastName']),
+				'bunk'=>array('id'=>$sup['bID'],'name'=>$sup['name'])
+			);
+			switch ($sup['day']) {
+				case 'Monday':
+					$monday[$sup['sID']] = $signup;
+					break;
+				case 'Tuesday':
+					$tuesday[$sup['sID']] = $signup;
+					break;
+				case 'Wednesday':
+					$wednesday[$sup['sID']] = $signup;
+					break;
+				case 'Thursday':
+					$thursday[$sup['sID']] = $signup;
+					break;
+				case 'Friday':
+					$friday[$sup['sID']] = $signup;
+					break;
+			}
+			unset($signup);
+		}
+		$signups = array(
+			1=>(isset($monday) ? $monday : ''),
+			2=>(isset($tuesday) ? $tuesday : ''),
+			3=>(isset($wednesday) ? $wednesday : ''),
+			4=>(isset($thursday) ? $thursday : ''),
+			5=>(isset($friday) ? $friday : ''),
+		);
+	}
+	return $signups;
 }
 
 // Get Activites for the week
@@ -304,9 +420,9 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled)
 			if ($activity['week'] == $week) {
 				if ($activity['period'] == $period) {
 					if ($admin) {
-						$activities .= '<form id="edit-activity-'. $activity['id'] .'" class="agenda-form" method="post" action="/admin/activities/edit/">
+						$activities .= '<form id="edit-activity-'. $activity['id'] .'" class="agenda-form button-form" method="post" action="/admin/activities/edit/">
 						<input type="hidden" name="id" value="'. $activity['id'] .'">'; 
-						$activities .= '<input type="submit" type="button" class="btn btn-light agenda-event-button" value="'. $activity['name'] .'">';
+						$activities .= '<input type="submit" type="button" class="btn btn-light agenda-event-button" value="'. $activity['name'] .'" title="'. $activity['space'][strtolower($day)] .' spots left" data-toggle="tooltip" data-placement="top" title="'. $activity['space'][strtolower($day)] .' spots left">';
 						$activities .= '</form>';
 					} else {
 						// Mark as active if scheduling is complete
@@ -315,7 +431,10 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled)
 						// Disable if scheduling is complete and user cannot edit
 						$disable = ((!empty($actScheduled)) ? ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"') : '');
 						
-						$activities .= '<li><input type="radio" class="schedule-radio '. $active .'" id="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" name="activity-'. $week .'-'. $day .'-'. $period .'" value="'. $activity['id'] .'" data-rule-required="true" data-msg-required="Please Select an Activity" '. $disable .'><label for="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" class="btn btn-light schedule-button '. $active .'">'. $activity['name'] .'<div class="small">'. $activity['space'][strtolower($day)] .' spots left</div></label></li>';
+						// Disable for Campers if Full
+						$disable = (($activity['space'][strtolower($day)]<=0) ? 'disabled="disabled"' : $disable);
+						
+						$activities .= '<li><input type="radio" class="schedule-radio '. $active .'" id="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" name="activity-'. $week .'-'. $day .'-'. $period .'" value="'. $activity['id'] .'" data-rule-required="false" data-msg-required="Please Select an Activity" '. $disable .'><label for="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" class="btn btn-light schedule-button '. $active .'">'. $activity['name'] .'<div class="small">'. $activity['space'][strtolower($day)] .' spots left</div></label></li>';
 					}
 				}
 			}

@@ -1,48 +1,26 @@
 <?php
 
+$allowAdmin = ($_SESSION['userPermissions']['edit'] ? true : false);
 $periods = getPeriods('',false,false,'array',$con);
-
-// Get Activites for the week
-/*$sql = 'SELECT * FROM activities WHERE week='. $weekID .' ORDER BY name';  
-$monday = array();
-$tuesday = array();
-$wednesday = array();
-$thursday = array();
-$friday = array();
-if ($res = $con->query($sql)) {
-	while ($act=$res->fetch_array(MYSQLI_ASSOC)) {
-		$monSpace = (($act['monday']) ? $act['capacity']-$act['regMonday'] : 0);
-		$tuesSpace = (($act['tuesday']) ? $act['capacity']-$act['regTuesday'] : 0);
-		$wedSpace = (($act['wednesday']) ? $act['capacity']-$act['regWednesday'] : 0);
-		$thursSpace = (($act['thursday']) ? $act['capacity']-$act['regThursday'] : 0);
-		$friSpace = (($act['friday']) ? $act['capacity']-$act['regFriday'] : 0);
-		$activity = array(
-			'id'=>$act['id'],
-			'name'=>$act['name'],
-			'week'=>$act['week'],
-			'period'=>$act['period'],
-			'space'=>array(
-				'Monday'=>$monSpace,
-				'Tuesday'=>$tuesSpace,
-				'Wednesday'=>$wedSpace,
-				'Thursday'=>$thursSpace,
-				'Friday'=>$friSpace,
-			)
-		);
-		if ($act['monday']) { $monday[] = $activity; }
-		if ($act['tuesday']) { $tuesday[] = $activity; }
-		if ($act['wednesday']) { $wednesday[] = $activity; }
-		if ($act['thursday']) { $thursday[] = $activity; }
-		if ($act['friday']) { $friday[] = $activity; }
-	}
-}*/
 $weekActivities = getWeekActivities($weekID,$con);
+
+if (isset($_POST['editID'])) {
+	$userInfo = array(
+		'userID'=>$_POST['editID'],
+		'bunkInfo'=>getBunkInfo($_POST['bunkID'],$con)
+	);
+} else {
+	$userInfo = array(
+		'userID'=>$_SESSION['userID'],
+		'bunkInfo'=>$_SESSION['bunkInfo']
+	);
+}
 
 $content .='<h2 class="text-center">'. getName($weekID,'weeks',$con) .' Available Activities</h2>'; 
 $content .= '<div class="agenda">
         <div class="table-responsive">
 			<form id="scheduleForm" class="scheduleForm" name="scheduleForm" method="post">
-				<input type="hidden" name="user" value="'. $_SESSION['userID'] .'">
+				<input type="hidden" name="user" value="'. $userInfo['userID'] .'">
 				<input type="hidden" name="registered" value="'. $now .'">
 				<input type="hidden" name="updated" value="'. $now .'">
 				<input type="hidden" name="updatedBy" value="'. $_SESSION['userID'] .'">
@@ -57,7 +35,7 @@ $content .= '<div class="agenda">
 					</thead>
 					<tbody>';
 
-$scheduledActivities = getScheduledActivities($weekID,$_SESSION['userID'],$con);
+$scheduledActivities = getScheduledActivities($weekID,$userInfo['userID'],$con);
 // For Testing
 /*if (isset($scheduledActivities)) {
 	$i = 1;
@@ -92,9 +70,9 @@ for ($d=1;$d<=5;$d++) {
 	
 	// Show first Activity Period
 	$count = 1;
-	if (isset($_SESSION['bunkInfo'])) {
+	if (isset($userInfo['bunkInfo'])) {
 		for ($v=0;$v<count($periods);$v++) {
-			if ((!isset($p)) && (in_array($_SESSION['bunkInfo']['group'],$periods[$v]['groups']))) {
+			if ((!isset($p)) && (in_array($userInfo['bunkInfo']['group'],$periods[$v]['groups']))) {
 				$p = $v;
 			}
 		}
@@ -115,7 +93,7 @@ for ($d=1;$d<=5;$d++) {
 
 		// Show additional Activity Periods
 		for ($r=$p+1;$r<=2;$r++) {
-			if (in_array($_SESSION['bunkInfo']['group'],$periods[$r]['groups'])) {
+			if (in_array($userInfo['bunkInfo']['group'],$periods[$r]['groups'])) {
 				if ($periods[$r]['days'][$d] == 1) {
 					$agenda .= '<tr>
 							<td class="agenda-time">
@@ -124,7 +102,10 @@ for ($d=1;$d<=5;$d++) {
 							</td>
 							<td class="agenda-events">';
 					if ($periods[$p]['days'][$d]==1) {
-						$available = showAgendaActivities($weekID,$dayOfWeek,$$dayArray,$periods[$r]['id'],false,$schActivity);
+						
+						$admin = 
+						
+						$available = showAgendaActivities($weekID,$dayOfWeek,$actArray,$periods[$r]['id'],false,$schActivity);
 						$agenda .= (!empty($available) ? $available : '<p class="text-muted"><em>No Activities Availabe Yet</em></p>');
 					} else {
 						$agenda .= '<p class="text-muted"><em>No Activities Availabe</em></p>'; 

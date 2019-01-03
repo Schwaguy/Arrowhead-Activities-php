@@ -30,6 +30,10 @@ jQuery(document).ready(function($) {
 		$(this).datepicker('show');
 	});
 	
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip();
+	})
+	
 	/*$('#tabs').responsiveTabs({
 		startCollapsed: 'accordion',
 		animation: 'slide',
@@ -256,6 +260,11 @@ jQuery(document).ready(function($) {
 			});
 			return false;
 		}
+	});
+	
+	// Link Form Submits
+	$('body').on('click', '.submitLink', function() {
+		$(this).parent('form').submit();
 	});
 	
 	$('body').on('click', '.scroll-link', function(event) {

@@ -34,7 +34,7 @@
 	// New Activity Form
 	$counselors = getCounselors('',$con);
 	$ageGroups = getAgeGroups('',true,true,$con);
-	$weeks = getWeeks($weekSel,false,true,$con);
+	$weeks = getWeeks(true,$weekSel,false,true,$con);
 	$periods = getPeriods($periodSel,false,true,'select',$con);
 	$prerequisites = getPrerequisites('',$con);
 	$content .= '<form id="form-add" class="adminForm">

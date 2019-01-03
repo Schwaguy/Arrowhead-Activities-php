@@ -44,8 +44,8 @@
 				$result = $con->query($query);
 				include('inc/pageContent.php');
 			} else { // Invalid Username or Password
-				$content .= $loginLink;
-				$content .= '<h1>Invalid Username or Password</h1>';
+				$loginError = '<h2 class="error login-error text-center">Invalid Username or Password</h2>';
+				include('pages/login.php');
 			}
 		} else { // Invalid Username or Password
 			$loginError = '<h2 class="error login-error text-center">Invalid Username or Password</h2>';

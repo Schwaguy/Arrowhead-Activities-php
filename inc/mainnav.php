@@ -23,7 +23,7 @@ $content .= '<!--Navbar-->
 // Left Links
 $content .= '<!-- Links -->
 		<ul class="navbar-nav mr-auto">
-		  <li class="nav-item active">
+		  <li class="nav-item">
 			<a class="nav-link" href="/">Home
 			  <span class="sr-only">(current)</span>
 			</a>
@@ -31,8 +31,19 @@ $content .= '<!-- Links -->
 		  <li>
 			<a class="nav-link" href="/my-activities/">My Activities</a>
 		  </li>';
-
+if ($_SESSION['userAuth']==3) {
+	$content .= '<li class="nav-item">
+			<a class="nav-link" href="/my-bunk/">My Bunk
+			  <span class="sr-only"></span>
+			</a>
+		  </li>';
+}
 if ($_SESSION['userAuth']<3) {
+	$content .= '<li class="nav-item">
+			<a class="nav-link" href="/bunks/">Bunks
+			  <span class="sr-only"></span>
+			</a>
+		  </li>';
 	$content .= '<!-- Admin Dropdown -->
 		  <li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
@@ -49,10 +60,6 @@ $content .= '</ul><!-- Links -->';
 
 // Right Links
 $content .= '<ul class="navbar-nav ml-auto nav-flex-icons">
-			  <li class="nav-item">
-				<a class="nav-link" href="#">
-				  <i class="fa fa-gear"></i> Settings</a>
-			  </li>
 			  <li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown" aria-haspopup="true"
 				  aria-expanded="false">
@@ -66,10 +73,9 @@ $content .= '<ul class="navbar-nav ml-auto nav-flex-icons">
 				</div>
 			  </li>
 		</ul>
-
 	  </div>
 	  <!-- Collapsible content -->
-	
+
 	</div>
 
 </nav>

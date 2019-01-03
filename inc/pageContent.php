@@ -47,6 +47,7 @@ if (!empty($_REQUEST['op'])) {
 		if ($_SESSION['userAuth']<=2) { 
 			include('pages/dashboard-admin.php');
 		} elseif ($_SESSION['userAuth']==3) {
+			//window.location('/my-bunk/');
 			include('pages/dashboard-counselor.php');
 		} else {
 			include('pages/dashboard-camper.php');

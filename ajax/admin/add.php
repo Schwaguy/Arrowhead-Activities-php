@@ -36,7 +36,7 @@ if ($_POST) {
 	$result = $con->query($sql);
 	$id = mysqli_insert_id($con);
 	
-	$rowUpdates = array('bunks','weeks','periods');
+	$rowUpdates = array('bunks','weeks','periods','users');
 	
 	if (in_array($table,$rowUpdates)) {
 		include('inc/addrow-'. $table .'.php');

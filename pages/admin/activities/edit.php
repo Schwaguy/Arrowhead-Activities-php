@@ -2,29 +2,7 @@
 
 	if (isset($_POST['id'])) {
 		// Get Activity Info
-		$sql = 'SELECT * FROM activities WHERE id='. $_POST['id'] .' LIMIT 1';  
-		if($res = $con->query($sql)) {
-			while ($act=$res->fetch_array(MYSQLI_ASSOC)) {
-				$activity = array(
-					'id'=>$act['id'],
-					'name'=>$act['name'],
-					'description'=>$act['description'],
-					'location'=>$act['location'],
-					'capacity'=>$act['capacity'],
-					'groups'=>explode(',',$act['groups']),
-					'week'=>$act['week'],
-					'period'=>$act['period'],
-					'days'=>array(
-						'monday'=>$act['monday'],
-						'tuesday'=>$act['tuesday'],
-						'wednesday'=>$act['wednesday'],
-						'thursday'=>$act['thursday'],
-						'friday'=>$act['friday']
-					),
-					'prerequisites'=>$act['prerequisites']
-				);
-			}
-		}
+		$activity = getActivityinfo ($_POST['id'],$con);
 		$monCheck = (($activity['days']['monday']==1) ? 'checked' : ''); 
 		$tuesCheck = (($activity['days']['tuesday']==1) ? 'checked' : '');
 		$wedCheck = (($activity['days']['wednesday']==1) ? 'checked' : '');
@@ -33,16 +11,24 @@
 		$prerequisites = getPrerequisites(explode(',',$activity['prerequisites']),$con);
 
 		$content .= '<div class="container main">
+			
+			<div class="quick-buttons">
+				<form method="post" action="/admin/activities/view-signups/">
+					<input type="hidden" name="id" value="'. $activity['id'] .'">
+					<input type="submit" class="btn btn-primary" value="View Signups">
+				</form>
+			</div>
+			
 			<h1 class="page-title">Edit Activity</h1>
+			
 			<div class="row justify-content-md-center">
 				<div class="col-12 col-xs-12 col-sm-12 col-md-10 col-lg-10">';
 
 		// New Activity Form
 		$ageGroups = getAgeGroups($activity['groups'],true,true,$con);
-		$weeks = getWeeks($activity['week'],false,true,$con);
+		$weeks = getWeeks(true,$activity['week'],false,true,$con);
 		$periods = getPeriods($activity['period'],false,false,'select',$con);
 		$content .= '<form id="form-edit" class="adminForm">
-
 						<input type="hidden" name="id" value="'. $activity['id'] .'">
 						<input type="hidden" name="table" value="activities">
 						<input type="hidden" name="updated" value="'. $now .'">
