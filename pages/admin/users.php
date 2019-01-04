@@ -13,8 +13,6 @@
 			<div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12">';
 
 	// New User Form
-	$bunks = getBunks('',$con);
-	$auth = getAuth('',true,$_SESSION['userID'],false,$con);
 	$content .= '
 	<div class="collapse add-item-box" id="addUser">
   		<div class="card card-body">
@@ -42,11 +40,11 @@
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="bunk">Bunk</label>
-							'. $bunks .'
+							'. getBunks('',$con) .'
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="access_level">User Type</label>
-							'. $auth .'
+							'. getAuth('',true,$_SESSION['userID'],false,$con) .'
 						</div>
 					</div>
 					<div class="row row-flex form-row">
@@ -57,6 +55,9 @@
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="password_repeat">Repeat Password</label>
 							<input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter Password Again" data-rule-required="false" data-msg-required="Password Confirmation is Required">
+						</div>
+						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
+							'. getWeeks(true,'',true,false,$con) .'
 						</div>
 					</div>
 					<div class="col-12 text-center">
