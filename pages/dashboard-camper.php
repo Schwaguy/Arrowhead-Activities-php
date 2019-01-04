@@ -2,7 +2,7 @@
 
 $pageTitle = 'Dashboard'; 
 $page = 'dash'; 
-$content .= '<div class="container main">'; 
+$content .= '<div class="container main"><h1>Camper Dashboard</h1>'; 
 
 /*$content .= '
         	<div class="row">
@@ -98,6 +98,6 @@ $content .= '<div class="container main">';
 </div>
 <!--/.Card-->';*/
 
-include($ROOT . '/pages/inc/calendar.php');
+//include($ROOT . '/pages/inc/calendar.php');
 $content .= '</div><!-- /container-fluid -->'; 
 ?>

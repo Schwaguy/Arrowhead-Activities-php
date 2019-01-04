@@ -26,18 +26,10 @@ if ($_POST) {
 		$output = array('update'=>'0','accountCreated'=>'false','feedback'=>'This username already exists.<br>Please try another username.','redirect'=>$redirect);
 	} else {
 		$sql = "INSERT INTO users (id,firstname,lastName,username,bunk,password,salt,access_level,lastLogin,active) VALUES ('','". $firstName ."','". $lastName ."','". $username ."','". $bunk ."','". $pass ."','". $salt ."','". $access_level ."','" . $now . "','1')";
-		$result = $con->query($sql);
-		$id = mysqli_insert_id($con);
-
-		if ($result) {
+		if ($result = $con->query($sql)) {
+			$id = mysqli_insert_id($con);
 			if ($newRegistration) {
-				$_SESSION['userID'] = $id;
-				$_SESSION['userAuth'] = $access_level;
-				$_SESSION['userName'] = $username;
-				$_SESSION['userFirstName'] = $firstName;
-				$_SESSION['userlastName'] = $lastName;
-				$_SESSION['userEmail'] = $email;
-				$_SESSION['userBunk'] = $bunk;
+				$login = logUserIn($username,false,$today,$con); 
 				$addRow = ''; 
 			} else {
 				include('inc/addrow-users.php');

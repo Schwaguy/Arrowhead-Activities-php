@@ -36,7 +36,7 @@
   							<div class="card card-body">
 								<h3 class="card-title">Create Your Account</h3>
 								<form id="registerForm" class="registerForm" name="registerForm" method="post">
-									<input type="hidden" name="redirect" value="/welcome">
+									<input type="hidden" name="redirect" value="/welcome/">
 									<input type="hidden" name="new-registration" value="true">
 									<input type="hidden" name="access_level" value="4">
 									<div class="row form-row align-middle">

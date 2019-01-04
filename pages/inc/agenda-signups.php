@@ -31,7 +31,7 @@ for ($d=1;$d<=5;$d++) {
 			$actSignups .= '<p class="text-muted"><em>Listed in signup order</em></p><ol class="signupList">';
 			foreach ($campers as $camper) {
 				$actSignups .= '<li><form method="post" action="/schedule-activities/">
-					<input type="hidden" name="editID" value="'. $camper['user']['id'] .'">
+					<input type="hidden" name="uID" value="'. $camper['user']['id'] .'">
 					<input type="hidden" name="bunkID" value="'. $camper['bunk']['id'] .'">
 					<input type="hidden" name="weekID" value="'. $activity['week'] .'">
 					<input type="hidden" name="startDate" value="'. $startDate .'">

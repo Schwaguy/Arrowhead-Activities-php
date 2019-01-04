@@ -4,19 +4,21 @@ $allowAdmin = ($_SESSION['userPermissions']['edit'] ? true : false);
 $periods = getPeriods('',false,false,'array',$con);
 $weekActivities = getWeekActivities($weekID,$con);
 
-if (isset($_POST['editID'])) {
+if (isset($_POST['uID'])) {
 	$userInfo = array(
-		'userID'=>$_POST['editID'],
-		'bunkInfo'=>getBunkInfo($_POST['bunkID'],$con)
+		'userID'=>$_POST['uID'],
+		'userName'=>$_POST['thisUserName'],
+		'bunkInfo'=>getBunkInfo($_POST['bunkID'],'',$con)
 	);
 } else {
 	$userInfo = array(
 		'userID'=>$_SESSION['userID'],
+		'userName'=>$_SESSION['userFirstName'] .' '. $_SESSION['userLastName'],
 		'bunkInfo'=>$_SESSION['bunkInfo']
 	);
 }
 
-$content .='<h2 class="text-center">'. getName($weekID,'weeks',$con) .' Available Activities</h2>'; 
+$content .='<h2 class="text-center">'. getName($weekID,'weeks',$con) .' Available '. siteVar('act','plural','capital') .' for '. $userInfo['userName'] .'</h2>'; 
 $content .= '<div class="agenda">
         <div class="table-responsive">
 			<form id="scheduleForm" class="scheduleForm" name="scheduleForm" method="post">
@@ -30,29 +32,12 @@ $content .= '<div class="agenda">
 						<tr>
 							<th>Date</th>
 							<th>Period</th>
-							<th>Activities</th>
+							<th>'. siteVar('act','plural','capital') .'</th>
 						</tr>
 					</thead>
 					<tbody>';
 
 $scheduledActivities = getScheduledActivities($weekID,$userInfo['userID'],$con);
-// For Testing
-/*if (isset($scheduledActivities)) {
-	$i = 1;
-	foreach ($scheduledActivities as $scheduled) {
-		$content .= '<tr><td colspan="3">$scheduledActivities[Day: '. $i .'] = array(<br>';
-		foreach($periods as $period) {
-			if (isset($scheduled[$period['id']])) {
-				$content .= 'Period: '. $period['id'] .'=> activity '. $scheduled[$period['id']] .',<br>';
-			}
-		}
-		$content .= ')</td></tr>';
-		$i++;
-	}
-}*/
-
-//######################################## HERE  - Now need to highlight seklected activities
-
 
 for ($d=1;$d<=5;$d++) {
 	$agenda = '';
@@ -84,9 +69,9 @@ for ($d=1;$d<=5;$d++) {
 		
 		if ($periods[$p]['days'][$d]==1) {
 			$available = showAgendaActivities($weekID,$dayOfWeek,$actArray,$periods[$p]['id'],false,$schActivity);
-			$agenda .= (!empty($available) ? $available : '<p class="text-muted"><em>No Activities Availabe Yet</em></p>');
+			$agenda .= (!empty($available) ? $available : '<p class="text-muted"><em>No '. siteVar('act','plural','capital') .' Availabe Yet</em></p>');
 		} else {
-			$agenda .= '<p class="text-muted"><em>No Activities Availabe</em></p>'; 
+			$agenda .= '<p class="text-muted"><em>No '. siteVar('act','plural','capital') .' Availabe</em></p>'; 
 		}
 			
 		$agenda .= '</td></tr>';
@@ -106,9 +91,9 @@ for ($d=1;$d<=5;$d++) {
 						$admin = 
 						
 						$available = showAgendaActivities($weekID,$dayOfWeek,$actArray,$periods[$r]['id'],false,$schActivity);
-						$agenda .= (!empty($available) ? $available : '<p class="text-muted"><em>No Activities Availabe Yet</em></p>');
+						$agenda .= (!empty($available) ? $available : '<p class="text-muted"><em>No '. siteVar('act','plural','capital') .' Availabe Yet</em></p>');
 					} else {
-						$agenda .= '<p class="text-muted"><em>No Activities Availabe</em></p>'; 
+						$agenda .= '<p class="text-muted"><em>No '. siteVar('act','plural','capital') .' Availabe</em></p>'; 
 					}
 					$agenda .= '</td></tr>';
 					$count++;
@@ -127,7 +112,7 @@ $disable = (($_POST['scheduleOp'] == 'edit') ? ($_SESSION['userPermissions']['ed
 $content .= '</tbody>
             	</table>
 				<p class="text-center">
-					<button type="button" class="btn btn-elegant scheduleBtn" data-op="add" '. $disable .'>Submit Acticvity Selections</button>
+					<button type="button" class="btn btn-elegant scheduleBtn" data-op="add" '. $disable .'>Submit '. siteVar('act','singular','capital') .' Selections</button>
 				</p>
 			</form>
         </div>

@@ -19,7 +19,7 @@
 				</form>
 			</div>
 			
-			<h1 class="page-title">Edit Activity</h1>
+			<h1 class="page-title">Edit '. siteVar('act','singular','capital') .'</h1>
 			
 			<div class="row justify-content-md-center">
 				<div class="col-12 col-xs-12 col-sm-12 col-md-10 col-lg-10">';
@@ -37,8 +37,8 @@
 						<input type="hidden" name="redirect" value="/admin/activities/overview/">
 
 						<div class="col-12">
-							<p><label for="name">Name</label><br><input name="name" class="form-control" value="'. $activity['name'] .'" placeholder="Activity Name" data-rule-required="true" data-msg-required="Activity Name is Required"></p>
-							<p><label for="description">Description</label><br><textarea name="description" class="form-control" placeholder="Activity Description">'. $activity['description'] .'</textarea></p>
+							<p><label for="name">Name</label><br><input name="name" class="form-control" value="'. $activity['name'] .'" placeholder="'. siteVar('act','singular','capital') .' Name" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Name is Required"></p>
+							<p><label for="description">Description</label><br><textarea name="description" class="form-control" placeholder="'. siteVar('act','singular','capital') .' Description">'. $activity['description'] .'</textarea></p>
 						</div>
 
 						<div class="row d-flex">
@@ -113,8 +113,8 @@
 						</div>
 						<div class="row">
 							<div class="col-12"><div class="col-12 text-center">
-								<button type="button" class="btn btn-dark-green adminBtn" data-op="update">Update Activity</button>
-							</div></div>
+								<button type="button" class="btn btn-dark-green adminBtn" data-op="update">Update '. siteVar('act','singular','capital') .'</button>
+							</div></div> 
 						</div>
 					</form>';
 

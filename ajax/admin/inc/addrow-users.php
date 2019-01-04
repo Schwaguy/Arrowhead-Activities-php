@@ -3,8 +3,8 @@ $addRow = '<tr id="form-'. $id .'">
 				<td>'. $lastName .', '. $firstName .'</td>
 				<td>'. $username .'</td>
 				<td>'. $email .'</td>
-				<td>'. getAuthName($access_level,$con) .'</td>
-				<td>'. getBunkName($bunk,$con) .'</td>
+				<td>'. getName($access_level,'access_levels',$con) .'</td>
+				<td>'. getName($bunk,'bunks',$con) .'</td>
 				<td>
 					<div class="row row-flex d-flex">
 						<div col-12 div-xs-col-12 div-sm-col-12 div-md-col-6 text-center"><button class="btn btn-dark-green  btn-sm adminBtn">Edit</button></div>

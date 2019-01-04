@@ -21,29 +21,30 @@ $content .= '<!--Navbar-->
 	  <div class="collapse side-collapse in navbar-collapse" id="mainNav">';
 
 // Left Links
+$linkInfo = checkPageLink($thisPg,'home');
 $content .= '<!-- Links -->
 		<ul class="navbar-nav mr-auto">
-		  <li class="nav-item">
-			<a class="nav-link" href="/">Home
-			  <span class="sr-only">(current)</span>
-			</a>
-		  </li>
-		  <li>
-			<a class="nav-link" href="/my-activities/">My Activities</a>
+			<li class="nav-item '. $linkInfo['li'] .'">
+				<a class="nav-link" href="/">Home'. $linkInfo['sr'] .'</a>
+		  	</li>';
+if ($_SESSION['userAuth']>=3) {
+	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'my-activities') : array('li'=>'','sr'=>''));
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'">
+			<a class="nav-link" href="/my-activities/">My Activities'. $linkInfo['sr'] .'</a>
 		  </li>';
+}
 if ($_SESSION['userAuth']==3) {
-	$content .= '<li class="nav-item">
-			<a class="nav-link" href="/my-bunk/">My Bunk
-			  <span class="sr-only"></span>
-			</a>
+	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'my-bunk') : array('li'=>'','sr'=>''));
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'">
+			<a class="nav-link" href="/my-bunk/">My Bunk'. $linkInfo['sr'] .'</a>
 		  </li>';
 }
 if ($_SESSION['userAuth']<3) {
-	$content .= '<li class="nav-item">
-			<a class="nav-link" href="/bunks/">Bunks
-			  <span class="sr-only"></span>
-			</a>
+	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'bunks') : array('li'=>'','sr'=>''));
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'">
+			<a class="nav-link" href="/bunks/">Bunks'. $linkInfo['sr'] .'</a>
 		  </li>';
+	//$linkInfo = (!empty($pg) ? checkPageLink($pg,'admin') : array('li'=>'','sr'=>''));
 	$content .= '<!-- Admin Dropdown -->
 		  <li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>

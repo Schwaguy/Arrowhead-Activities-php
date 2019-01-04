@@ -6,7 +6,7 @@
 	}
 
 	$content .= '<div class="container main">
-		<h1 class="page-title">Activity Signups</h1>
+		<h1 class="page-title">'. siteVar('act','singular','capital') .' Signups</h1>
 		
 		<h2>'. getName($activity['week'],'weeks',$con) .' - '. $activity['name'] .'</h2>
 		

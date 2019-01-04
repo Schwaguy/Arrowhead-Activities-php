@@ -1,6 +1,8 @@
 <?php
 	$editAuth = ((($_SESSION['userAuth']>2) || (($_SESSION['userAuth']==2) && ($_SESSION['userAuth']==$user['id']))) ? true : false);
 
+	//$canEdit = ($editAuth ? '' : 'disabled');
+
 	// User Edit Form
 	$content .= '<form id="form-edit" class="adminForm">
 					<input type="hidden" name="id" value="'. $user['id'] .'">
@@ -43,8 +45,14 @@
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="password_repeat">Repeat New Password</label>
 							<input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter Password Again" data-rule-required="false" data-msg-required="Password Confirmation is Required">
-						</div>
-					</div>
+						</div>';
+	if ($user['access_level']>3) {
+		$content .= '<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
+							<label for="access_level">Camp Weeks</label>
+							'. getWeeks(true,$user['week'],true,false,$con) .'
+						</div>';
+	}
+	$content .= '</div>
 					<div class="col-12 text-center">
 						<button type="button" class="btn btn-dark-green adminBtn" data-op="update">Save Updates</button>
 					</div>

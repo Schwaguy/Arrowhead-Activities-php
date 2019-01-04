@@ -272,6 +272,9 @@ textarea {
     font-size: 1em;
   }
 }
+.btn {
+  line-height: 1.1;
+}
 .btn-primary,
 .btn-default {
   background-color: #336600 !important;
@@ -883,6 +886,9 @@ table.dataTable thead .sorting_desc_disabled:after {
 }
 .button-form {
   display: inline-block;
+}
+.camper-name {
+  padding-top: 0.5em;
 }
 input[type='submit'] {
   cursor: pointer;

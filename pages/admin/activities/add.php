@@ -49,8 +49,8 @@
 					<input type="hidden" name="redirect" value="/admin/activities/overview/">
 					
 					<div class="col-12">
-						<p><label for="name">Name</label><br><input name="name" class="form-control" value="" placeholder="Activity Name" data-rule-required="true" data-msg-required="Activity Name is Required"></p>
-						<p><label for="description">Description</label><br><textarea name="description" class="form-control" placeholder="Activity Description"></textarea></p>
+						<p><label for="name">Name</label><br><input name="name" class="form-control" value="" placeholder="'. siteVar('act','singular','capital') .' Name" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Name is Required"></p>
+						<p><label for="description">Description</label><br><textarea name="description" class="form-control" placeholder="'. siteVar('act','singular','capital') .' Description"></textarea></p>
 					</div>
 					
 					<div class="row align-items-center d-flex">
@@ -100,7 +100,7 @@
 					</div>
 					<div class="row">
 						<div class="col-12"><div class="col-12 text-center">
-							<button type="button" class="btn btn-dark-green adminBtn" data-op="add">Add Activity</button>
+							<button type="button" class="btn btn-dark-green adminBtn" data-op="add">Add '. siteVar('act','singular','capital') .'</button>
 						</div></div>
 					</div>
 				</form>';

@@ -4,7 +4,7 @@
 		
 		<div class="quick-buttons"><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addBunk" aria-expanded="false" aria-controls="addBunk">Add New Period</button></div>
 		
-		<h1 class="page-title">Activity Periods</h1>
+		<h1 class="page-title">'. siteVar('act','singular','capital') .' Periods</h1>
 		
 		<div class="row justify-content-md-center">
 			<div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12">';

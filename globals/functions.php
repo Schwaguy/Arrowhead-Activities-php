@@ -10,6 +10,93 @@ function generateHashWithSalt($password) {
 	return $secPW;
 }
 
+// Check Pasword
+function checkPassword($uName,$uPass,$con) {
+	$pwCheck = '';
+	$query = 'SELECT salt FROM users WHERE username="' . $uName . '"';
+	if ($result = $con->query($query)) {
+		$row = mysqli_fetch_assoc($result);
+		$pwCheck =  hash("sha256", $uPass . $row['salt']);
+	} 
+	return $pwCheck;
+}
+
+// Get User Information for Valid Login
+function logUserIn($uName,$pwCheck,$today,$con) {
+	$loggedin = false;
+	$query = 'SELECT u.*, a.super, a.admin, a.manage, a.edit, a.schedule FROM users u LEFT JOIN access_levels a ON (u.access_level = a.id) WHERE u.username="' . $uName . '"';
+	if ($pwCheck) { $query .= ' AND u.password="'. $pwCheck .'"'; }
+	if ($result = $con->query($query)) {
+		$row = $result->fetch_array(MYSQLI_ASSOC);
+		if ($row['active'] == 1)  {
+			$_SESSION['userID'] = $row['id'];
+			$_SESSION['userAuth'] = $row['access_level'];
+			$_SESSION['userPermissions'] = array(
+				'super'=>$row['super'],
+				'admin'=>$row['admin'],
+				'manage'=>$row['manage'],
+				'edit'=>$row['edit'],
+				'schedule'=>$row['schedule']
+			);
+			$_SESSION['userName'] = $row['username'];
+			$_SESSION['userFirstName'] = $row['firstName'];
+			$_SESSION['userLastName'] = $row['lastName'];
+			$_SESSION['userEmail'] = $row['email'];
+			$_SESSION['userBunk'] = $row['bunk'];
+			$_SESSION['bunkInfo'] = (!empty($_SESSION['userBunk']) ? getBunkInfo($_SESSION['userBunk'],'',$con) : getBunkInfo($_SESSION['userBunk'],$_SESSION['userID'],$con));
+			$result->free();
+			$query = 'UPDATE users SET lastLogin="' . $today . '" WHERE id="' . $_SESSION['userID'] . '"'; 
+			$result = $con->query($query);
+			//include('inc/pageContent.php');
+			$loggedin = true;
+		} 
+	}
+	return $loggedin;
+}
+
+// Site-Wide variables
+function siteVar($var,$form,$case) {
+	switch ($var) {
+		case 'act':
+			$firstLetter = (($case=='capital') ? 'A' : 'a');
+			$output = (($form=='plural') ? $firstLetter .'ctivities' : $firstLetter .'ctivity');
+			break;
+	}
+	return $output;
+}
+
+// Check Current Page for Menu Highlighting
+function checkPageLink($thisPg,$pageLink) {
+	unset($linkStat);
+	if (!$thisPg) {
+		$linkStat = array(
+			'li'=>'active',
+			'sr'=>'<span class="sr-only">(current)</span>'
+		);
+	} elseif ($thisPg == $pageLink) {
+		$linkStat = array(
+			'li'=>'active',
+			'sr'=>'<span class="sr-only">(current)</span>'
+		);
+	} else {
+		$linkStat = array(
+			'li'=>'',
+			'sr'=>''
+		);
+	}
+	return $linkStat;
+}
+
+// Get User Info
+function getUserInfo($uID,$con) {
+	$user = ''; 
+	$query = 'SELECT * FROM users WHERE id='. $uID .' LIMIT 1';  
+	if($result = $con->query($query)) {
+		$user = mysqli_fetch_array($result,MYSQLI_ASSOC);
+	}
+	return $user;
+}
+
 // Get Auth
 function getAuth($selected,$required,$userAuth,$disabled,$con) {
 	$req = ($required ? 'true' : 'false');
@@ -29,7 +116,7 @@ function getAuth($selected,$required,$userAuth,$disabled,$con) {
 }
 
 // Get Auth Name
-function getAuthName($authID,$con) {
+/*function getAuthName($authID,$con) {
 	$output = ''; 
 	$query = 'SELECT name FROM access_levels WHERE id='. $authID .' LIMIT 1'; 
 	$result = $con->query($query);
@@ -37,10 +124,10 @@ function getAuthName($authID,$con) {
 		$output = $row['name'];
 	}
 	return $output;
-}
+}*/
 
 // Get Bunk Name
-function getBunkName($bunkID,$con) {
+/*function getBunkName($bunkID,$con) {
 	$output = ''; 
 	$query = 'SELECT name FROM bunks WHERE id='. $bunkID .' LIMIT 1'; 
 	$result = $con->query($query);
@@ -48,7 +135,7 @@ function getBunkName($bunkID,$con) {
 		$output = $row['name'];
 	}
 	return $output;
-}
+}*/
 
 // Get Item Name
 function getName($id,$table,$con) {
@@ -123,21 +210,26 @@ function getBunks($selected,$con) {
 function getWeeks($admin,$selected,$multi,$required,$con) {
 	$query = 'SELECT * FROM weeks WHERE active=1 ORDER BY name ASC, startDate ASC';
 	$result = $con->query($query);
+	$selected = (!empty($selected) ? explode(',',$selected) : array());
 	if ($admin) {
 		if ($multi) {
 			$multiple = 'multiple="multiple"';
+			$multiArr = '[]';
 			$option1 = '';
 		} else {
 			$multiple = '';
+			$multiArr = '';
 			$option1 = '<option value="">&lt; select week &gt;</option>';
 		}
 		$req = ($required ? 'true' : 'false');
-		$output = '<select name="week" class="form-control browser-default custom-select" data-rule-required="'. $req .'" data-msg-required="Week is Required" '. $multiple .'>'. $option1;
+		$output = '<select name="week'. $multiArr .'" class="form-control browser-default custom-select" data-rule-required="'. $req .'" data-msg-required="Week is Required" '. $multiple .'>'. $option1;
 
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 			$output .= '<option value="'. $row['id'] .'"';
-			if ($row['id'] == $selected)
+			if (in_array($row['id'],$selected)) {
+			//if ($row['id'] == $selected)
 				$output .= ' selected';
+			}
 			$output .= '>'. $row['name'] .'</option>';
 		}
 		$output .= '</select>';
@@ -244,16 +336,21 @@ function getPrerequisites($selected,$con) {
 }
 
 // Get Bunk Info
-function getBunkInfo($bunkID,$con) {
+function getBunkInfo($bunkID,$counselorID,$con) {
+	if ($bunkID==0) {
+		$getID = mysqli_fetch_assoc(mysqli_query($con, 'SELECT id FROM bunks WHERE counselor='. $counselorID));
+		$bunkID = $getID['id'];
+	} 
 	unset($outputArray);
 	$query = 'SELECT b.*, u.firstName, u.lastName FROM bunks b LEFT JOIN users u ON (b.counselor = u.id) WHERE b.id='. $bunkID .' LIMIT 1'; 
-	$result = $con->query($query);
-	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
-		$outputArray['name'] = $row['name'];
-		$outputArray['group'] = $row['groups'];
-		$outputArray['counselor'] = $row['firstName'] .' '. $row['lastName'];
+	if($result = $con->query($query)) {
+		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+			$outputArray['name'] = $row['name'];
+			$outputArray['group'] = $row['groups'];
+			$outputArray['counselor'] = $row['firstName'] .' '. $row['lastName'];
+		}
 	}
-	$output = $outputArray;
+	$output = (isset($outputArray) ? $outputArray : '');
 	return $output;
 }
 
@@ -426,7 +523,14 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled)
 						$activities .= '</form>';
 					} else {
 						// Mark as active if scheduling is complete
-						$active = ((is_array($actScheduled)) ? (($activity['id'] == $actScheduled[$period]) ? 'active' : '') : ''); 
+						$active = '';
+						if (is_array($actScheduled)) {
+							if(isset($actScheduled[$period])) {
+								if ($activity['id'] == $actScheduled[$period]) {
+									$active = 'active';
+								}
+							} 
+						} 
 						
 						// Disable if scheduling is complete and user cannot edit
 						$disable = ((!empty($actScheduled)) ? ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"') : '');
@@ -486,6 +590,31 @@ function showScheduledActivities($week,$user,$con) {
 	return $scheduledActivities;
 }
 
+// Get Bunk Roster
+function getBunkRoster($bunkID,$counselorID,$con) {
+	if ($bunkID==0) {
+		$getID = mysqli_fetch_assoc(mysqli_query($con, 'SELECT id FROM bunks WHERE counselor='. $counselorID));
+		$bunkID = $getID['id'];
+	} 
+	$query = 'SELECT id, firstName, lastName, email, lastLogin, week, bunk FROM users WHERE bunk='. $bunkID .' AND active=1 ORDER by lastName ASC, firstName ASC';
+	if ($result = $con->query($query)) {
+		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+			$user = array(
+				'id'=>$row['id'],
+				'firstName'=>$row['firstName'],
+				'lastName'=>$row['lastName'],
+				'email'=>$row['email'],
+				'lastLogin'=>$row['lastLogin'],
+				'week'=>$row['week'],
+				'bunk'=>$row['bunk']
+			);
+			$users[$row['id']] = $user;
+			unset($user);
+		}
+	}
+	$output = (isset($users) ? $users : '');
+	return $output;
+}
 
 
 // Update scheduling start date when week is edited
