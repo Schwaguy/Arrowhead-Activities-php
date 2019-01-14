@@ -8,7 +8,9 @@
 		<div class="row justify-content-md-center clearfix">
 			<div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12">';
 	
-	$weeks = getWeeks(false,'',false,false,$con);
+	$content .= '<div class="alert alert-success" role="alert">Click on the weeks below to add/edit '. siteVar('act','plural','capital') .'</div>';
+	
+	$weeks = getWeeks('array','',false,false,$con);
 	if (is_array($weeks)) {
 		foreach($weeks as $week) {
 			$content .= '<div id="list-group-edit" class="list-group list-group-flush list-group-admin">';
@@ -19,20 +21,7 @@
 		}
 	}
 
-	/*$query = "SELECT * FROM weeks WHERE active=1 ORDER BY name ASC";
-	if($result = $con->query($query)) {
-		$content .= '<div id="list-group-edit" class="list-group list-group-flush list-group-admin">'; 
-		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
-			$weekID = $row['id'];
-			$content .= '<div id="week-'. $weekID .'" class="list-group-item"><a href="#panel-'. $weekID .'" title="'. $row['name'] .'" data-toggle="collapse" data-target="#panel-'. $weekID .'" aria-expanded="false" aria-controls="panel-'. $weekID .'"><h3>'. $row['name'] .' '. siteVar('act','plural','capital') .'</h3></a></div>';
-			$content .= '<div class="collapse" id="panel-'. $weekID .'">';
-			include($ROOT .'/pages/inc/agenda.php');
-			$content .= '</div>'; 
-		}
-		$content .= '</div><!-- /list-group -->';
-	} */
-
-$content .= '</div><!-- /col -->
+	$content .= '</div><!-- /col -->
         </div><!-- /row -->
     </div><!-- /container main -->';
 ?>

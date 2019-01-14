@@ -8,6 +8,7 @@ jQuery(document).ready(function($) {
 	// Mobile Menu Button
 	$('.navbar-toggle').click(function(){
 		$(this).toggleClass('open');
+		$('.side-collapse').toggleClass('show');
 	});
 	
 	// Mobile Slide Out Menu
@@ -29,6 +30,18 @@ jQuery(document).ready(function($) {
 		});
 		$(this).datepicker('show');
 	});
+	
+	/*$('.timepicker').timepicker({
+		timeFormat: 'h:mm p',
+		interval: 60,
+		minTime: '9',
+		maxTime: '6:00pm',
+		defaultTime: '9',
+		startTime: '9:00am',
+		dynamic: false,
+		dropdown: true,
+		scrollbar: true
+	});*/
 	
 	$(function () {
 		$('[data-toggle="tooltip"]').tooltip();
@@ -126,10 +139,6 @@ jQuery(document).ready(function($) {
 			var formData = $(frm).serialize();
 			formData+ "&op=" + op;
 			
-			console.log(ajaxUrl);
-			console.log(formData);
-			
-			//$('#response').html('<b>Loading response...</b>');
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
@@ -137,47 +146,43 @@ jQuery(document).ready(function($) {
 			})
 			.done(function(data){ // if getting done then call.
 				if (data.output.op){
-					//if (data.output.updateString) {
-						if (data.output.op == 'update') {
-							$('#processing').hide();
-							$('#response').show().html(data.output.feedback);
-							console.log(data.output.feedback);
-							if (data.output.redirect) {
-								setTimeout(function() {
-									$('#feedback').hide();
-									window.location.replace(data.output.redirect);
-								}, 2000);
-							} else {
-								setTimeout(function() {
-									$('#feedback').fadeOut();
-								}, 2000);
-							}
-						} else if (data.output.op == 'add') {
-							console.log(data.output.feedback);
-							$('#list-group-edit').append(data.output.updateString);
-							$('#processing').hide();
-							$('#response').show().html(data.output.feedback);
-							$('.add-form').trigger('reset');
-							$('.collapse-form').removeClass('show');
-							if (data.output.redirect) {
-								setTimeout(function() {
-									window.location.replace(data.output.redirect);
-								}, 2000);
-							} else {
-								setTimeout(function() {
-									$('#feedback').fadeOut();
-								}, 2000);
-							}
-						} else if (data.output.op == 'delete') {
-							$('#processing').hide();
-							$('#response').show().html(data.output.feedback);
-							var deleteID = '#form-'+ data.output.update;
-							$.when($(deleteID).animate({ backgroundColor: '#fbc7c7' }, 'fast').animate({ opacity: 'hide' }, 'slow')).then(function() { 
-								$(deleteID).remove();
+					if (data.output.op == 'update') {
+						$('#processing').hide();
+						$('#response').show().html(data.output.feedback);
+						if (data.output.redirect) {
+							setTimeout(function() {
+								$('#feedback').hide();
+								window.location.replace(data.output.redirect);
+							}, 2000);
+						} else {
+							setTimeout(function() {
 								$('#feedback').fadeOut();
-							});
+							}, 2000);
 						}
-					//}
+					} else if (data.output.op == 'add') {
+						$('#list-group-edit').append(data.output.updateString);
+						$('#processing').hide();
+						$('#response').show().html(data.output.feedback);
+						$('.add-form').trigger('reset');
+						$('.collapse-form').removeClass('show');
+						if (data.output.redirect) {
+							setTimeout(function() {
+								window.location.replace(data.output.redirect);
+							}, 2000);
+						} else {
+							setTimeout(function() {
+								$('#feedback').fadeOut();
+							}, 2000);
+						}
+					} else if (data.output.op == 'delete') {
+						$('#processing').hide();
+						$('#response').show().html(data.output.feedback);
+						var deleteID = '#form-'+ data.output.update;
+						$.when($(deleteID).animate({ backgroundColor: '#fbc7c7' }, 'fast').animate({ opacity: 'hide' }, 'slow')).then(function() { 
+							$(deleteID).remove();
+							$('#feedback').fadeOut();
+						});
+					}
 				} else {
 					$('#response').html('No Output');
 				}
@@ -187,6 +192,39 @@ jQuery(document).ready(function($) {
 			});
 			return false;
 		}
+	});
+	
+	// Update Groups when period changed on Activity Admin Froms
+	$('body').on('change','form.activity-admin .period-select', function() {
+		var selected = $(this).children("option:selected").val(); 
+		var ajaxUrl = '/ajax/admin/comparePeriodGroup.php'; 
+		var formData = "period=" + selected;
+		$.ajax({
+			type: 'POST',
+			url: ajaxUrl,
+			data: formData
+		})
+		.done(function(data){ 
+			if (data.output.groups){
+				var grps = (data.output.groups).split(',');
+				$('form.activity-admin .group-select').val(grps);
+			}
+			if (data.output.days){
+				$.each(data.output.days,function(key,value) {
+					if (parseInt(value) === 0) {
+						$('form.activity-admin .'+ key +' input').attr('disabled', true);
+						$('form.activity-admin .'+ key +' input').prop('checked', false);
+						$('form.activity-admin .'+ key).addClass('text-muted');
+					} else {
+						$('form.activity-admin .'+ key +' input').attr("disabled", false);
+						$('form.activity-admin .'+ key).removeClass('text-muted');
+					}
+				});
+			}
+		})
+		.fail(function() { // if fail then getting message
+			console.log('fail');
+		});
 	});
 	
 	// Handle Scheduling Forms
@@ -264,7 +302,9 @@ jQuery(document).ready(function($) {
 	
 	// Link Form Submits
 	$('body').on('click', '.submitLink', function() {
+		console.log('Clicky');
 		$(this).parent('form').submit();
+		return false;
 	});
 	
 	$('body').on('click', '.scroll-link', function(event) {
@@ -280,11 +320,11 @@ jQuery(document).ready(function($) {
 	$('.dataTables_length').addClass('bs-select');
 	
 	
-	$('body').on('click', '.schedule-radio', function() {
+	/*$('body').on('click', '.schedule-radio', function() {
 		console.log('click id: '+ $(this).attr('id'));
 		//$(this).closest('.radio-list').children('.schedule-button').not(this).removeClass('active'); 
 		//$(this).parent('.schedule-button').addClass('active');
-	});
+	});*/
 	
 	
 	/*$('body').on('click', '.btn-register', function() { 

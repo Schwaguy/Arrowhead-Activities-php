@@ -30,7 +30,7 @@
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="bunk">Bunk</label>
-							'. getBunks($user['bunk'],$con) .'
+							'. getBunks($user['bunk'],'select',$con) .'
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="access_level">User Type</label>
@@ -46,11 +46,12 @@
 							<label for="password_repeat">Repeat New Password</label>
 							<input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter Password Again" data-rule-required="false" data-msg-required="Password Confirmation is Required">
 						</div>';
-	if ($user['access_level']>3) {
-		$content .= '<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
-							<label for="access_level">Camp Weeks</label>
-							'. getWeeks(true,$user['week'],true,false,$con) .'
-						</div>';
+	if (in_array($user['access_level'],array(4,5))) {
+		$prerequisites = getPrerequisites(explode(',',$user['prerequisites']),$con);
+		$content .= '<div class="col-12 col-xs-12 col-sm-12 col-md-12 align-middle">
+				<label for="prerequisites">Prerequisites</label>
+				<div class="col-12 checkbox-wrap">'. $prerequisites .'</div>
+			</div>'; 
 	}
 	$content .= '</div>
 					<div class="col-12 text-center">

@@ -2,21 +2,7 @@
 	
 	if (isset($_POST['id'])) {
 		// Get User Info
-		$sql = 'SELECT * FROM users WHERE id='. $_POST['id'] .' LIMIT 1';  
-		if($res = $con->query($sql)) {
-			while ($usr=$res->fetch_array(MYSQLI_ASSOC)) {
-				$user = array(
-					'id'=>$usr['id'],
-					'firstName'=>$usr['firstName'],
-					'lastName'=>$usr['lastName'],
-					'email'=>$usr['email'],
-					'username'=>$usr['username'],
-					'access_level'=>$usr['access_level'],
-					'bunk'=>$usr['bunk'],
-					'lastLogin'=>$usr['lastLogin']
-				);
-			}
-		}
+		$user = getUserInfo($_POST['id'],$con);
 		$redirect = '';
 		
 		$content .= '<div class="container main">

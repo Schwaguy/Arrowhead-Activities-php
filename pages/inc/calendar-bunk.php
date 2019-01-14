@@ -1,7 +1,7 @@
 <?php
 
 $periods = getPeriods('',false,false,'array',$con);
-$weeks = getWeeks(false,'',false,false,$con);
+$weeks = getWeeks('array','',false,false,$con);
 $campers = getBunkRoster($_SESSION['userBunk'],$_SESSION['userID'],$con);
 
 $content .= '<div id="list-group-edit" class="list-group list-group-flush list-group-admin">';
@@ -26,7 +26,7 @@ foreach ($weeks as $week) {
 								<h5 class="camper-name">'. $camper['lastName'] .', '. $camper['firstName'] .'</h5>
 							</div>';
 
-				$scheduledActivities = showScheduledActivities($week['id'],$camper['id'],$con);
+				$scheduledActivities = showScheduledActivities($week['id'],$camper['id'],$camper['prerequisites'],$con);
 
 				$d = 1;
 				foreach ($week['days'] as $day) {

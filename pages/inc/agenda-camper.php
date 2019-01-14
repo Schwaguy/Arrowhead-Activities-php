@@ -56,7 +56,7 @@ for ($d=1;$d<=5;$d++) {
 	// Show first Activity Period
 	$count = 1;
 	if (isset($userInfo['bunkInfo'])) {
-		for ($v=0;$v<count($periods);$v++) {
+		for ($v=1;$v<=count($periods);$v++) {
 			if ((!isset($p)) && (in_array($userInfo['bunkInfo']['group'],$periods[$v]['groups']))) {
 				$p = $v;
 			}

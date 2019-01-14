@@ -305,12 +305,14 @@
 		display: none !important; 
 	}
 	.side-collapse-container {
-    	width: 100%;
+    	background: #fff;
+		width: 100%;
    		position: relative;
      	left: 0;
       	-webkit-transition: left .4s ease-in-out;
 		   -moz-transition: left .4s ease-in-out;
 				transition: left .4s ease-in-out;
+		z-index: 100;
    	}
   	.side-collapse-container.out{
    		left: 300px;
@@ -331,6 +333,8 @@
       	-webkit-transition: left .4s ease-in-out;
 		   -moz-transition: left .4s ease-in-out;
 				transition: left .4s ease-in-out;
+		z-index: 1;
+		.animate-slower;
    	}
 	.collapse:not(.show) {
 		display: block !important;

@@ -24,38 +24,35 @@ $content .= '<!--Navbar-->
 $linkInfo = checkPageLink($thisPg,'home');
 $content .= '<!-- Links -->
 		<ul class="navbar-nav mr-auto">
-			<li class="nav-item '. $linkInfo['li'] .'">
-				<a class="nav-link" href="/">Home'. $linkInfo['sr'] .'</a>
-		  	</li>';
+			<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/">Home'. $linkInfo['sr'] .'</a></li>';
 if ($_SESSION['userAuth']>=3) {
 	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'my-activities') : array('li'=>'','sr'=>''));
-	$content .= '<li class="nav-item '. $linkInfo['li'] .'">
-			<a class="nav-link" href="/my-activities/">My Activities'. $linkInfo['sr'] .'</a>
-		  </li>';
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/my-activities/">My Activities'. $linkInfo['sr'] .'</a></li>';
 }
 if ($_SESSION['userAuth']==3) {
 	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'my-bunk') : array('li'=>'','sr'=>''));
-	$content .= '<li class="nav-item '. $linkInfo['li'] .'">
-			<a class="nav-link" href="/my-bunk/">My Bunk'. $linkInfo['sr'] .'</a>
-		  </li>';
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/my-bunk/">My Bunk'. $linkInfo['sr'] .'</a></li>';
 }
 if ($_SESSION['userAuth']<3) {
+	// Activity Admin
+	$linkInfo = (!empty($sp) ? checkPageLink($sp,'activities') : array('li'=>'','sr'=>''));
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/activities/overview/" title="'. siteVar('act','singular','capital') .' Admin">'. siteVar('act','plural','capital') . $linkInfo['sr'] .'</a></li>';
+	
+	// User Admin
+	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'users') : array('li'=>'','sr'=>''));
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/users/" title="User Admin">Users</a></li>';
+	
+	// Bunk Admin
 	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'bunks') : array('li'=>'','sr'=>''));
-	$content .= '<li class="nav-item '. $linkInfo['li'] .'">
-			<a class="nav-link" href="/bunks/">Bunks'. $linkInfo['sr'] .'</a>
-		  </li>';
-	//$linkInfo = (!empty($pg) ? checkPageLink($pg,'admin') : array('li'=>'','sr'=>''));
-	$content .= '<!-- Admin Dropdown -->
-		  <li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
-			<div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
-			  	<a class="dropdown-item" href="/admin/activities/overview/">Activities</a>
-				<a class="dropdown-item" href="/admin/users/">Users</a>
-			  	<a class="dropdown-item" href="/admin/bunks/">Bunks</a>
-			  	<a class="dropdown-item" href="/admin/weeks/">Weeks</a>
-				<a class="dropdown-item" href="/admin/periods/">Periods</a>
-			</div>
-		  </li>';
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/bunks/" title="Bunk Admin">Bunks</a></li>';
+	
+	// Week Admin
+	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'weeks') : array('li'=>'','sr'=>''));
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/weeks/" title="Week Admin">Weeks</a></li>';
+	
+	// Period Admin
+	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'periods') : array('li'=>'','sr'=>''));
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/periods/" title="Period Admin">Periods</a></li>';
 }
 $content .= '</ul><!-- Links -->';
 

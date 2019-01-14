@@ -51,7 +51,7 @@
 									</div>
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Your Bunk</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle">'. getBunks('',$con) .'</div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle">'. getBunks('','select',$con) .'</div>
 									</div>
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Username</label></div>

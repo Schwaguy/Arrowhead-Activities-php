@@ -1,6 +1,4 @@
-
 <?php
-
 	$content .= '<div class="container main">
 		<div class="clearfix">
 			
@@ -40,7 +38,7 @@
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="bunk">Bunk</label>
-							'. getBunks('',$con) .'
+							'. getBunks('','select',$con) .'
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="access_level">User Type</label>
@@ -57,7 +55,7 @@
 							<input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter Password Again" data-rule-required="false" data-msg-required="Password Confirmation is Required">
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
-							'. getWeeks(true,'',true,false,$con) .'
+							'. getWeeks('select','',true,false,$con) .'
 						</div>
 					</div>
 					<div class="col-12 text-center">
@@ -68,9 +66,8 @@
   		</div>
 	</div>';
 
-	$query = "SELECT u.id, u.firstName, u.lastName, u.username, u.email, a.name AS access, b.name AS bunkName FROM users u LEFT JOIN access_levels a on (u.access_level = a.id) LEFT JOIN bunks b ON (u.bunk = b.id) WHERE u.active=1 ORDER BY u.lastName ASC, u.firstName ASC";
-	if($result = $con->query($query)) {
-		//$content .= '<p><input class="form-control" id="searchInput" type="text" placeholder="Search.."></p>';
+	$users = getUsers('','array',$con);
+	if ($users) {
   		$content .= '<div class="table-responsive-sm"><table class="table table-sm table-sortable table-data-table table-striped">
 			<thead>
       			<tr>
@@ -84,25 +81,25 @@
     		</thead>
     		<tbody id="searchTable">';
       
-  		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
-			$content .= '<tr id="form-'. $row['id'] .'">
-				<td>'. $row['lastName'] .', '. $row['firstName'] .'</td>
-				<td>'. $row['username'] .'</td>
-				<td>'. $row['email'] .'</td>
-				<td>'. $row['access'] .'</td>
-				<td>'. $row['bunkName'] .'</td>
+		foreach ($users as $user) {
+			$content .= '<tr id="form-'. $user['id'] .'">
+				<td>'. $user['lastName'] .', '. $user['firstName'] .'</td>
+				<td>'. $user['username'] .'</td>
+				<td>'. $user['email'] .'</td>
+				<td>'. $user['access'] .'</td>
+				<td>'. $user['bunkName'] .'</td>
 				<td>
 					<div class="row row-flex d-flex">
 						<div col-12 div-xs-col-12 div-sm-col-12 div-md-col-6 text-center">
 							<form method="post" action="/admin/users/edit/">
-								<input type="hidden" name="id" value="'. $row['id'] .'">
+								<input type="hidden" name="id" value="'. $user['id'] .'">
 								<input type="submit" class="btn btn-dark-green btn-sm adminBtn" value="Edit">
 							</form>
 						</div>
 						<div col-12 div-xs-col-12 div-sm-col-12 div-md-col-6 text-center">
 							<form method="post" class="adminForm">
 								<input type="hidden" name="table" value="users">
-								<input type="hidden" name="id" value="'. $row['id'] .'">
+								<input type="hidden" name="id" value="'. $user['id'] .'">
 								<button class="btn btn-danger btn-sm adminBtn" data-op="delete">Delete</button>
 							</form>
 						</div>

@@ -34,10 +34,10 @@
 	// New Activity Form
 	$counselors = getCounselors('',$con);
 	$ageGroups = getAgeGroups('',true,true,$con);
-	$weeks = getWeeks(true,$weekSel,false,true,$con);
+	$weeks = getWeeks('select',$weekSel,false,true,$con);
 	$periods = getPeriods($periodSel,false,true,'select',$con);
 	$prerequisites = getPrerequisites('',$con);
-	$content .= '<form id="form-add" class="adminForm">
+	$content .= '<form id="form-add" class="adminForm activity-admin">
 					
 					<input type="hidden" name="id" value="">
 					<input type="hidden" name="table" value="activities">
@@ -82,11 +82,11 @@
 								<h4>Days Offered</h4>
 								<div class="col-12 checkbox-wrap">
 									<div class="row d-sm-flex checkbox-group">
-										<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox"> <input type="checkbox" class="require-one" name="monday" value="1" '. $monCheck .'> <label for "monday"> Monday</label></p></div>
-										<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox"> <input type="checkbox" class="require-one" name="tuesday" value="1" '. $tuesCheck .'> <label for "tuesday"> Tuesday</label></p></div>
-										<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox"> <input type="checkbox" class="require-one" name="wednesday" value="1" '. $wedCheck .'> <label for "wednesday"> Wednesday</label></p></div>
-										<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox"> <input type="checkbox" class="require-one" name="thursday" value="1" '. $thursCheck .'> <label for "thursday"> Thursday</label></p></div>
-										<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox"> <input type="checkbox" class="require-one" name="friday" value="1" '. $friCheck .'> <label for "friday"> Friday</label></p></div>
+										<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox monday"> <input type="checkbox" class="require-one" name="monday" value="1" '. $monCheck .'> <label for "monday"> Monday</label></p></div>
+										<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox tuesday"> <input type="checkbox" class="require-one" name="tuesday" value="1" '. $tuesCheck .'> <label for "tuesday"> Tuesday</label></p></div>
+										<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox wednesday"> <input type="checkbox" class="require-one" name="wednesday" value="1" '. $wedCheck .'> <label for "wednesday"> Wednesday</label></p></div>
+										<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox thursday"> <input type="checkbox" class="require-one" name="thursday" value="1" '. $thursCheck .'> <label for "thursday"> Thursday</label></p></div>
+										<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox friday"> <input type="checkbox" class="require-one" name="friday" value="1" '. $friCheck .'> <label for "friday"> Friday</label></p></div>
 									</div>
 								</div>
 							</div>

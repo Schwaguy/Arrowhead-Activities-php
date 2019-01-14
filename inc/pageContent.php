@@ -2,7 +2,7 @@
 
 $content .= '<div id="wrapper">';
 
-include('inc/mainnav.php');
+include($ROOT .'/inc/mainnav.php');
 
 $content .= '<div id="page-wrapper">';
 
@@ -12,7 +12,7 @@ if (!empty($_REQUEST['op'])) {
 	
 	if ($_REQUEST['op'] == 'admin') {
 		if (!empty($_REQUEST['type'])) {
-			include('pages/admin.php');	
+			include($ROOT .'/pages/admin.php');	
 		}
 		else {
 			$content .= '<p class="errorMessage">ERROR - No Admin Type Selected</p>'; 
@@ -44,14 +44,15 @@ if (!empty($_REQUEST['op'])) {
 	} elseif (!empty($pg)) {
 		include('pages/'. $pg .'.php');
 	} else {
-		if ($_SESSION['userAuth']<=2) { 
-			include('pages/dashboard-admin.php');
+		include($ROOT .'/pages/dashboard.php');
+		/*if ($_SESSION['userAuth']<=2) { 
+			include($ROOT .'/pages/dashboard-admin.php');
 		} elseif ($_SESSION['userAuth']==3) {
 			//window.location('/my-bunk/');
-			include('pages/dashboard-counselor.php');
+			include($ROOT .'/pages/dashboard-counselor.php');
 		} else {
-			include('pages/dashboard-camper.php');
-		}
+			include($ROOT .'/pages/dashboard-camper.php');
+		}*/
 	}
 }
 

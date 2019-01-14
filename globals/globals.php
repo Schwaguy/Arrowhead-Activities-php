@@ -17,6 +17,16 @@ global $today, $now;
 date_default_timezone_set("America/New_York");
 $today = date('Y-m-d');
 $now = date('Y-m-d H:i:s');
+$now = date('2019-06-25 19:01:00'); 
+
+global $weekdays;
+$weekdays = array(
+	1=>'monday',
+	2=>'tuesday',
+	3=>'wednesday',
+	4=>'thursday',
+	5=>'friday',
+);
 
 // Global Element File
 global $URL, $ROOTPATH, $SITEURL;

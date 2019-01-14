@@ -27,7 +27,7 @@ for ($d=1;$d<=5;$d++) {
 	
 	// Show first Activity Period
 	$count = 1;
-	$p = (($periods[0]['days'][$d] == 1) ? 0 : 1);
+	$p = (($periods[1]['days'][$d] == 1) ? 1 : 2);
 	$agenda .= '<td class="agenda-time period">
                 	'. $periods[$p]['name'] .'
 					<div class="text-muted">'. date_format((date_create($week['startDate'] .' '. $periods[$p]['startTime'])),'g:iA')  .' - '. date_format((date_create($week['startDate'] .' '. $periods[$p]['endTime'])),'g:iA')  .'</div>

@@ -19,6 +19,12 @@ if ($_POST) {
 			if (($key == 'startTime') || ($key == 'endTime')) {
 				$value = date('H:i:s', strtotime($today .' '. $value));
 			} elseif (isDate($value)) {
+				if ($key == 'startDate') {
+					$scheduleDate = scheduleCheck($_POST['table'],$key,$value);
+					if (!empty($scheduleDate)) {
+						$updates[] = "signupStartDate='". $scheduleDate ."'";
+					}
+				}
 				$value = date_format(date_create($value),'Y-m-d');
 			}  elseif (is_array($value)) {
 				$value = implode(',',$value);

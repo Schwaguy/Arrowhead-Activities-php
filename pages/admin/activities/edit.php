@@ -8,8 +8,17 @@
 		$wedCheck = (($activity['days']['wednesday']==1) ? 'checked' : '');
 		$thursCheck = (($activity['days']['thursday']==1) ? 'checked' : '');
 		$friCheck = (($activity['days']['friday']==1) ? 'checked' : '');
+		
+		$dayChecks = array(
+			1=>(($activity['days']['monday']==1) ? 'checked' : ''), 
+			2=>(($activity['days']['tuesday']==1) ? 'checked' : ''),
+			3=>(($activity['days']['wednesday']==1) ? 'checked' : ''),
+			4=>(($activity['days']['thursday']==1) ? 'checked' : ''),
+			5=>(($activity['days']['friday']==1) ? 'checked' : '')
+		);
+		
 		$prerequisites = getPrerequisites(explode(',',$activity['prerequisites']),$con);
-
+		
 		$content .= '<div class="container main">
 			
 			<div class="quick-buttons">
@@ -26,9 +35,10 @@
 
 		// New Activity Form
 		$ageGroups = getAgeGroups($activity['groups'],true,true,$con);
-		$weeks = getWeeks(true,$activity['week'],false,true,$con);
+		$weeks = getWeeks('select',$activity['week'],false,true,$con);
 		$periods = getPeriods($activity['period'],false,false,'select',$con);
-		$content .= '<form id="form-edit" class="adminForm">
+		$periods2 = getPeriods('',false,false,'array',$con);
+		$content .= '<form id="form-edit" class="adminForm activity-admin">
 						<input type="hidden" name="id" value="'. $activity['id'] .'">
 						<input type="hidden" name="table" value="activities">
 						<input type="hidden" name="updated" value="'. $now .'">
@@ -69,38 +79,22 @@
 								<div class="col-12">
 									<h4>Days Offered</h4>
 									<div class="col-12 checkbox-wrap">
-										<div class="row d-sm-flex checkbox-group">
-											<div class="col-12 col-xs-12 col-sm-6 col-md-auto">
-												<p class="checkbox"> 
-													<input type="hidden" name="monday" value="0" />
-													<input type="checkbox" class="require-one" name="monday" value="1" '. $monCheck .'> <label for "monday"> Monday</label>
-												</p>
-											</div>
-											<div class="col-12 col-xs-12 col-sm-6 col-md-auto">
-												<p class="checkbox"> 
-													<input type="hidden" name="tuesday" value="0" />
-													<input type="checkbox" class="require-one" name="tuesday" value="1" '. $tuesCheck .'> <label for "tuesday"> Tuesday</label>
-												</p>
-											</div>
-											<div class="col-12 col-xs-12 col-sm-6 col-md-auto">
-												<p class="checkbox"> 
-													<input type="hidden" name="wednesday" value="0" />
-													<input type="checkbox" class="require-one" name="wednesday" value="1" '. $wedCheck .'> <label for "wednesday"> Wednesday</label>
-												</p>
-											</div>
-											<div class="col-12 col-xs-12 col-sm-6 col-md-auto">
-												<p class="checkbox"> 
-													<input type="hidden" name="thursday" value="0" />
-													<input type="checkbox" class="require-one" name="thursday" value="1" '. $thursCheck .'> <label for "thursday"> Thursday</label>
-												</p>
-											</div>
-											<div class="col-12 col-xs-12 col-sm-6 col-md-auto">
-												<p class="checkbox"> 
-													<input type="hidden" name="friday" value="0" />
-													<input type="checkbox" class="require-one" name="friday" value="1" '. $friCheck .'> <label for "friday"> Friday</label>
-												</p>
-											</div>
-										</div>
+										<div class="row d-sm-flex checkbox-group">';
+							foreach ($weekdays as $key=>$val) {
+								$cbClass = ''; 
+								$cbDisable = ''; 
+								if ($periods2[$activity['period']]['days'][$key] == 0) {
+									$cbClass = 'text-muted'; 
+									$cbDisable = 'disabled="disabled"'; 
+								}
+								$content .= '<div class="col-12 col-xs-12 col-sm-6 col-md-auto">
+									<p class="checkbox '. $val .' '. $cbClass .'"> 
+										<input type="hidden" name="'. $val .'" value="0" />
+										<input type="checkbox" class="require-one" name="'. $val .'" value="1" '. $dayChecks[$key] .' '. $cbDisable .'> <label for "'. $val .'"> '. ucfirst($val) .'</label>
+									</p>
+								</div>';
+							}			
+							$content .= '</div>
 									</div>
 								</div>
 							</div>

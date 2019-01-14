@@ -43,6 +43,8 @@ function logUserIn($uName,$pwCheck,$today,$con) {
 			$_SESSION['userLastName'] = $row['lastName'];
 			$_SESSION['userEmail'] = $row['email'];
 			$_SESSION['userBunk'] = $row['bunk'];
+			$_SESSION['userWeeks'] = explode(',',$row['week']);
+			$_SESSION['userPrereqs'] = explode(',',$row['prerequisites']);
 			$_SESSION['bunkInfo'] = (!empty($_SESSION['userBunk']) ? getBunkInfo($_SESSION['userBunk'],'',$con) : getBunkInfo($_SESSION['userBunk'],$_SESSION['userID'],$con));
 			$result->free();
 			$query = 'UPDATE users SET lastLogin="' . $today . '" WHERE id="' . $_SESSION['userID'] . '"'; 
@@ -90,7 +92,7 @@ function checkPageLink($thisPg,$pageLink) {
 // Get User Info
 function getUserInfo($uID,$con) {
 	$user = ''; 
-	$query = 'SELECT * FROM users WHERE id='. $uID .' LIMIT 1';  
+	$query = 'SELECT * FROM users WHERE id='. $uID .' LIMIT 1'; 
 	if($result = $con->query($query)) {
 		$user = mysqli_fetch_array($result,MYSQLI_ASSOC);
 	}
@@ -108,34 +110,12 @@ function getAuth($selected,$required,$userAuth,$disabled,$con) {
 	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 		$output .= '<option value="'. $row['id'] .'"';
 		if ($row['id'] == $selected)
-			$output .= ' selected';
+			$output .= ' selected="selected"';
 		$output .= '>'. $row['name'] .'</option>';
 	}
 	$output .= '</select>';
 	return $output;
 }
-
-// Get Auth Name
-/*function getAuthName($authID,$con) {
-	$output = ''; 
-	$query = 'SELECT name FROM access_levels WHERE id='. $authID .' LIMIT 1'; 
-	$result = $con->query($query);
-	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
-		$output = $row['name'];
-	}
-	return $output;
-}*/
-
-// Get Bunk Name
-/*function getBunkName($bunkID,$con) {
-	$output = ''; 
-	$query = 'SELECT name FROM bunks WHERE id='. $bunkID .' LIMIT 1'; 
-	$result = $con->query($query);
-	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
-		$output = $row['name'];
-	}
-	return $output;
-}*/
 
 // Get Item Name
 function getName($id,$table,$con) {
@@ -148,6 +128,43 @@ function getName($id,$table,$con) {
 	return $output;
 }
 
+// Get Users
+function getUsers($selected,$return,$con) {
+	$output = ''; 
+	if ($return == 'select') {
+		$query = "SELECT u.id, u.firstName, u.lastName FROM users WHERE active=1 ORDER BY lastName ASC, firstName ASC";
+		if ($result = $con->query($query)) {
+			$output = '<select name="counselor" class="form-control browser-default custom-select" data-rule-required="false" data-msg-required="Please Select a Counselor"><option value="">&lt; select counselor &gt;</option>'; 
+			while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+				$output .= '<option value="'. $row['id'] .'"';
+				if ($row['id'] == $selected)
+					$output .= ' selected="selected"';
+				$output .= '>'. $row['lastName'] .', '. $row['firstName'] .'</option>';
+			}
+			$output .= '</select>';
+		}
+	} else {
+		$query = "SELECT u.id, u.firstName, u.lastName, u.username, u.email, u.bunk, u.access_level, a.name AS access, b.name AS bunkName FROM users u LEFT JOIN access_levels a on (u.access_level = a.id) LEFT JOIN bunks b ON (u.bunk = b.id) WHERE u.active=1 ORDER BY u.lastName ASC, u.firstName ASC";
+		if ($result = $con->query($query)) {
+			while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+				$users[] = array(
+					'id'=>$row['id'],
+					'firstName'=>$row['firstName'],
+					'lastName'=>$row['lastName'],
+					'username'=>$row['username'],
+					'email'=>$row['email'],
+					'access_level'=>$row['access_level'],
+					'access'=>$row['access'],
+					'bunk'=>$row['bunk'],
+					'bunkName'=>$row['bunkName'],
+				);
+			}
+			$output = $users;
+		}
+	}
+	return $output;
+}
+
 // Get Counselors
 function getCounselors($selected,$con) {
 	$output = '<select name="counselor" class="form-control browser-default custom-select" data-rule-required="false" data-msg-required="Please Select a Counselor"><option value="">&lt; select counselor &gt;</option>'; 
@@ -156,7 +173,7 @@ function getCounselors($selected,$con) {
 	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 		$output .= '<option value="'. $row['id'] .'"';
 		if ($row['id'] == $selected)
-			$output .= ' selected';
+			$output .= ' selected="selected"';
 		$output .= '>'. $row['lastName'] .', '. $row['firstName'] .'</option>';
 	}
 	$output .= '</select>';
@@ -175,15 +192,15 @@ function getAgeGroups($selected,$multi,$required,$con) {
 		$name = 'groups';
 	}
 	$req = ($required ? 'true' : 'false');
-	$output = '<select name="'. $name .'" class="form-control browser-default custom-select" data-rule-required="'. $req .'" data-msg-required="Age Group is Required" '. $multiple .'>'. $option1;
+	$output = '<select name="'. $name .'" class="form-control browser-default custom-select group-select" data-rule-required="'. $req .'" data-msg-required="Age Group is Required" '. $multiple .'>'. $option1;
 	$query = 'SELECT * FROM bunk_age_groups WHERE display=1 ORDER BY age_min ASC, name DESC';
 	$result = $con->query($query);
 	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 		$output .= '<option value="'. $row['id'] .'"';
 		if (is_array($selected)) {
-			if (in_array($row['id'],$selected)) { $output .= ' selected'; }
+			if (in_array($row['id'],$selected)) { $output .= ' selected="selected"'; }
 		} else {
-			if ($row['id'] == $selected) { $output .= ' selected'; }
+			if ($row['id'] == $selected) { $output .= ' selected="selected"'; }
 		}
 		$output .= '>'. $row['name'] .'</option>';
 	}
@@ -192,26 +209,41 @@ function getAgeGroups($selected,$multi,$required,$con) {
 }
 
 // Get Bunks
-function getBunks($selected,$con) {
-	$output = '<select name="bunk" class="form-control browser-default custom-select" data-rule-required="false" data-msg-required="Please Select Bunk"><option value="">&lt; select bunk &gt;</option>'; 
-	$query = 'SELECT b.id as bunkID, b.name AS bunkName, a.age_min, a.name AS groupName FROM bunks b LEFT JOIN bunk_age_groups a ON (b.groups = a.id) WHERE active=1 ORDER BY a.age_min ASC, a.name DESC';
-	$result = $con->query($query);
-	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
-		$output .= '<option value="'. $row['bunkID'] .'"';
-		if ($row['bunkID'] == $selected)
-			$output .= ' selected';
-		$output .= '>'. $row['bunkName'] .' ('. $row['groupName'] .')</option>';
+function getBunks($selected,$return,$con) {
+	if ($return == 'select') {
+		$query = 'SELECT b.id as bunkID, b.name AS bunkName, a.age_min, a.name AS groupName FROM bunks b LEFT JOIN bunk_age_groups a ON (b.groups = a.id) WHERE active=1 ORDER BY a.age_min ASC, a.name DESC';
+		$result = $con->query($query);
+		$output = '<select name="bunk" class="form-control browser-default custom-select" data-rule-required="false" data-msg-required="Please Select Bunk"><option value="">&lt; select bunk &gt;</option>'; 
+		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+			$output .= '<option value="'. $row['bunkID'] .'"';
+			if ($row['bunkID'] == $selected)
+				$output .= ' selected="selected"';
+			$output .= '>'. $row['bunkName'] .' ('. $row['groupName'] .')</option>';
+		}
+		$output .= '</select>';
+	} else {
+		$query = 'SELECT b.* FROM bunks b LEFT JOIN bunk_age_groups a ON (b.groups = a.id) WHERE active=1 ORDER BY a.age_min ASC, a.name DESC, b.name ASC';
+		if ($result = $con->query($query)) {
+			while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+				$bunks[$row['id']] = array(
+					'id'=>$row['id'],
+					'name'=>$row['name'],
+					'groups'=>$row['groups'],
+					'counselor'=>$row['counselor']
+				);
+			}
+			$output = $bunks;
+		}
 	}
-	$output .= '</select>';
 	return $output;
 }
 
 // Get Weeks
-function getWeeks($admin,$selected,$multi,$required,$con) {
+function getWeeks($return,$selected,$multi,$required,$con) {
 	$query = 'SELECT * FROM weeks WHERE active=1 ORDER BY name ASC, startDate ASC';
 	$result = $con->query($query);
 	$selected = (!empty($selected) ? explode(',',$selected) : array());
-	if ($admin) {
+	if ($return == 'select') {
 		if ($multi) {
 			$multiple = 'multiple="multiple"';
 			$multiArr = '[]';
@@ -227,8 +259,7 @@ function getWeeks($admin,$selected,$multi,$required,$con) {
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 			$output .= '<option value="'. $row['id'] .'"';
 			if (in_array($row['id'],$selected)) {
-			//if ($row['id'] == $selected)
-				$output .= ' selected';
+				$output .= ' selected="selected"';
 			}
 			$output .= '>'. $row['name'] .'</option>';
 		}
@@ -294,11 +325,11 @@ function getPeriods($selected,$multi,$required,$return,$con) {
 			$option1 = '<option value="">&lt; select period &gt;</option>';
 		}
 		$req = ($required ? 'true' : 'false');
-		$output = '<select name="period" class="form-control browser-default custom-select" data-rule-required="'. $req .'" data-msg-required="Period is Required" '. $multiple .'>'. $option1;
+		$output = '<select name="period" class="form-control browser-default custom-select period-select" data-rule-required="'. $req .'" data-msg-required="Period is Required" '. $multiple .'>'. $option1;
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 			$output .= '<option value="'. $row['id'] .'"';
 			if ($row['id'] == $selected)
-				$output .= ' selected';
+				$output .= ' selected="selected"';
 			$output .= '>'. $row['name'] .'</option>';
 		}
 		$output .= '</select>';
@@ -309,7 +340,7 @@ function getPeriods($selected,$multi,$required,$return,$con) {
 			$days[3] = $row['wednesday'];
 			$days[4] = $row['thursday'];
 			$days[5] = $row['friday'];
-			$output[] = array('id'=>$row['id'],'name'=>$row['name'],'startTime'=>$row['startTime'],'endTime'=>$row['endTime'],'groups'=>explode(',',$row['groups']),'days'=>$days);
+			$output[$row['id']] = array('id'=>$row['id'],'name'=>$row['name'],'startTime'=>$row['startTime'],'endTime'=>$row['endTime'],'groups'=>explode(',',$row['groups']),'days'=>$days);
 		}
 	}
 	return $output;
@@ -550,22 +581,32 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled)
 }
 
 // Show Scheduled Activities
-function showScheduledActivities($week,$user,$con) {
-	$sql= 'SELECT s.id, s.week, s.day, s.period, s.activity, a.name FROM activity_signups s LEFT JOIN activities a ON (s.activity = a.id) WHERE s.week='. $week .' AND s.user='. $user .' AND s.active=1 AND a.active=1';
+function showScheduledActivities($week,$user,$prereqs,$con) {
+	$sql= 'SELECT s.id, s.week, s.day, s.period, s.activity, a.name, a.prerequisites FROM activity_signups s LEFT JOIN activities a ON (s.activity = a.id) WHERE s.week='. $week .' AND s.user='. $user .' AND s.active=1 AND a.active=1';
+	if (!is_array($prereqs)) { $prereqs = explode(',',$prereqs); }
 	if ($res = $con->query($sql)) {
 		while ($r=$res->fetch_array(MYSQLI_ASSOC)) {
+			$canSchedule = false;
+			if (empty($prerequisites)) {
+				$canSchedule = true;	
+			} else {
+				$prerequisites = (!is_array($r['prerequisites']) ? explode(',',$r['prerequisites']  ) : $r['prerequisites']);
+				if (in_array($r['activity'],$prerequisites)) {
+					$canSchedule = true;
+				}
+			}
 			switch ($r['day']) {
 				case 'Monday':
-					$mon[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name']);
+					$mon[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name'],$canSchedule);
 					break;
 				case 'Tuesday':
-					$tues[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name']);
+					$tues[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name'],$canSchedule);
 					break;
 				case 'Wednesday':
-					$wed[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name']);
+					$wed[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name'],$canSchedule);
 					break;
 				case 'Thursday':
-					$thurs[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name']);
+					$thurs[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name'],$canSchedule);
 					break;
 				case 'Friday':
 					$fri[$r['period']] = array('id'=>$r['activity'],'name'=>$r['name']);
@@ -596,7 +637,7 @@ function getBunkRoster($bunkID,$counselorID,$con) {
 		$getID = mysqli_fetch_assoc(mysqli_query($con, 'SELECT id FROM bunks WHERE counselor='. $counselorID));
 		$bunkID = $getID['id'];
 	} 
-	$query = 'SELECT id, firstName, lastName, email, lastLogin, week, bunk FROM users WHERE bunk='. $bunkID .' AND active=1 ORDER by lastName ASC, firstName ASC';
+	$query = 'SELECT id, firstName, lastName, email, lastLogin, week, prerequisites, bunk FROM users WHERE bunk='. $bunkID .' AND active=1 ORDER by lastName ASC, firstName ASC';
 	if ($result = $con->query($query)) {
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 			$user = array(
@@ -606,6 +647,7 @@ function getBunkRoster($bunkID,$counselorID,$con) {
 				'email'=>$row['email'],
 				'lastLogin'=>$row['lastLogin'],
 				'week'=>$row['week'],
+				'prerequisites'=>$row['prerequisites'],
 				'bunk'=>$row['bunk']
 			);
 			$users[$row['id']] = $user;

@@ -35,6 +35,9 @@
 .col-header {
 	font-weight: 600;
 }
+.adminForm.list-group-item p.input-spacer {
+	margin-bottom: 0;
+}
 
 /* Validation */
 label.error {
@@ -95,6 +98,17 @@ label.error.valid {
 	.dark-grey !important;
 	text-align: center;
 	font-size: 4em;
+}
+
+/* Dashboard */
+#dashboard {
+	padding-top: 2em;
+}
+#dashboard #dash-icons {
+	padding-top: 2em;
+}
+#dashboard #dash-icons i {
+	margin: 0.25em 0 0.05em 0;
 }
 
 /* Tables */
@@ -179,6 +193,11 @@ table.dataTable thead .sorting_desc_disabled:after {
 	}	
 }
 @media (max-width: 960px) {
+}
+@media (max-width: 767px) {
+	.adminForm.list-group-item p.input-spacer {
+		margin-bottom: 1em;
+	}
 }
 @media (max-width: 667px) {
 }
