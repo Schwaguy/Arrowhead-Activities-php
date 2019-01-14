@@ -32,9 +32,14 @@ if ($_POST) {
 				$value = date('H:i:s', strtotime($today .' '. $value));
 			} elseif (isDate($value)) {
 				if ($key == 'startDate') {
-					$scheduleDate = scheduleCheck($_POST['table'],$key,$value);
-					if (!empty($scheduleDate)) {
-						$updates[] = "signupStartDate='". $scheduleDate ."'";
+					$scheduleDates = scheduleCheck($_POST['table'],$key,$value);
+					if (is_array($scheduleDates)) {
+						if (!empty($scheduleDates['start'])) {
+							$updates[] = "signupStartDate='". $scheduleDates['start'] ."'";
+						}
+						if (!empty($scheduleDates['end'])) {
+							$updates[] = "signupEndDate='". $scheduleDates['end'] ."'";
+						}
 					}
 				}
 				$value = date_format(date_create($value),'Y-m-d');

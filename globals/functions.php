@@ -664,11 +664,17 @@ function scheduleCheck($table,$field,$date) {
 	if (($table=='weeks') && ($field=='startDate')) {
 		$date = date_format(date_create($date),'Y-m-d 00:00:00');
 		$lastTuesday = date('Y-m-d', strtotime('previous tuesday', strtotime($date)));
-		$scheduleDate = date_format(date_create($lastTuesday),'Y-m-d 19:00:00');
+		$scheduleDateStart = date_format(date_create($lastTuesday),'Y-m-d 19:00:00');
+		$lastSunday = date('Y-m-d', strtotime('previous sunday', strtotime($date)));
+		$scheduleDateEnd = date_format(date_create($lastSunday),'Y-m-d 23:59:59');
+		$scheduleDates = array(
+			'start'=>$scheduleDateStart,
+			'end'=>$scheduleDateEnd
+		);
 	} else {
-		$scheduleDate = ''; 
+		$scheduleDates = ''; 
 	}
-	return $scheduleDate;
+	return $scheduleDates;
 }
 
 // Define Column Sort Variables for Sortable Tables
