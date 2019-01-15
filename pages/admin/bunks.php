@@ -45,7 +45,7 @@
 		$content .= $header;
 		foreach ($bunks as $bunk) {
 			$content .= '<form id="form-'. $bunk['id'] .'" class="adminForm list-group-item row flex-row align-items-center d-flex">
-				<div class="col-12 col-xs-12 col-sm-9 col-md-8">
+				<div class="col-12 col-xs-12 col-sm-9 col-md-8 col-lg-9">
 					<input type="hidden" name="table" value="bunks">
 					<input type="hidden" name="id" value="'. $bunk['id'] .'">
 					<div class="row flex-row">
@@ -54,7 +54,7 @@
 						<div class="col-12 col-sm-12 col-md-4 align-self-center"><p class="input-spacer"><label class="w-100 d-block d-xs-block d-sm-block d-md-none">Counselor</label>'. getCounselors($bunk['counselor'],$con) .'</p></div>
 					</div>
 				</div>
-				<div class="col-12 col-xs-12 col-sm-3 col-md-4">
+				<div class="col-12 col-xs-12 col-sm-3 col-md-4 col-lg-3">
 					<div class="row flex-row">
 						<div class="col-6 col-xs-6 col-sm-12 col-md-6 text-center align-self-center"><button type="button" class="btn btn-dark-green adminBtn" data-op="update">Update</button></div>
 						<div class="col-6 col-xs-6 col-sm-12 col-md-6 text-center align-self-center"><button type="button" class="btn btn-danger adminBtn" data-op="delete">Delete</button></div>

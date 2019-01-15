@@ -18,6 +18,7 @@
 		);
 		
 		$prerequisites = getPrerequisites(explode(',',$activity['prerequisites']),$con);
+		$restrictions = getRestrictions(explode(',',$activity['restrictions']),$con);
 		
 		$content .= '<div class="container main">
 			
@@ -100,9 +101,13 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-12"><div class="col-12">
+							<div class="col-12 col-sm-12 col-md-6"><div class="col-12">
 								<h4>Prerequisites</h4>
 								<div class="col-12 checkbox-wrap">'. $prerequisites .'</div>
+							</div></div>
+							<div class="col-12 col-sm-12 col-md-6"><div class="col-12">
+								<h4>Restrictions</h4>
+								<div class="col-12 checkbox-wrap">'. $restrictions .'</div>
 							</div></div>
 						</div>
 						<div class="row">

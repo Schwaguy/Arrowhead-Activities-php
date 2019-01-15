@@ -19,7 +19,7 @@ if (isset($_POST['uID'])) {
 }
 
 $content .='<h2 class="text-center">'. getName($weekID,'weeks',$con) .' Available '. siteVar('act','plural','capital') .' for '. $userInfo['userName'] .'</h2>'; 
-$content .= '<div class="agenda">
+/*$content .= '<div class="agenda">
         <div class="table-responsive">
 			<form id="scheduleForm" class="scheduleForm" name="scheduleForm" method="post">
 				<input type="hidden" name="user" value="'. $userInfo['userID'] .'">
@@ -35,10 +35,11 @@ $content .= '<div class="agenda">
 							<th>'. siteVar('act','plural','capital') .'</th>
 						</tr>
 					</thead>
-					<tbody>';
+					<tbody>';*/
 
 $scheduledActivities = getScheduledActivities($weekID,$userInfo['userID'],$con);
-
+$formRows = ''; 
+$actScheduled = 0;
 for ($d=1;$d<=5;$d++) {
 	$agenda = '';
 	$startDate = $_POST['startDate'];
@@ -51,8 +52,14 @@ for ($d=1;$d<=5;$d++) {
 	
 	$actArray = $weekActivities[strtolower($dayOfWeek)];
 	
-	$schActivity = ((isset($scheduledActivities)) ? $scheduledActivities[$d] : '');
+	//$schActivity = ((isset($scheduledActivities)) ? $scheduledActivities[$d] : '');
 	
+	if (isset($scheduledActivities)) { 
+		$schActivity = $scheduledActivities[$d];
+		$actScheduled = $actScheduled+1;
+	} else {
+		$schActivity =''; 
+	}
 	// Show first Activity Period
 	$count = 1;
 	if (isset($userInfo['bunkInfo'])) {
@@ -88,7 +95,7 @@ for ($d=1;$d<=5;$d++) {
 							<td class="agenda-events">';
 					if ($periods[$p]['days'][$d]==1) {
 						
-						$admin = 
+						//$admin = 
 						
 						$available = showAgendaActivities($weekID,$dayOfWeek,$actArray,$periods[$r]['id'],false,$schActivity);
 						$agenda .= (!empty($available) ? $available : '<p class="text-muted"><em>No '. siteVar('act','plural','capital') .' Availabe Yet</em></p>');
@@ -100,8 +107,8 @@ for ($d=1;$d<=5;$d++) {
 				}
 			}
 		}
-		$content .= '<tr>
-					<td class="agenda-date" class="active" rowspan="'. $count .'">
+		$formRows .= '<tr>
+					<td class="agenda-date active" rowspan="'. $count .'">
 						<div class="dayofmonth">'. $dayOfMonth .'</div>
 						<div class="dayofweek">'. $dayOfWeek .'</div>
 						<div class="shortdate text-muted">'. $monthYear .'</div>
@@ -109,10 +116,41 @@ for ($d=1;$d<=5;$d++) {
 	}
 }
 $disable = (($_POST['scheduleOp'] == 'edit') ? ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"') : '');
+
+//$content .= '<p>ACT SCHEDULED: '. $actScheduled .'</p>';
+if ($actScheduled>0) {
+	$formName = 'updateScheduleForm';
+	$buttonText = 'Update '. siteVar('act','singular','capital') .' Selections'; 
+} else {
+	$formName = 'scheduleForm';
+	$buttonText = 'Submit '. siteVar('act','singular','capital') .' Selections'; 
+}
+
+$content .= '<div class="agenda">
+        <div class="table-responsive">
+			<form id="'. $formName .'" class="scheduleForm" name="'. $formName .'" method="post">
+				<input type="hidden" name="user" value="'. $userInfo['userID'] .'">
+				<input type="hidden" name="registered" value="'. $now .'">
+				<input type="hidden" name="updated" value="'. $now .'">
+				<input type="hidden" name="updatedBy" value="'. $_SESSION['userID'] .'">
+				<input type="hidden" name="redirect" value="/my-activities/">
+				<table class="table table-condensed table-bordered">
+					<thead class="thead-dark">
+						<tr>
+							<th>Date</th>
+							<th>Period</th>
+							<th>'. siteVar('act','plural','capital') .'</th>
+						</tr>
+					</thead>
+					<tbody>';
+
+
+$content .= $formRows;
+
 $content .= '</tbody>
             	</table>
 				<p class="text-center">
-					<button type="button" class="btn btn-elegant scheduleBtn" data-op="add" '. $disable .'>Submit '. siteVar('act','singular','capital') .' Selections</button>
+					<button type="button" class="btn btn-elegant scheduleBtn" data-op="add" '. $disable .'>'. $buttonText .'</button>
 				</p>
 			</form>
         </div>

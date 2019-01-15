@@ -16,7 +16,7 @@ for ($d=1;$d<=5;$d++) {
 	
 	// Show first Activity Period
 	$count = 1;
-	$p = (($periods[0]['days'][$d] == 1) ? 0 : 1);
+	$p = (($periods[1]['days'][$d] == 1) ? 1 : 2);
 	
 	for ($v=0;$v<count($periods);$v++) {
 		if ((!isset($p)) && $v==$activity['period]']){
@@ -36,7 +36,7 @@ for ($d=1;$d<=5;$d++) {
 					<input type="hidden" name="weekID" value="'. $activity['week'] .'">
 					<input type="hidden" name="startDate" value="'. $startDate .'">
 					<input type="hidden" name="scheduleOp" value="edit">
-					<a href="#" class="submitLink" title="Edit '. $camper['user']['firstName'] .'\'s Schedule" href="#">'. $camper['user']['lastName'] .', '. $camper['user']['firstName'] .' ('. $camper['bunk']['name'] .')</a>
+					<a href="#" class="submitLink" title="Edit '. $camper['user']['firstName'] .'\'s Schedule" href="#">'. $camper['user']['lastName'] .', '. $camper['user']['firstName'] . ($camper['bunk']['name'] ? ' ('. $camper['bunk']['name'] .')' : '') .'</a>
 				</form></li>';
 			}
 			$actSignups .= '</ol><!-- /signupList -->';

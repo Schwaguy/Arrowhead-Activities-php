@@ -9,7 +9,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
 <script type="text/javascript" src="/js/popper.min.js"></script>
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/js/mdb.min.js"></script>
+<!--<script type="text/javascript" src="/js/mdb.min.js"></script>-->
 <script type="text/javascript" src="/js/addons/datatables.min.js"></script>
 
 <script type="text/javascript" src="/js/arrow-activities.js"></script>

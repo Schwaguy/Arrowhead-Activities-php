@@ -37,6 +37,7 @@
 	$weeks = getWeeks('select',$weekSel,false,true,$con);
 	$periods = getPeriods($periodSel,false,true,'select',$con);
 	$prerequisites = getPrerequisites('',$con);
+	$restrictions = getRestrictions('',$con);
 	$content .= '<form id="form-add" class="adminForm activity-admin">
 					
 					<input type="hidden" name="id" value="">
@@ -49,7 +50,15 @@
 					<input type="hidden" name="redirect" value="/admin/activities/overview/">
 					
 					<div class="col-12">
-						<p><label for="name">Name</label><br><input name="name" class="form-control" value="" placeholder="'. siteVar('act','singular','capital') .' Name" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Name is Required"></p>
+						<p><label for="name">Name</label><br><input type="text" list="activity-select" name="name" class="form-control" value="" placeholder="'. siteVar('act','singular','capital') .' Name" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Name is Required">
+						<datalist id="activity-select">
+						  	<option>Volvo</option>
+						  	<option>Saab</option>
+						  	<option>Mercedes</option>
+						  	<option>Audi</option>
+						</datalist>
+						</p>
+						
 						<p><label for="description">Description</label><br><textarea name="description" class="form-control" placeholder="'. siteVar('act','singular','capital') .' Description"></textarea></p>
 					</div>
 					
@@ -93,9 +102,13 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-12"><div class="col-12">
+						<div class="col-12 col-sm-12 col-md-6"><div class="col-12">
 							<h4>Prerequisites</h4>
 							<div class="col-12 checkbox-wrap">'. $prerequisites .'</div>
+						</div></div>
+						<div class="col-12 col-sm-12 col-md-6"><div class="col-12">
+							<h4>Restrictions</h4>
+							<div class="col-12 checkbox-wrap">'. $restrictions .'</div>
 						</div></div>
 					</div>
 					<div class="row">

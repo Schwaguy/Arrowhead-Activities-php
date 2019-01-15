@@ -27,17 +27,26 @@ foreach ($weeks as $week) {
 					if ((isset($_SESSION['bunkInfo'])) && (in_array($_SESSION['bunkInfo']['group'],$period['groups']))) {
 						if ($period['days'][$day['number']]==1) {
 							$weekdays .= '<div class="period"><h6>'. $period['name'] .'</h6>';
-							$activityScheduled = false; 						
+							$activityScheduled = false; 	
+							
+							$disable = (($_SESSION['userPermissions']['edit'] || ($now <= $week['signupEndDate'])) ? '' : 'disabled="disabled"');
+								
+							$tooltip = (($now>$week['signupEndDate']) ? 'data-toggle="tooltip" data-placement="top" title="Scheduling for this week is closed"' : '');
+							
 							if (!empty($schActivity[$period['id']])) {
-								$disable = ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"');
-								$disable = ''; 
+								//$disable = ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"');
+								/*$disable = (($_SESSION['userPermissions']['edit'] || ($now <= $week['signupEndDate'])) ? '' : 'disabled="disabled"');
+								
+								$tooltip = (($now>$week['signupEndDate']) ? 'data-toggle="tooltip" data-placement="top" title="Scheduling for this week is closed"' : '');*/
+								
+								
 								$weekdays .= '<form method="post" class="scheduled-activity" action="/schedule-activities/">
 									<input type="hidden" name="weekID" value="'. $week['id'] .'">
 									<input type="hidden" name="scheduleOp" value="edit">
 									<input type="hidden" name="day" value="'. $d .'">
 									<input type="hidden" name="period" value="'. $period['id'] .'">
 									<input type="hidden" name="startDate" value="'. $week['days'][0]['date'] .'">
-									<input type="submit" class="event btn btn-block btn-light-green agenda-event-button d-block" value="'. $schActivity[$period['id']]['name'] .'" '. $disable .'>
+									<input type="submit" class="event btn btn-block btn-light-green agenda-event-button d-block" value="'. $schActivity[$period['id']]['name'] .'" '. $disable .' '. $tooltip .'>
 								</form>';
 							} else {
 								$weekdays .= '<form method="post" action="/schedule-activities/">
@@ -46,7 +55,7 @@ foreach ($weeks as $week) {
 									<input type="hidden" name="day" value="'. $d .'">
 									<input type="hidden" name="period" value="'. $period['id'] .'">
 									<input type="hidden" name="startDate" value="'. $week['days'][0]['date'] .'">
-									<input type="submit" class="btn btn-light agenda-event-button" value="Click to Schedule '. siteVar('act','plural','capital') .'">
+									<input type="submit" class="btn btn-light agenda-event-button" value="Click to Schedule '. siteVar('act','plural','capital') .'" '. $disable .' '. $tooltip .'>
 								</form>';
 							}
 							$weekdays .= '</div>';

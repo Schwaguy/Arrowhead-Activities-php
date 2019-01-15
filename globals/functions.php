@@ -366,6 +366,26 @@ function getPrerequisites($selected,$con) {
 	return $output;
 }
 
+// Get Restrictions
+function getRestrictions($selected,$con) {
+	$query = 'SELECT * FROM restrictions WHERE active=1 ORDER BY name ASC';
+	$result = $con->query($query);
+	$output = '<div class="row d-sm-flex">'; 
+	$x = 0;
+	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+		$output .= '<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox"><input type="hidden" name="restrictions['. $x .']" value="0"><input type="checkbox" name="restrictions['. $x .']" value="'. $row['id'] .'"';
+		if (is_array($selected)) {
+			if (in_array($row['id'],$selected)) { $output .= ' checked'; }
+		} else {
+			if ($row['id'] == $selected) { $output .= ' checked'; }
+		}
+		$output .= '> <label>'. $row['name'] .'</label></p></div>';
+		$x++;
+	}
+	$output .= '</div>'; 
+	return $output;
+}
+
 // Get Bunk Info
 function getBunkInfo($bunkID,$counselorID,$con) {
 	if ($bunkID==0) {
@@ -407,7 +427,8 @@ function getActivityinfo($actID,$con) {
 					'thursday'=>$act['thursday'],
 					'friday'=>$act['friday']
 				),
-				'prerequisites'=>$act['prerequisites']
+				'prerequisites'=>$act['prerequisites'],
+				'restrictions'=>$act['restrictions']
 			);
 		}
 	}
@@ -504,21 +525,22 @@ function getScheduledActivities($week,$user,$con) {
 	$query = 'SELECT * FROM activity_signups WHERE week='. $week .' AND user='. $user .' AND active=1'; 
 	if ($result = $con->query($query)) {
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+			$signupInfo = array('id'=>$row['id'],'activity'=>$row['activity']);
 			switch ($row['day']) {
 				case 'Monday':
-					$mon[$row['period']] = $row['activity'];
+					$mon[$row['period']] = $signupInfo;
 					break;
 				case 'Tuesday':
-					$tues[$row['period']] = $row['activity'];
+					$tues[$row['period']] = $signupInfo;
 					break;
 				case 'Wednesday':
-					$wed[$row['period']] = $row['activity'];
+					$wed[$row['period']] = $signupInfo;
 					break;
 				case 'Thursday':
-					$thurs[$row['period']] = $row['activity'];
+					$thurs[$row['period']] = $signupInfo;
 					break;
 				case 'Friday':
-					$fri[$row['period']] = $row['activity'];
+					$fri[$row['period']] = $signupInfo;
 					break;
 			}
 		}
@@ -542,7 +564,8 @@ function getScheduledActivities($week,$user,$con) {
 
 // Show Agenda Activities
 function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled) {
-	$activities = ''; 
+	$activities = '';
+	$scheduleID = '';
 	if (count($actArray)>0) {
 		foreach ($actArray as $activity) {
 			if ($activity['week'] == $week) {
@@ -555,26 +578,38 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled)
 					} else {
 						// Mark as active if scheduling is complete
 						$active = '';
+						$checked = ''; 
 						if (is_array($actScheduled)) {
 							if(isset($actScheduled[$period])) {
-								if ($activity['id'] == $actScheduled[$period]) {
+								$scheduleID = $actScheduled[$period]['id'];
+								if ($activity['id'] == $actScheduled[$period]['activity']) {
 									$active = 'active';
+									$checked = 'checked="checked"'; 
 								}
 							} 
 						} 
+						$required = (empty($activities) ? 'true' : '');
 						
 						// Disable if scheduling is complete and user cannot edit
-						$disable = ((!empty($actScheduled)) ? ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"') : '');
+						//$disable = ((!empty($actScheduled)) ? ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"') : '');
+						$disable = ''; 
 						
 						// Disable for Campers if Full
 						$disable = (($activity['space'][strtolower($day)]<=0) ? 'disabled="disabled"' : $disable);
+						$disableClass = (($activity['space'][strtolower($day)]<=0) ? 'disabled' : '');
+						$tooltip = (($activity['space'][strtolower($day)]<=0) ? 'data-toggle="tooltip" data-placement="top" title="This Activity is Full"' : '');
 						
-						$activities .= '<li><input type="radio" class="schedule-radio '. $active .'" id="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" name="activity-'. $week .'-'. $day .'-'. $period .'" value="'. $activity['id'] .'" data-rule-required="false" data-msg-required="Please Select an Activity" '. $disable .'><label for="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" class="btn btn-light schedule-button '. $active .'">'. $activity['name'] .'<div class="small">'. $activity['space'][strtolower($day)] .' spots left</div></label></li>';
+						$activities .= '<li '. $tooltip .'>
+							<input type="radio" class="schedule-radio '. $active .'" id="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" name="activity-'. $week .'-'. $day .'-'. $period .'" value="'. $activity['id'] .'" data-rule-required="'. $required .'" data-msg-required="Please Select an Activity" '. $checked .' '. $disable .' data-scheduleID="'. $scheduleID .'">
+							<label for="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" class="btn btn-light schedule-button '. $active .' '. $disableClass .'">'. $activity['name'] .'
+								<div class="small">'. $activity['space'][strtolower($day)] .' spots left</div>
+							</label>
+						</li>';
 					}
 				}
 			}
 		}
-		if (!$admin && !empty($activities)) { $activities = '<ul class="activity-signup-buttons">'. $activities .'</ul>'; }
+		if (!$admin && !empty($activities)) { $activities = '<ul class="activity-signup-buttons" data-scheduleID="'. $scheduleID .'">'. $activities .'</ul>'; }
 	} 
 	$output = ((!empty($activities)) ? $activities : '');
 	return $output;
