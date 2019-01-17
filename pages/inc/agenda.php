@@ -39,7 +39,7 @@ for ($d=1;$d<=5;$d++) {
 	$agenda .= '</td></tr>';
 	
 	// Show additional Activity Periods
-	for ($r=$p+1;$r<=2;$r++) {
+	for ($r=$p+1;$r<=count($periods);$r++) {
 		if ($periods[$r]['days'][$d] == 1) {
 			$agenda .= '<tr>
 					<td class="agenda-time">

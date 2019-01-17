@@ -7,14 +7,16 @@ $campers = getBunkRoster($_SESSION['userBunk'],$_SESSION['userID'],$con);
 $content .= '<div id="list-group-edit" class="list-group list-group-flush list-group-admin">';
 foreach ($weeks as $week) {
 	$header = '<div id="week-'. $week['id'] .'" class="list-group-item">
-		<a href="#panel-'. $week['id'] .'" title="'. $week['name'] .'" data-toggle="collapse" data-target="#panel-'. $week['id'] .'" aria-expanded="false" aria-controls="panel-'. $week['id'] .'"><h2>'. $week['name'] .'</h2></a>
-	</div>';
+			<a href="#panel-'. $week['id'] .'" title="'. $week['name'] .'" data-toggle="collapse" data-target="#panel-'. $week['id'] .'" aria-expanded="false" aria-controls="panel-'. $week['id'] .'"><h2>'. $week['name'] .'</h2></a>
+		</div>';
 	$header .= '<div class="collapse" id="panel-'. $week['id'] .'">
 		<div class="row d-none d-sm-flex p-1 bg-dark text-white">
 			<h5 class="col-sm p-1 text-center camper">Camper</h5>';
+	
 	foreach ($week['days'] as $day) {
 		$header .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
 	}
+	
 	$header .= '</div>'; 
 	
 	$weekdays = '';
@@ -51,6 +53,7 @@ foreach ($weeks as $week) {
 										<input type="hidden" name="thisUserName" value="'. $camper['firstName'] .' '. $camper['lastName'] .'">
 										<input type="hidden" name="bunkID" value="'. $camper['bunk'] .'">
 										<input type="hidden" name="weekID" value="'. $week['id'] .'">
+										<input type="hidden" name="redirect" value="'. $redirect .'">
 										<input type="hidden" name="scheduleOp" value="edit">
 										<input type="hidden" name="day" value="'. $d .'">
 										<input type="hidden" name="period" value="'. $period['id'] .'">
@@ -63,6 +66,7 @@ foreach ($weeks as $week) {
 										<input type="hidden" name="thisUserName" value="'. $camper['firstName'] .' '. $camper['lastName'] .'">
 										<input type="hidden" name="bunkID" value="'. $camper['bunk'] .'">
 										<input type="hidden" name="weekID" value="'. $week['id'] .'">
+										<input type="hidden" name="redirect" value="'. $redirect .'">
 										<input type="hidden" name="scheduleOp" value="add">
 										<input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $period['id'] .'">
 										<input type="hidden" name="startDate" value="'. $week['days'][0]['date'] .'">
@@ -85,7 +89,6 @@ foreach ($weeks as $week) {
 		$weekdays .= '</div><!-- /camper row -->';
 	}
 	$weekdays .= '</div><!-- /collapse panel-'. $week['id'] .' -->';
-	//$header .= '</div></header>'; 
 	$content .= '<div class="container-fluid">'. $header . $weekdays .'</div><!-- /week-view -->';
 }
 $content .= '</div><!-- /list-group-edit -->';

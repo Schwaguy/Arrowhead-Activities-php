@@ -213,44 +213,6 @@ a:focus,
 a:active {
   color: #7d993e;
 }
-/* Forms */
-input[type=text],
-input[type=tel],
-input[type=email],
-input[type=number],
-input[type=password],
-textarea,
-select {
-  font-family: "Roboto", sans-serif !important;
-  color: #282828 !important;
-  font-size: 20px !important;
-  font-weight: 300 !important;
-  line-height: 1.25 !important !important;
-}
-option,
-select option,
-.browser-default.custom-select option {
-  font-size: 1em !important;
-}
-.form-control {
-  font-size: 1em;
-  font-weight: 300;
-  text-shadow: none;
-}
-.custom-select {
-  line-height: 1;
-}
-.adminForm label {
-  font-size: 0.85em;
-  font-weight: 400;
-  line-height: 1;
-}
-.checkbox-wrap {
-  padding-bottom: 1em;
-}
-p.checkbox {
-  margin-bottom: 0;
-}
 @media (max-width: 736px) {
   .small {
     font-size: 1em;
@@ -2880,6 +2842,47 @@ p.checkbox {
 .activity-signup-buttons .btn-light.schedule-button.disabled {
   color: #7F7F7F !important;
 }
+/* Forms */
+input[type=text],
+input[type=tel],
+input[type=email],
+input[type=number],
+input[type=password],
+textarea,
+select {
+  font-family: "Roboto", sans-serif !important;
+  color: #282828 !important;
+  font-size: 20px !important;
+  font-weight: 300 !important;
+  line-height: 1.25 !important !important;
+}
+option,
+select option,
+.browser-default.custom-select option {
+  font-size: 1em !important;
+}
+.form-control {
+  font-size: 1em;
+  font-weight: 300;
+  text-shadow: none;
+}
+.custom-select {
+  line-height: 1;
+}
+.adminForm label {
+  font-size: 0.85em;
+  font-weight: 400;
+  line-height: 1;
+}
+.checkbox-wrap {
+  padding-bottom: 1em;
+}
+p.checkbox {
+  margin-bottom: 0;
+}
+.combobox {
+  background: &#9660;
+}
 /* Main Nav */
 /* ---------- Main Nav ---------- */
 .navbar-custom {
@@ -3232,6 +3235,9 @@ p.checkbox {
   font-weight: 300;
   line-height: 1.25 !important;
 }
+.hide {
+  display: none;
+}
 .list-group .list-group-item:first-child {
   -webkit-border-top-left-radius: 0.125rem;
   border-top-left-radius: 0.125rem;
@@ -3348,6 +3354,9 @@ table.table-sm td {
 }
 .adminForm.list-group-item p.input-spacer {
   margin-bottom: 0;
+}
+.oneTime {
+  padding-left: 1em;
 }
 /* Validation */
 label.error {

@@ -19,7 +19,6 @@
 	});	
 </script>
 
-<?=$footerScripts?>
 <?php
 require_once('globals/phpDebug.php');
 $debug = new PHPDebug();

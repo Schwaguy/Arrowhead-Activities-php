@@ -43,9 +43,37 @@ jQuery(document).ready(function($) {
 		scrollbar: true
 	});*/
 	
+	// Handle Combo Boxes
+	if ($('input[list]').length > 0){
+		document.querySelector('input[list]').addEventListener('input', function(e) {
+			var input = e.target,
+				list = input.getAttribute('list'),
+				options = document.querySelectorAll('#' + list + ' option'),
+				hiddenInput = document.getElementById(input.id + '-hidden'),
+				inputValue = input.value;
+			hiddenInput.value = inputValue;
+			for(var i = 0; i < options.length; i++) {
+				var option = options[i];
+				if (option.getAttribute('data-onetime')==1) {
+					$('.oneTime .oneTimeCheck').prop('checked', true);	
+				} else {
+					$('.oneTime .oneTimeCheck').prop('checked', false);
+				}
+				if(option.innerText === inputValue) {
+					hiddenInput.value = option.getAttribute('data-value');
+					//$('.oneTime').addClass('hide');
+					break;
+				} else {
+					$('.oneTime .oneTimeCheck').prop('checked', false);
+				}
+			}
+		});
+	}
+	
 	$(function () {
 		$('[data-toggle="tooltip"]').tooltip();
-	})
+	});
+	
 	
 	/*$('#tabs').responsiveTabs({
 		startCollapsed: 'accordion',
@@ -129,16 +157,15 @@ jQuery(document).ready(function($) {
 	});
 	var form = $('.adminForm');
 	form.validate();
-	$('body').on('click', '.adminForm .btn', function() {
+	$('body').on('click', '.adminForm .adminBtn', function() {
 		if (form.valid()) {
 			$('#feedback').show();
 			$('#processing').show();
 			var op = $(this).data('op');
 			var frm = $(this).closest('.adminForm');
 			var ajaxUrl = '/ajax/admin/'+ op +'.php'; 
-			var formData = $(frm).serialize();
-			formData+ "&op=" + op;
-			
+			var formData = 'op=' + op + '&' + $(frm).serialize();
+			//formData+ "&op=" + op;
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
@@ -148,6 +175,7 @@ jQuery(document).ready(function($) {
 				if (data.output.op){
 					if (data.output.op == 'update') {
 						$('#processing').hide();
+						console.log(data.output.feedback);
 						$('#response').show().html(data.output.feedback);
 						if (data.output.redirect) {
 							setTimeout(function() {
@@ -237,8 +265,7 @@ jQuery(document).ready(function($) {
 			var op = $(this).data('op');
 			var frm = $(this).closest('.scheduleForm');
 			var ajaxUrl = '/ajax/schedule/'+ op +'.php'; 
-			var formData = $(frm).serialize();
-			formData+ "&op=" + op;
+			var formData = 'op=' + op + '&' + $(frm).serialize();
 			
 			console.log(ajaxUrl);
 			console.log(formData);

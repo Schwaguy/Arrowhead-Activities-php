@@ -32,12 +32,13 @@
 			<div class="col-12 col-xs-12 col-sm-12 col-md-10 col-lg-10">';
 
 	// New Activity Form
-	$counselors = getCounselors('',$con);
-	$ageGroups = getAgeGroups('',true,true,$con);
-	$weeks = getWeeks('select',$weekSel,false,true,$con);
-	$periods = getPeriods($periodSel,false,true,'select',$con);
+	//$counselors = getCounselors('',$con);
+	//$ageGroups = getAgeGroups('',true,true,$con);
+	//$weeks = getWeeks('select',$weekSel,false,true,$con);
+	//$periods = getPeriods($periodSel,false,true,'select',$con);
 	$prerequisites = getPrerequisites('',$con);
 	$restrictions = getRestrictions('',$con);
+
 	$content .= '<form id="form-add" class="adminForm activity-admin">
 					
 					<input type="hidden" name="id" value="">
@@ -50,13 +51,14 @@
 					<input type="hidden" name="redirect" value="/admin/activities/overview/">
 					
 					<div class="col-12">
-						<p><label for="name">Name</label><br><input type="text" list="activity-select" name="name" class="form-control" value="" placeholder="'. siteVar('act','singular','capital') .' Name" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Name is Required">
-						<datalist id="activity-select">
-						  	<option>Volvo</option>
-						  	<option>Saab</option>
-						  	<option>Mercedes</option>
-						  	<option>Audi</option>
-						</datalist>
+						<p><label for="type">Activity Type</label><br>
+						<input type="text" list="typeList" id="typeInput" class="form-control combobox typeInput" placeholder="'. siteVar('act','singular','capital') .' Type" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Type is Required">
+						<datalist id="typeList">'. getActivityTypes($con) .'</datalist>
+						<input type="hidden" name="type" id="typeInput-hidden" class="hiddenInput"></p>
+						
+						<p class="oneTime hide">
+							<input type="hidden" name="oneTime" value="0">
+							<input type="checkbox" name="oneTime" value="1"> <label for="oneTime">Check if this is a One-Time-Only Activity
 						</p>
 						
 						<p><label for="description">Description</label><br><textarea name="description" class="form-control" placeholder="'. siteVar('act','singular','capital') .' Description"></textarea></p>
@@ -67,7 +69,7 @@
 							<div class="col-12 col-sm-12 col-md-12 col-md-12 col-lg-8">
 								<div class="row">
 									<div class="col-12 col-sm-12 col-md-6 col-md-6 col-lg-6">
-										<p><label for="location">Location</label><br><input type="text" name="location" class="form-control" value="" placeholder="Location" data-rule-required="true" data-msg-required="Location is Required"></p>
+										<p><label for="location">Location</label><br><input type="text" name="location" class="form-control" value="" placeholder="Location" data-rule-required="false" data-msg-required="Location is Required"></p>
 									</div>
 									<div class="col-12 col-sm-12 col-md-6 col-lg-6">
 										<p><label for="capacity">Capacity</label><br><input type="number" name="capacity" class="form-control" value="" placeholder="Capacity" min="0" data-rule-required="true" data-msg-required="Capacity is Required"></p>
@@ -75,15 +77,15 @@
 								</div>
 								<div class="row">
 									<div class="col-12 col-sm-12 col-md-6 col-md-6 col-lg-6">
-										<p><label for="week">Week</label><br>'. $weeks .'</p>
+										<p><label for="week">Week</label><br>'. getWeeks('select',$weekSel,false,true,$con) .'</p>
 									</div>
 									<div class="col-12 col-sm-12 col-md-6 col-lg-6">
-										<p><label for="period">Period</label><br>'. $periods .'</p>
+										<p><label for="period">Period</label><br>'. getPeriods($periodSel,false,true,'select',$con) .'</p>
 									</div>
 								</div>
 							</div>
 							<div class="col-12 col-sm-12 col-md-12 col-lg-4">
-								<p><label for="groups">Eligible Age Groups</label><br>'. $ageGroups .'</p>
+								<p><label for="groups">Eligible Age Groups</label><br>'. getAgeGroups('',true,true,$con) .'</p>
 							</div>
 						</div>
 						<div class="col-12">

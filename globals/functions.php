@@ -99,6 +99,24 @@ function getUserInfo($uID,$con) {
 	return $user;
 }
 
+// Check to see if User was specified, if not get logge3d in user's info
+function checkUser($con) {
+	if (isset($_POST['uID'])) {
+		$userInfo = array(
+			'userID'=>$_POST['uID'],
+			'userName'=>$_POST['thisUserName'],
+			'bunkInfo'=>getBunkInfo($_POST['bunkID'],'',$con)
+		);
+	} else {
+		$userInfo = array(
+			'userID'=>$_SESSION['userID'],
+			'userName'=>$_SESSION['userFirstName'] .' '. $_SESSION['userLastName'],
+			'bunkInfo'=>$_SESSION['bunkInfo']
+		);
+	}
+	return $userInfo;
+}
+
 // Get Auth
 function getAuth($selected,$required,$userAuth,$disabled,$con) {
 	$req = ($required ? 'true' : 'false');
@@ -405,14 +423,27 @@ function getBunkInfo($bunkID,$counselorID,$con) {
 	return $output;
 }
 
+// Get Activity Types
+function getActivityTypes($con) {
+	$output = '';
+	$query = 'SELECT * FROM activity_types WHERE active=1 ORDER BY name ASC';
+	if ($result = $con->query($query)) {
+		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+			$output .= '<option data-value="'. $row['id'] .'" data-onetime="'. $row['oneTime'] .'">'. $row['name'] .'</option>';
+		}
+	}
+	return $output;
+}
+
 // Get Activity Info
 function getActivityinfo($actID,$con) {
-	$query = 'SELECT a.*, w.startDate FROM activities a LEFT JOIN weeks w ON (a.week = w.id) WHERE a.id='. $actID .' LIMIT 1';  
+	$query = 'SELECT a.*, t.name, t.oneTime, w.startDate FROM activities a LEFT JOIN activity_types t ON (a.type = t.id) LEFT JOIN weeks w ON (a.week = w.id) WHERE a.id='. $actID .' LIMIT 1';  
 	if($result = $con->query($query)) {
 		while ($act=$result->fetch_array(MYSQLI_ASSOC)) {
 			$activity = array(
 				'id'=>$act['id'],
 				'name'=>$act['name'],
+				'type'=>$act['type'],
 				'description'=>$act['description'],
 				'location'=>$act['location'],
 				'capacity'=>$act['capacity'],
@@ -477,7 +508,7 @@ function getActivitySignups($actID,$con) {
 
 // Get Activites for the week
 function getWeekActivities($week,$con) {
-	$sql = 'SELECT * FROM activities WHERE week='. $week .' ORDER BY name';  
+	$sql = 'SELECT a.*, t.name FROM activities a LEFT JOIN activity_types t ON (a.type = t.id) WHERE a.week='. $week .' ORDER BY t.name';  
 	$monday = array();
 	$tuesday = array();
 	$wednesday = array();
@@ -609,7 +640,10 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled)
 				}
 			}
 		}
-		if (!$admin && !empty($activities)) { $activities = '<ul class="activity-signup-buttons" data-scheduleID="'. $scheduleID .'">'. $activities .'</ul>'; }
+		if (!$admin && !empty($activities)) { 
+			$activities = '<input type="hidden" name="schedule-'. $week .'-'. $day .'-'. $period .'" value="'. $scheduleID .'">
+			<ul class="activity-signup-buttons" data-scheduleID="'. $scheduleID .'">'. $activities .'</ul>'; 
+		}
 	} 
 	$output = ((!empty($activities)) ? $activities : '');
 	return $output;
@@ -617,7 +651,7 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled)
 
 // Show Scheduled Activities
 function showScheduledActivities($week,$user,$prereqs,$con) {
-	$sql= 'SELECT s.id, s.week, s.day, s.period, s.activity, a.name, a.prerequisites FROM activity_signups s LEFT JOIN activities a ON (s.activity = a.id) WHERE s.week='. $week .' AND s.user='. $user .' AND s.active=1 AND a.active=1';
+	$sql= 'SELECT s.id, s.week, s.day, s.period, s.activity, t.name, a.prerequisites FROM activity_signups s LEFT JOIN activities a ON (s.activity = a.id) LEFT JOIN activity_types t ON (a.type = t.id) WHERE s.week='. $week .' AND s.user='. $user .' AND s.active=1 AND a.active=1';
 	if (!is_array($prereqs)) { $prereqs = explode(',',$prereqs); }
 	if ($res = $con->query($sql)) {
 		while ($r=$res->fetch_array(MYSQLI_ASSOC)) {

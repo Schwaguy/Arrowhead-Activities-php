@@ -7,6 +7,8 @@
 			<div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12">';
 	$content .= '<div class="alert alert-success" role="alert">Click on the weeks below to view camper schedules.</div>';
 
+	$redirect = '/my-bunk/';
+
 	include($ROOT . '/pages/inc/calendar-bunk.php');
 
 	$content .= '</div><!-- /col -->

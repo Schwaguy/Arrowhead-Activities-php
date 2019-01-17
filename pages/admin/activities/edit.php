@@ -48,7 +48,17 @@
 						<input type="hidden" name="redirect" value="/admin/activities/overview/">
 
 						<div class="col-12">
-							<p><label for="name">Name</label><br><input name="name" class="form-control" value="'. $activity['name'] .'" placeholder="'. siteVar('act','singular','capital') .' Name" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Name is Required"></p>
+							<p><label for="type">Activity Type</label><br>
+							<input type="text" list="typeList" id="typeInput" class="form-control combobox typeInput" value="'. $activity['name'] .'" placeholder="'. siteVar('act','singular','capital') .' Type" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Type is Required">
+							<datalist id="typeList">'. getActivityTypes($con) .'</datalist>
+							<input type="hidden" name="type" id="typeInput-hidden" class="hiddenInput" value="'. $activity['type'] .'"></p>
+
+							<p class="oneTime hide">
+								<input type="hidden" name="oneTime" value="0">
+								<input type="checkbox" name="oneTime" class="oneTimeCheck" value="1"> <label for="oneTime">Check if this is a One-Time-Only Activity
+							</p>
+							
+							
 							<p><label for="description">Description</label><br><textarea name="description" class="form-control" placeholder="'. siteVar('act','singular','capital') .' Description">'. $activity['description'] .'</textarea></p>
 						</div>
 

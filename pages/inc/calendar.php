@@ -3,11 +3,12 @@
 $periods = getPeriods('',false,false,'array',$con);
 $weeks = getWeeks('array','',false,false,$con);
 $activityWeeks = ''; 
+$userInfo = checkUser($con);
 
 foreach ($weeks as $week) {
 	//if (in_array($week['id'],$_SESSION['userWeeks'])) {
 		if ($now >= $week['signupStartDate']) {
-			$scheduledActivities = showScheduledActivities($week['id'],$_SESSION['userID'],$_SESSION['userPrereqs'],$con);
+			$scheduledActivities = showScheduledActivities($week['id'],$userInfo['userID'],$_SESSION['userPrereqs'],$con);
 			$weekdays = '';
 
 			$header = '<header><h4 class="display-4 mb-1 text-center">'. $week['name'] .'</h4><div class="row d-none d-sm-flex p-1 bg-dark text-white">';
@@ -41,7 +42,9 @@ foreach ($weeks as $week) {
 								
 								
 								$weekdays .= '<form method="post" class="scheduled-activity" action="/schedule-activities/">
+									<input type="hidden" name="user" value="'. $userInfo['userID'] .'">
 									<input type="hidden" name="weekID" value="'. $week['id'] .'">
+									<input type="hidden" name="redirect" value="'. $redirect .'">
 									<input type="hidden" name="scheduleOp" value="edit">
 									<input type="hidden" name="day" value="'. $d .'">
 									<input type="hidden" name="period" value="'. $period['id'] .'">
@@ -50,7 +53,9 @@ foreach ($weeks as $week) {
 								</form>';
 							} else {
 								$weekdays .= '<form method="post" action="/schedule-activities/">
+									<input type="hidden" name="user" value="'. $userInfo['userID'] .'">
 									<input type="hidden" name="weekID" value="'. $week['id'] .'">
+									<input type="hidden" name="redirect" value="'. $redirect .'">
 									<input type="hidden" name="scheduleOp" value="add">
 									<input type="hidden" name="day" value="'. $d .'">
 									<input type="hidden" name="period" value="'. $period['id'] .'">

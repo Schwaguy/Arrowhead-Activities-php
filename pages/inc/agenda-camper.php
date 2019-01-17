@@ -3,39 +3,9 @@
 $allowAdmin = ($_SESSION['userPermissions']['edit'] ? true : false);
 $periods = getPeriods('',false,false,'array',$con);
 $weekActivities = getWeekActivities($weekID,$con);
-
-if (isset($_POST['uID'])) {
-	$userInfo = array(
-		'userID'=>$_POST['uID'],
-		'userName'=>$_POST['thisUserName'],
-		'bunkInfo'=>getBunkInfo($_POST['bunkID'],'',$con)
-	);
-} else {
-	$userInfo = array(
-		'userID'=>$_SESSION['userID'],
-		'userName'=>$_SESSION['userFirstName'] .' '. $_SESSION['userLastName'],
-		'bunkInfo'=>$_SESSION['bunkInfo']
-	);
-}
+$userInfo = checkUser($con);
 
 $content .='<h2 class="text-center">'. getName($weekID,'weeks',$con) .' Available '. siteVar('act','plural','capital') .' for '. $userInfo['userName'] .'</h2>'; 
-/*$content .= '<div class="agenda">
-        <div class="table-responsive">
-			<form id="scheduleForm" class="scheduleForm" name="scheduleForm" method="post">
-				<input type="hidden" name="user" value="'. $userInfo['userID'] .'">
-				<input type="hidden" name="registered" value="'. $now .'">
-				<input type="hidden" name="updated" value="'. $now .'">
-				<input type="hidden" name="updatedBy" value="'. $_SESSION['userID'] .'">
-				<input type="hidden" name="redirect" value="/my-activities/">
-				<table class="table table-condensed table-bordered">
-					<thead class="thead-dark">
-						<tr>
-							<th>Date</th>
-							<th>Period</th>
-							<th>'. siteVar('act','plural','capital') .'</th>
-						</tr>
-					</thead>
-					<tbody>';*/
 
 $scheduledActivities = getScheduledActivities($weekID,$userInfo['userID'],$con);
 $formRows = ''; 
@@ -94,9 +64,6 @@ for ($d=1;$d<=5;$d++) {
 							</td>
 							<td class="agenda-events">';
 					if ($periods[$p]['days'][$d]==1) {
-						
-						//$admin = 
-						
 						$available = showAgendaActivities($weekID,$dayOfWeek,$actArray,$periods[$r]['id'],false,$schActivity);
 						$agenda .= (!empty($available) ? $available : '<p class="text-muted"><em>No '. siteVar('act','plural','capital') .' Availabe Yet</em></p>');
 					} else {
@@ -117,23 +84,27 @@ for ($d=1;$d<=5;$d++) {
 }
 $disable = (($_POST['scheduleOp'] == 'edit') ? ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"') : '');
 
-//$content .= '<p>ACT SCHEDULED: '. $actScheduled .'</p>';
+$content .= '<p>ACT SCHEDULED: '. $actScheduled .'</p>';
 if ($actScheduled>0) {
 	$formName = 'updateScheduleForm';
-	$buttonText = 'Update '. siteVar('act','singular','capital') .' Selections'; 
+	$buttonText = 'Update '. siteVar('act','singular','capital') .' Selections';
+	$registered = '';
+	$op = 'update';
 } else {
 	$formName = 'scheduleForm';
 	$buttonText = 'Submit '. siteVar('act','singular','capital') .' Selections'; 
+	$registered = '<input type="hidden" name="registered" value="'. $now .'">';
+	$op = 'add';
 }
 
 $content .= '<div class="agenda">
         <div class="table-responsive">
 			<form id="'. $formName .'" class="scheduleForm" name="'. $formName .'" method="post">
 				<input type="hidden" name="user" value="'. $userInfo['userID'] .'">
-				<input type="hidden" name="registered" value="'. $now .'">
+				'. $registered .'
 				<input type="hidden" name="updated" value="'. $now .'">
 				<input type="hidden" name="updatedBy" value="'. $_SESSION['userID'] .'">
-				<input type="hidden" name="redirect" value="/my-activities/">
+				<input type="hidden" name="redirect" value="'. $redirect .'">
 				<table class="table table-condensed table-bordered">
 					<thead class="thead-dark">
 						<tr>
@@ -150,7 +121,7 @@ $content .= $formRows;
 $content .= '</tbody>
             	</table>
 				<p class="text-center">
-					<button type="button" class="btn btn-elegant scheduleBtn" data-op="add" '. $disable .'>'. $buttonText .'</button>
+					<button type="button" class="btn btn-elegant scheduleBtn" data-op="'. $op .'" '. $disable .'>'. $buttonText .'</button>
 				</p>
 			</form>
         </div>
