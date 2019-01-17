@@ -9,6 +9,7 @@ $content .='<h2 class="text-center">'. getName($weekID,'weeks',$con) .' Availabl
 
 $scheduledActivities = getScheduledActivities($weekID,$userInfo['userID'],$con);
 $formRows = ''; 
+
 $actScheduled = 0;
 for ($d=1;$d<=5;$d++) {
 	$agenda = '';
@@ -24,9 +25,9 @@ for ($d=1;$d<=5;$d++) {
 	
 	//$schActivity = ((isset($scheduledActivities)) ? $scheduledActivities[$d] : '');
 	
-	if (isset($scheduledActivities)) { 
+	if (!empty($scheduledActivities)) { 
 		$schActivity = $scheduledActivities[$d];
-		$actScheduled = $actScheduled+1;
+		if (is_array( $schActivity)) { $actScheduled = $actScheduled+1; }
 	} else {
 		$schActivity =''; 
 	}
@@ -84,7 +85,7 @@ for ($d=1;$d<=5;$d++) {
 }
 $disable = (($_POST['scheduleOp'] == 'edit') ? ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"') : '');
 
-$content .= '<p>ACT SCHEDULED: '. $actScheduled .'</p>';
+//$content .= '<p>ACT SCHEDULED: '. $actScheduled .'</p>';
 if ($actScheduled>0) {
 	$formName = 'updateScheduleForm';
 	$buttonText = 'Update '. siteVar('act','singular','capital') .' Selections';

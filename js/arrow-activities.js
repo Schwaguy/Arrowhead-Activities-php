@@ -149,6 +149,8 @@ jQuery(document).ready(function($) {
 		errorPlacement: function(error, element) {
 			if (element.attr('type') == 'checkbox') {
 				error.insertAfter('.checkbox-group');
+			} else if (element.attr('type') == 'radio') {
+				error.insertAfter(element.closest('.activity-signup-buttons'));
 			} else {
 				error.insertAfter(element);
 			}

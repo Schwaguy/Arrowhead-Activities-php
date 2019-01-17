@@ -588,7 +588,7 @@ function getScheduledActivities($week,$user,$con) {
 		unset($thurs);
 		unset($fri);
 	} else {
-		$scheduledActivities = array(1=>'',2=>'',3=>'',4=>'',5=>'',); 
+		$scheduledActivities = ''; 
 	}
 	return $scheduledActivities;
 }
