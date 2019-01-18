@@ -42,17 +42,24 @@ if ($_SESSION['userAuth']<3) {
 	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'users') : array('li'=>'','sr'=>''));
 	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/users/" title="User Admin">Users</a></li>';
 	
-	// Bunk Admin
-	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'bunks') : array('li'=>'','sr'=>''));
-	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/bunks/" title="Bunk Admin">Bunks</a></li>';
 	
-	// Week Admin
-	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'weeks') : array('li'=>'','sr'=>''));
-	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/weeks/" title="Week Admin">Weeks</a></li>';
+	$content .= '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-admin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a><div class="dropdown-menu dropdown-menu-right dropdown-info" aria-labelledby="navbarDropdownMenuLink-admin">';
 	
-	// Period Admin
-	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'periods') : array('li'=>'','sr'=>''));
-	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/periods/" title="Period Admin">Periods</a></li>';
+		// Bunk Admin
+		$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'bunks') : array('li'=>'','sr'=>''));
+		$content .= '<a class="dropdown-item '. $linkInfo['li'] .'" href="/admin/bunks/" title="Bunk Admin">Bunks</a>';
+
+		// Week Admin
+		$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'weeks') : array('li'=>'','sr'=>''));
+		$content .= '<a class="dropdown-item '. $linkInfo['li'] .'" href="/admin/weeks/" title="Week Admin">Weeks</a>';
+
+		// Period Admin
+		$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'periods') : array('li'=>'','sr'=>''));
+		$content .= '<a class="dropdown-item '. $linkInfo['li'] .'" href="/admin/periods/" title="Period Admin">Periods</a>';
+
+	$content .= '</div></li>'; 
+	
+	
 }
 $content .= '</ul><!-- Links -->';
 
@@ -70,7 +77,7 @@ $content .= '<ul class="navbar-nav ml-auto nav-flex-icons">
 				  	<a id="logout" class="dropdown-item" href="/logout/">Log out</a>
 				</div>
 			  </li>
-		</ul>
+			</ul>
 	  </div>
 	  <!-- Collapsible content -->
 

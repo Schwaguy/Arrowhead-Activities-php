@@ -8,8 +8,8 @@ require_once($PATH  .'globals/globals.php');
 
 $success = false;
 $redirect = ''; 
-if ($_POST) {
-	foreach($_POST as $key => $value) {
+if ($_REQUEST) {
+	foreach($_REQUEST as $key => $value) {
 		if ($key == 'op') {
 			$op = $value;
 		} elseif ($key == 'table') {
@@ -32,6 +32,12 @@ if ($_POST) {
 					'day'=>$actInfo[2],
 					'period'=>$actInfo[3]
 				);
+				
+				// Get Activity Type
+				$sql = "SELECT type FROM activities WHERE id=". $value ." LIMIT 1"; 
+				$getType = mysqli_fetch_assoc(mysqli_query($con, $sql));
+				$uActNew[] = $getType['type'];
+				
 				unset($key);
 				unset($value);
 			} elseif (($key == 'startTime') || ($key == 'endTime')) {
@@ -50,6 +56,8 @@ if ($_POST) {
 			}
 		}
 	}
+	$uID = $fields['user'];
+	
 	if (count($activities)>0) {
 		foreach ($activities as $k => $act) {
 			$actID = $schedules[$k];
@@ -74,6 +82,9 @@ if ($_POST) {
 				$oldActID = $getAct['activity'];
 				if ($oldActID != $act['id']) {
 					
+					// if old act is one time
+					$oneTime = checkOneTimeAct($typeID,$con);
+					
 					// Update Activity Signup by ID
 					$sql = "REPLACE INTO activity_signups (". implode(',',$udKeys) .") VALUES (". implode(',',$udValues) .")";
 					
@@ -96,11 +107,29 @@ if ($_POST) {
 			unset($udKeys);
 			unset($udValues);
 		}
+		
+		if ($success) {
+			// Check and Adjust User Activity Record
+			$column = date('Y'); // Camp Year Column
+			$sql = "SELECT `". $column ."` FROM user_activities WHERE user=". $uID; 
+			if ($result = $con->query($sql)) {
+				$userActAll = $result->fetch_array(MYSQLI_ASSOC);
+				$userActCurrent = explode(',',$userActAll[$column]);
+			} else {
+				$userActCurrent = array();	
+			}
+		}
+		
+		
+		
+		
 	}
 	$output = (($success) ? array('op'=>'add','feedback'=>'Update Complete','redirect'=>$redirect) : array('op'=>'add','feedback'=>'UPDATE ERROR','redirect'=>''));
 } else {
 	$output = array('op'=>'add','feedback'=>'ERROR','redirect'=>''); 	
 }
+exit;
+end;
 
 if ($con) $con->close(); 
 header('Content-Type: application/json; charset=utf-8', true); 

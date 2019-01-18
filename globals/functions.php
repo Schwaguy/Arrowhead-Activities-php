@@ -746,8 +746,18 @@ function scheduleCheck($table,$field,$date) {
 	return $scheduleDates;
 }
 
+// Check ONe-Time Activities
+function s {
+	$query = 'SELECT oneTime FROM activity_types WHERE id='. $typeID; 
+	if($result = $con->query($query)) {
+		$res = mysqli_fetch_array($result,MYSQLI_ASSOC);
+		$output = $res['oneTime'];
+	}
+	return $output;
+}
+
 // Define Column Sort Variables for Sortable Tables
-function defineSorts($num,$orderBy) {
+/*function defineSorts($num,$orderBy) {
 	for ($i=1;$i<=$num;$i++) {
 		$sortVar = 'sort'. $i;
 		$orderVar = 'order'. $i;
@@ -769,7 +779,7 @@ function defineSorts($num,$orderBy) {
 			$$orderVar = 'orderBy='. $i .'down'; 
 		}
 	}
-}	
+}	*/
 
 
 

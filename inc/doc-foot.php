@@ -1,5 +1,14 @@
 </div><!-- /side-collapse-container -->
 
+<footer id="site-footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-6"><?=$backBtn?></div>
+			<div class="col-6"></div>	
+		</div>
+	</div>	
+</footer>
+
 <!-- JQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-migrate-3.0.1.min.js" integrity="sha256-F0O1TmEa4I8N24nY0bya59eP6svWcshqX1uzwaWC4F4=" crossorigin="anonymous"></script>
@@ -13,11 +22,6 @@
 <script type="text/javascript" src="/js/addons/datatables.min.js"></script>
 
 <script type="text/javascript" src="/js/arrow-activities.js"></script>
-<script>
-	$(document).ready(function() {
-		<?=$docReady?>
-	});	
-</script>
 
 <?php
 require_once('globals/phpDebug.php');

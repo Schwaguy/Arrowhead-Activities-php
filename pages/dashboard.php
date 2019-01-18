@@ -2,8 +2,7 @@
 
 $pageTitle = 'Dashboard'; 
 $page = 'dash'; 
-$content .= '<div class="container main"><h1>Dashboard</h1><div id="dashboard">'; 
-$content .= '<h3>Welcome '. $_SESSION['userFirstName'] .'</h3>';
+$content .= '<div class="container main"><h1>Welcome '. $_SESSION['userFirstName'] .'</h1><div id="dashboard">'; 
 
 if ($_SESSION['userAuth']<=2) { // Admin/Office
 	$content .= '<div class="row d-flex justify-content-around" id="dash-icons">
