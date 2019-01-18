@@ -83,7 +83,13 @@ for ($d=1;$d<=5;$d++) {
 					</td>'. $agenda;
 	}
 }
-$disable = (($_POST['scheduleOp'] == 'edit') ? ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"') : '');
+//$disable = (($_SESSION['userPermissions']['edit'] || ($now <= $week['signupEndDate'])) ? '' : 'disabled="disabled"');
+//$tooltip = (($now>$week['signupEndDate']) ? 'data-toggle="tooltip" data-placement="top" title="Scheduling for this week is closed. If you need to make any changes, please contact the camp office."' : '');
+
+$checkSchedule = checkSchedulDate($now,$week['signupStartDate'],'Scheduling for this week is not available yet',$week['signupEndDate'],'Scheduling for this week is closed. If you need to make any changes, please contact the camp office.');
+$disable = $checkSchedule['disable'];
+$tooltip = $checkSchedule['tooltip'];
+
 
 //$content .= '<p>ACT SCHEDULED: '. $actScheduled .'</p>';
 if ($actScheduled>0) {
@@ -122,7 +128,7 @@ $content .= $formRows;
 $content .= '</tbody>
             	</table>
 				<p class="text-center">
-					<button type="button" class="btn btn-elegant scheduleBtn" data-op="'. $op .'" '. $disable .'>'. $buttonText .'</button>
+					<button type="button" class="btn btn-elegant scheduleBtn" data-op="'. $op .'" '. $disable .' '. $tooltip .'>'. $buttonText .'</button>
 				</p>
 			</form>
         </div>

@@ -17,7 +17,7 @@ global $today, $now;
 date_default_timezone_set("America/New_York");
 $today = date('Y-m-d');
 $now = date('Y-m-d H:i:s');
-$now = date('2019-06-22 19:01:00'); 
+$now = date('2019-06-27 19:01:00'); 
 
 global $weekdays;
 $weekdays = array(

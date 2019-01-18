@@ -435,6 +435,30 @@ function getActivityTypes($con) {
 	return $output;
 }
 
+// Check Scheduling Availability
+function checkSchedulDate($now,$signupStart,$tipEarly,$signupEnd,$tipLate) {
+	if (!$_SESSION['userPermissions']['edit']) {
+		if ($now < $signupStart) {
+			$disable = 'disabled="disabled"';	
+			$tooltip = 'data-toggle="tooltip" data-placement="top" title="'. $tipEarly .'"';
+		} elseif ($now > $signupEnd) {
+			$disable = 'disabled="disabled"';	
+			$tooltip = 'data-toggle="tooltip" data-placement="top" title="'. $tipLate .'"';
+		} else {
+			$disable = ''; 
+			$tooltip = ''; 
+		}
+	} else {
+		$disable = ''; 
+		$tooltip = ''; 
+	}
+	$output = array(
+		'disable'=>$disable,
+		'tooltip'=>$tooltip
+	);
+	return $output;
+}
+
 // Get Activity Info
 function getActivityinfo($actID,$con) {
 	$query = 'SELECT a.*, t.name, t.oneTime, w.startDate FROM activities a LEFT JOIN activity_types t ON (a.type = t.id) LEFT JOIN weeks w ON (a.week = w.id) WHERE a.id='. $actID .' LIMIT 1';  
@@ -746,8 +770,8 @@ function scheduleCheck($table,$field,$date) {
 	return $scheduleDates;
 }
 
-// Check ONe-Time Activities
-function s {
+// Check One-Time Activities
+function checkOneTimeAct($typeID,$con) {
 	$query = 'SELECT oneTime FROM activity_types WHERE id='. $typeID; 
 	if($result = $con->query($query)) {
 		$res = mysqli_fetch_array($result,MYSQLI_ASSOC);

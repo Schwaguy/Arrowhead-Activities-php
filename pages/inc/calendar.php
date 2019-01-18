@@ -35,11 +35,9 @@ foreach ($weeks as $week) {
 							$tooltip = (($now>$week['signupEndDate']) ? 'data-toggle="tooltip" data-placement="top" title="Scheduling for this week is closed"' : '');
 							
 							if (!empty($schActivity[$period['id']])) {
-								//$disable = ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"');
-								/*$disable = (($_SESSION['userPermissions']['edit'] || ($now <= $week['signupEndDate'])) ? '' : 'disabled="disabled"');
-								
-								$tooltip = (($now>$week['signupEndDate']) ? 'data-toggle="tooltip" data-placement="top" title="Scheduling for this week is closed"' : '');*/
-								
+								$checkSchedule = checkSchedulDate($now,$week['signupStartDate'],'Scheduling for this week is not available yet',$week['signupEndDate'],'Scheduling for this week is closed');
+								$disable = $checkSchedule['disable'];
+								$tooltip = $checkSchedule['tooltip'];
 								
 								$weekdays .= '<form method="post" class="scheduled-activity" action="/schedule-activities/">
 									<input type="hidden" name="user" value="'. $userInfo['userID'] .'">
