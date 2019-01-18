@@ -713,7 +713,7 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled,
 								}
 							}
 							
-							// Disable if this is a one-time activity and the camper has already done it
+########################### // Disable if this is a one-time activity and the camper has already done it ###################################################
 							
 							// Disable for Campers if Full
 							if ($activity['space'][strtolower($day)]<=0) { 
