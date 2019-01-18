@@ -33,7 +33,7 @@ for ($d=1;$d<=5;$d++) {
 					<div class="text-muted">'. date_format((date_create($week['startDate'] .' '. $periods[$p]['startTime'])),'g:iA')  .' - '. date_format((date_create($week['startDate'] .' '. $periods[$p]['endTime'])),'g:iA')  .'</div>
              	</td>
                 <td class="agenda-events">';
-	$agenda .= showAgendaActivities($week['id'],$dayOfWeek,$actArray,$periods[$p]['id'],true,'');
+	$agenda .= showAgendaActivities($week['id'],$dayOfWeek,$actArray,$periods[$p]['id'],true,'','',$con);
 	$agenda .= '<form class="agenda-form" method="post" action="/admin/activities/add/">
 				<input type="hidden" name="week" value="'. $week['id'] .'"><input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $periods[$p]['id'] .'"><input type="submit" class="btn btn-light-green agenda-event-button" value="Add New Activity"></form>'; 
 	$agenda .= '</td></tr>';
@@ -47,7 +47,7 @@ for ($d=1;$d<=5;$d++) {
 						<div class="text-muted">'. date_format((date_create($week['startDate'] .' '. $periods[$r]['startTime'])),'g:iA')  .' - '. date_format((date_create($week['startDate'] .' '. $periods[$r]['endTime'])),'g:iA')  .'</div>
 					</td>
 					<td class="agenda-events">';
-			$agenda .= showAgendaActivities($week['id'],$dayOfWeek,$actArray,$periods[$r]['id'],true,'');
+			$agenda .= showAgendaActivities($week['id'],$dayOfWeek,$actArray,$periods[$r]['id'],true,'','',$con);
 			$agenda .= '<form class="agenda-form" method="post" action="/admin/activities/add/">
 				<input type="hidden" name="week" value="'. $week['id'] .'"><input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $periods[$r]['id'] .'"><input type="submit" class="btn btn-light-green agenda-event-button" value="Add New '. siteVar('act','singular','capital') .'"></form>'; 
 			$agenda .= '</td></tr>';

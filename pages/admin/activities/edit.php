@@ -17,9 +17,6 @@
 			5=>(($activity['days']['friday']==1) ? 'checked' : '')
 		);
 		
-		$prerequisites = getPrerequisites(explode(',',$activity['prerequisites']),$con);
-		$restrictions = getRestrictions(explode(',',$activity['restrictions']),$con);
-		
 		$content .= '<div class="container main">
 			
 			<div class="quick-buttons">
@@ -35,10 +32,7 @@
 				<div class="col-12 col-xs-12 col-sm-12 col-md-10 col-lg-10">';
 
 		// New Activity Form
-		$ageGroups = getAgeGroups($activity['groups'],true,true,$con);
-		$weeks = getWeeks('select',$activity['week'],false,true,$con);
-		$periods = getPeriods($activity['period'],false,false,'select',$con);
-		$periods2 = getPeriods('',false,false,'array',$con);
+		$periodsArr = getPeriods('',false,false,'array',$con);
 		$content .= '<form id="form-edit" class="adminForm activity-admin">
 						<input type="hidden" name="id" value="'. $activity['id'] .'">
 						<input type="hidden" name="table" value="activities">
@@ -67,7 +61,7 @@
 								<div class="col-12 col-sm-12 col-md-12 col-md-12 col-lg-8">
 									<div class="row">
 										<div class="col-12 col-sm-12 col-md-6 col-md-6 col-lg-6">
-											<p><label for="location">Location</label><br><input type="text" name="location" class="form-control" value="'. $activity['location'] .'" placeholder="Location" data-rule-required="true" data-msg-required="Location is Required"></p>
+											<p><label for="location">Location</label><br><input type="text" name="location" class="form-control" value="'. $activity['location'] .'" placeholder="Location" data-rule-required="false" data-msg-required="Location is Required"></p>
 										</div>
 										<div class="col-12 col-sm-12 col-md-6 col-lg-6">
 											<p><label for="capacity">Capacity</label><br><input type="number" name="capacity" class="form-control" value="'. $activity['capacity'] .'" placeholder="Capacity" min="0" data-rule-required="true" data-msg-required="Capacity is Required"></p>
@@ -75,15 +69,15 @@
 									</div>
 									<div class="row">
 										<div class="col-12 col-sm-12 col-md-6 col-md-6 col-lg-6">
-											<p><label for="week">Week</label><br>'. $weeks .'</p>
+											<p><label for="week">Week</label><br>'. getWeeks('select',$activity['week'],false,true,$con) .'</p>
 										</div>
 										<div class="col-12 col-sm-12 col-md-6 col-lg-6">
-											<p><label for="period">Period</label><br>'. $periods .'</p>
+											<p><label for="period">Period</label><br>'. getPeriods($activity['period'],false,false,'select',$con) .'</p>
 										</div>
 									</div>
 								</div>
 								<div class="col-12 col-sm-12 col-md-12 col-lg-4">
-									<p><label for="groups">Eligible Age Groups</label><br>'. $ageGroups .'</p>
+									<p><label for="groups">Eligible Age Groups</label><br>'. getAgeGroups($activity['groups'],true,true,$con) .'</p>
 								</div>
 							</div>
 							<div class="col-12">
@@ -94,7 +88,7 @@
 							foreach ($weekdays as $key=>$val) {
 								$cbClass = ''; 
 								$cbDisable = ''; 
-								if ($periods2[$activity['period']]['days'][$key] == 0) {
+								if ($periodsArr[$activity['period']]['days'][$key] == 0) {
 									$cbClass = 'text-muted'; 
 									$cbDisable = 'disabled="disabled"'; 
 								}
@@ -113,11 +107,11 @@
 						<div class="row">
 							<div class="col-12 col-sm-12 col-md-6"><div class="col-12">
 								<h4>Prerequisites</h4>
-								<div class="col-12 checkbox-wrap">'. $prerequisites .'</div>
+								<div class="col-12 checkbox-wrap">'. getPrerequisites(explode(',',$activity['prerequisites']),$con) .'</div>
 							</div></div>
 							<div class="col-12 col-sm-12 col-md-6"><div class="col-12">
 								<h4>Restrictions</h4>
-								<div class="col-12 checkbox-wrap">'. $restrictions .'</div>
+								<div class="col-12 checkbox-wrap">'. getRestrictions(explode(',',$activity['restrictions']),'checkboxes',$con) .'</div>
 							</div></div>
 						</div>
 						<div class="row">

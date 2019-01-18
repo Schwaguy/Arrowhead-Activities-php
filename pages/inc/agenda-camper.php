@@ -46,7 +46,7 @@ for ($d=1;$d<=5;$d++) {
 					<td class="agenda-events">';
 		
 		if ($periods[$p]['days'][$d]==1) {
-			$available = showAgendaActivities($weekID,$dayOfWeek,$actArray,$periods[$p]['id'],false,$schActivity);
+			$available = showAgendaActivities($weekID,$dayOfWeek,$actArray,$periods[$p]['id'],false,$schActivity,$userInfo['userID'],$con);
 			$agenda .= (!empty($available) ? $available : '<p class="text-muted"><em>No '. siteVar('act','plural','capital') .' Availabe Yet</em></p>');
 		} else {
 			$agenda .= '<p class="text-muted"><em>No '. siteVar('act','plural','capital') .' Availabe</em></p>'; 
@@ -65,7 +65,7 @@ for ($d=1;$d<=5;$d++) {
 							</td>
 							<td class="agenda-events">';
 					if ($periods[$p]['days'][$d]==1) {
-						$available = showAgendaActivities($weekID,$dayOfWeek,$actArray,$periods[$r]['id'],false,$schActivity);
+						$available = showAgendaActivities($weekID,$dayOfWeek,$actArray,$periods[$r]['id'],false,$schActivity,$userInfo['userID'],$con);
 						$agenda .= (!empty($available) ? $available : '<p class="text-muted"><em>No '. siteVar('act','plural','capital') .' Availabe Yet</em></p>');
 					} else {
 						$agenda .= '<p class="text-muted"><em>No '. siteVar('act','plural','capital') .' Availabe</em></p>'; 
@@ -83,15 +83,11 @@ for ($d=1;$d<=5;$d++) {
 					</td>'. $agenda;
 	}
 }
-//$disable = (($_SESSION['userPermissions']['edit'] || ($now <= $week['signupEndDate'])) ? '' : 'disabled="disabled"');
-//$tooltip = (($now>$week['signupEndDate']) ? 'data-toggle="tooltip" data-placement="top" title="Scheduling for this week is closed. If you need to make any changes, please contact the camp office."' : '');
 
 $checkSchedule = checkSchedulDate($now,$week['signupStartDate'],'Scheduling for this week is not available yet',$week['signupEndDate'],'Scheduling for this week is closed. If you need to make any changes, please contact the camp office.');
 $disable = $checkSchedule['disable'];
 $tooltip = $checkSchedule['tooltip'];
 
-
-//$content .= '<p>ACT SCHEDULED: '. $actScheduled .'</p>';
 if ($actScheduled>0) {
 	$formName = 'updateScheduleForm';
 	$buttonText = 'Update '. siteVar('act','singular','capital') .' Selections';

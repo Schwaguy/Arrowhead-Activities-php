@@ -10,7 +10,7 @@ function generateHashWithSalt($password) {
 	return $secPW;
 }
 
-// Check Pasword
+// Check Password
 function checkPassword($uName,$uPass,$con) {
 	$pwCheck = '';
 	$query = 'SELECT salt FROM users WHERE username="' . $uName . '"';
@@ -99,7 +99,7 @@ function getUserInfo($uID,$con) {
 	return $user;
 }
 
-// Check to see if User was specified, if not get logge3d in user's info
+// Check to see if User was specified, if not get logged in user's info
 function checkUser($con) {
 	if (isset($_POST['uID'])) {
 		$userInfo = array(
@@ -110,7 +110,8 @@ function checkUser($con) {
 	} else {
 		$userInfo = array(
 			'userID'=>$_SESSION['userID'],
-			'userName'=>$_SESSION['userFirstName'] .' '. $_SESSION['userLastName'],
+			//'userName'=>$_SESSION['userFirstName'] .' '. $_SESSION['userLastName'],
+			'userName'=>$_SESSION['userName'],
 			'bunkInfo'=>$_SESSION['bunkInfo']
 		);
 	}
@@ -385,22 +386,47 @@ function getPrerequisites($selected,$con) {
 }
 
 // Get Restrictions
-function getRestrictions($selected,$con) {
+function getRestrictions($selected,$return,$con) {
 	$query = 'SELECT * FROM restrictions WHERE active=1 ORDER BY name ASC';
 	$result = $con->query($query);
-	$output = '<div class="row d-sm-flex">'; 
-	$x = 0;
-	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
-		$output .= '<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox"><input type="hidden" name="restrictions['. $x .']" value="0"><input type="checkbox" name="restrictions['. $x .']" value="'. $row['id'] .'"';
-		if (is_array($selected)) {
-			if (in_array($row['id'],$selected)) { $output .= ' checked'; }
-		} else {
-			if ($row['id'] == $selected) { $output .= ' checked'; }
+	
+	if ($return == 'checkboxes') {
+		$output = '<div class="row d-sm-flex">'; 
+		$x = 0;
+		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+			$output .= '<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox"><input type="hidden" name="restrictions['. $x .']" value="0"><input type="checkbox" name="restrictions['. $x .']" value="'. $row['id'] .'"';
+			if (is_array($selected)) {
+				if (in_array($row['id'],$selected)) { $output .= ' checked'; }
+			} else {
+				if ($row['id'] == $selected) { $output .= ' checked'; }
+			}
+			$output .= '> <label>'. $row['name'] .'</label></p></div>';
+			$x++;
 		}
-		$output .= '> <label>'. $row['name'] .'</label></p></div>';
-		$x++;
+		$output .= '</div>'; 
+	} else { // Return Array
+		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+			$output = array(
+				'id'=>$row['id'],
+				'name'=>$row['name'],
+				'eligible'=>explode(',',$row['eligible'])
+			);
+		}
 	}
-	$output .= '</div>'; 
+	return $output;
+}
+
+// Get Restriction
+function getRestrictionInfo($restID,$con) {
+	$query = 'SELECT * FROM restrictions WHERE id='. $restID .' LIMIT 1';
+	$result = $con->query($query);
+	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+		$output = array(
+			'id'=>$row['id'],
+			'name'=>$row['name'],
+			'eligible'=>explode(',',$row['eligible'])
+		);
+	}
 	return $output;
 }
 
@@ -550,6 +576,8 @@ function getWeekActivities($week,$con) {
 				'name'=>$act['name'],
 				'week'=>$act['week'],
 				'period'=>$act['period'],
+				'prerequisites'=>$act['prerequisites'],
+				'restrictions'=>$act['restrictions'],
 				'space'=>array(
 					'monday'=>$monSpace,
 					'tuesday'=>$tuesSpace,
@@ -577,7 +605,7 @@ function getWeekActivities($week,$con) {
 
 // Get Scheduled Activities
 function getScheduledActivities($week,$user,$con) {
-	$query = 'SELECT * FROM activity_signups WHERE week='. $week .' AND user='. $user .' AND active=1'; 
+	$query = 'SELECT * FROM activity_signups WHERE week='. $week .' AND user='. $user .' AND active=1';
 	if ($result = $con->query($query)) {
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 			$signupInfo = array('id'=>$row['id'],'activity'=>$row['activity']);
@@ -618,7 +646,7 @@ function getScheduledActivities($week,$user,$con) {
 }
 
 // Show Agenda Activities
-function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled) {
+function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled,$userID,$con) {
 	$activities = '';
 	$scheduleID = '';
 	if (count($actArray)>0) {
@@ -645,14 +673,55 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled)
 						} 
 						$required = (empty($activities) ? 'true' : '');
 						
-						// Disable if scheduling is complete and user cannot edit
-						//$disable = ((!empty($actScheduled)) ? ($_SESSION['userPermissions']['edit'] ? '' : 'disabled="disabled"') : '');
-						$disable = ''; 
+						$disable = '';
+						$disableClass = '';
+						$tooltip = ''; 
 						
-						// Disable for Campers if Full
-						$disable = (($activity['space'][strtolower($day)]<=0) ? 'disabled="disabled"' : $disable);
-						$disableClass = (($activity['space'][strtolower($day)]<=0) ? 'disabled' : '');
-						$tooltip = (($activity['space'][strtolower($day)]<=0) ? 'data-toggle="tooltip" data-placement="top" title="This Activity is Full"' : '');
+						// Admins can override all Scheduling Disables
+						// Non Admins will go throught the disable check process
+						if (!$_SESSION['userPermissions']['admin']) {
+						
+							// Disable for campers that do not have necessary Prerequisites
+							$actPrereqs = array_filter(explode(',',$activity['prerequisites']));
+							if (count($actPrereqs)>0) { 
+								$qualified = false;
+								$camper = getUserInfo($userID,$con);
+								$camperPrereqs = array_filter(explode(',',$camper['prerequisites']));
+								if (count($camperPrereqs)>0) {
+									foreach ($actPrereqs as $prereq) {
+										if (in_array($prereq,$camperPrereqs)) { $qualified = true; }
+									}
+								}
+								if (!$qualified) {
+									$disable = 'disabled="disabled"';	
+									$disableClass = 'disabled';
+									$tooltip = 'data-toggle="tooltip" data-placement="top" title="'. $camper['firstName'] .' is not authorized for '. $activity['name'] .'.  Please contact the Camp Office with any questions."';
+								}
+							} 
+							
+							// Disable if Restricted (Staff only, Paying Campers Only)
+							$actRestrict = array_filter(explode(',',$activity['restrictions']));
+							if (count($actRestrict)>0) { 
+								$camper = getUserInfo($userID,$con);
+								foreach ($actRestrict as $restID) {
+									$rest = getRestrictionInfo($restID,$con);
+									if (!in_array($camper['access_level'],$rest['eligible'])) {
+										$disable = 'disabled="disabled"';	
+										$disableClass = 'disabled';
+										$tooltip = 'data-toggle="tooltip" data-placement="top" title="This '. siteVar('act','singular','capital') .' is for '. $rest['name'] .'"';
+									}
+								}
+							}
+							
+							// Disable if this is a one-time activity and the camper has already done it
+							
+							// Disable for Campers if Full
+							if ($activity['space'][strtolower($day)]<=0) { 
+								$disable = 'disabled="disabled"';	
+								$disableClass = 'disabled';
+								$tooltip = 'data-toggle="tooltip" data-placement="top" title="This '. siteVar('act','singular','capital') .' is Full"';
+							}
+						}
 						
 						$activities .= '<li '. $tooltip .'>
 							<input type="radio" class="schedule-radio '. $active .'" id="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" name="activity-'. $week .'-'. $day .'-'. $period .'" value="'. $activity['id'] .'" data-rule-required="'. $required .'" data-msg-required="Please Select an Activity" '. $checked .' '. $disable .' data-scheduleID="'. $scheduleID .'">

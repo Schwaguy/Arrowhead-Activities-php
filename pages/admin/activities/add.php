@@ -32,13 +32,6 @@
 			<div class="col-12 col-xs-12 col-sm-12 col-md-10 col-lg-10">';
 
 	// New Activity Form
-	//$counselors = getCounselors('',$con);
-	//$ageGroups = getAgeGroups('',true,true,$con);
-	//$weeks = getWeeks('select',$weekSel,false,true,$con);
-	//$periods = getPeriods($periodSel,false,true,'select',$con);
-	$prerequisites = getPrerequisites('',$con);
-	$restrictions = getRestrictions('',$con);
-
 	$content .= '<form id="form-add" class="adminForm activity-admin">
 					
 					<input type="hidden" name="id" value="">
@@ -106,11 +99,11 @@
 					<div class="row">
 						<div class="col-12 col-sm-12 col-md-6"><div class="col-12">
 							<h4>Prerequisites</h4>
-							<div class="col-12 checkbox-wrap">'. $prerequisites .'</div>
+							<div class="col-12 checkbox-wrap">'. getPrerequisites('',$con) .'</div>
 						</div></div>
 						<div class="col-12 col-sm-12 col-md-6"><div class="col-12">
 							<h4>Restrictions</h4>
-							<div class="col-12 checkbox-wrap">'. $restrictions .'</div>
+							<div class="col-12 checkbox-wrap">'. getRestrictions('','checkboxes',$con) .'</div>
 						</div></div>
 					</div>
 					<div class="row">
