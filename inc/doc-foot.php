@@ -20,7 +20,7 @@
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 <!--<script type="text/javascript" src="/js/mdb.min.js"></script>-->
 <script type="text/javascript" src="/js/addons/datatables.min.js"></script>
-
+<script type="text/javascript" src="/js/redirect.jquery.js"></script>
 <script type="text/javascript" src="/js/arrow-activities.js"></script>
 
 <?php

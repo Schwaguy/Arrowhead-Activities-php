@@ -61,7 +61,6 @@ jQuery(document).ready(function($) {
 				}
 				if(option.innerText === inputValue) {
 					hiddenInput.value = option.getAttribute('data-value');
-					//$('.oneTime').addClass('hide');
 					break;
 				} else {
 					$('.oneTime .oneTimeCheck').prop('checked', false);
@@ -81,6 +80,19 @@ jQuery(document).ready(function($) {
 		duration: 500,
 		scrollToAccordion: true
 	});*/
+	
+	// Post Link
+	$('body').on('click','.postLink', function() {
+		var linkPage = $(this).attr('href');
+		var keys = ($(this).data('keys')).split(',');
+		var values = ($(this).data('values')).split(',')
+		var postObject = {};
+		$.each(keys, function(i, item) {
+			postObject[keys[i]] = values[i];
+		});
+		$.redirect(linkPage, postObject);
+		return false;
+	});
 	
 	// Registration Form
 	$('#registerForm').validate({
@@ -223,6 +235,84 @@ jQuery(document).ready(function($) {
 			return false;
 		}
 	});
+	
+	// Disable One-Time-Only Options when one is sclected
+	$('body').on('click','form.scheduleForm .activity-signup-buttons .schedule-button', function() {
+		var thisForm = $('form.scheduleForm');
+		var $thisBtn = $(this).parent('.schedule-item');
+		var $thisBtnGrp = $(this).parents('.activity-signup-buttons');
+		$thisBtnGrp.children('.schedule-item').not($thisBtn).each(function(){
+			$(this).children('.schedule-radio').prop('checked', false);
+		});
+		if ($(this).data('onetime')) {
+			var btnClass = '.'+ $(this).data('onetime');
+			$(btnClass).not($thisBtn).each(function(){
+				$(this).addClass('disabled');
+				$(this).children('.schedule-radio').prop('checked', false);
+				$(this).children('.schedule-radio').prop('disabled', true);
+				$(this).children('.schedule-button').addClass('disabled');
+				$(this).data('toggle','tooltip');
+				$(this).data('placement','top');
+				$(this).prop('title','This can only be taken once per summer');
+ 			});
+		} else {
+			var btnGroup = $(this).closest('.activity-signup-buttons');
+			var oneTimers = new Array();
+			if ($(btnGroup).find('.onetime').length !== 0) {
+				$(btnGroup).find('.onetime .schedule-button').each(function() {
+					var btnClass = $(this).data('onetime');
+					$(this).prop('checked', false);
+					if($.inArray(btnClass, oneTimers) === -1) {
+						if ($(this).data('previous')!=='yes') {
+							oneTimers.push(btnClass);
+						}
+					}
+				});
+				if (oneTimers.length !== 0) {
+					oneTimers = filter_array(oneTimers);
+					$.each(oneTimers, function(key,value) {
+						var onceler = '.'+ value;
+						var ckd = 0;
+						$(thisForm).find(onceler + ' .schedule-radio').each(function() {
+							if ($(this).prop('checked')) {
+								ckd = ckd+1;
+							} 
+						});
+						if (ckd === 0) {
+							$(onceler).removeClass('disabled');
+							$(onceler).children('.schedule-button').removeClass('disabled');
+						} 	
+					});
+				} else {
+					console.log('array is empty');
+				}
+				
+				
+				
+			}
+		}
+		
+		
+	});
+	
+	// Remove Empty Elements form Array
+	function filter_array(test_array) {
+		var index = -1,
+			arr_length = test_array ? test_array.length : 0,
+			resIndex = -1,
+			result = [];
+		while (++index < arr_length) {
+			var value = test_array[index];
+
+			if (value) {
+				result[++resIndex] = value;
+			}
+		}
+		return result;
+	}
+
+	
+	
 	
 	// Update Groups when period changed on Activity Admin Froms
 	$('body').on('change','form.activity-admin .period-select', function() {

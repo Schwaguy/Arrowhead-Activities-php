@@ -3,12 +3,13 @@
 $periods = getPeriods('',false,false,'array',$con);
 $weeks = getWeeks('array','',false,false,$con);
 $activityWeeks = ''; 
-$userInfo = checkUser($con);
+if (!isset($userInfo)) { $userInfo = checkUser($con); }
 
 foreach ($weeks as $week) {
 	//if (in_array($week['id'],$_SESSION['userWeeks'])) {
-	if ($now >= $week['signupStartDate']) {
-		$scheduledActivities = showScheduledActivities($week['id'],$userInfo['userID'],$_SESSION['userPrereqs'],$con);
+	if (($now >= $week['signupStartDate']) || (in_array($_SESSION['userAuth'],$adminAccessLevels))) {
+		//$scheduledActivities = showScheduledActivities($week['id'],$userInfo['userID'],$_SESSION['userPrereqs'],$con);
+		$scheduledActivities = showScheduledActivities($week['id'],$userInfo['userID'],$userInfo['userInfo']['prerequisites'],$con);		
 		$weekdays = '';
 
 		$header = '<header><h4 class="display-4 mb-1 text-center">'. $week['name'] .'</h4><div class="row d-none d-sm-flex p-1 bg-dark text-white">';
@@ -25,7 +26,7 @@ foreach ($weeks as $week) {
 							</h5>';
 
 			foreach ($periods as $period) {
-				if ((isset($_SESSION['bunkInfo'])) && (in_array($_SESSION['bunkInfo']['group'],$period['groups']))) {
+				if ((isset($userInfo['bunkInfo'])) && (in_array($userInfo['bunkInfo']['group'],$period['groups']))) {
 					if ($period['days'][$day['number']]==1) {
 						$weekdays .= '<div class="period"><h6>'. $period['name'] .'</h6>';
 						$activityScheduled = false; 	
@@ -39,9 +40,15 @@ foreach ($weeks as $week) {
 							$disable = $checkSchedule['disable'];
 							$tooltip = $checkSchedule['tooltip'];
 								
-							$weekdays .= '<form method="post" class="scheduled-activity" action="/schedule-activities/">
-								<input type="hidden" name="user" value="'. $userInfo['userID'] .'">
-								<input type="hidden" name="weekID" value="'. $week['id'] .'">
+							$weekdays .= '<form method="post" class="scheduled-activity" action="/schedule-activities/">';
+							if ($camperAdmin) {
+								$weekdays .= '<input type="hidden" name="uID" value="'. $userInfo['userID'] .'">';
+								$weekdays .= '<input type="hidden" name="thisUserName" value="'. $userInfo['userInfo']['firstName'] .' '. $userInfo['userInfo']['lastName'] .'">';
+								$weekdays .= '<input type="hidden" name="bunkID" value="'. $userInfo['bunkInfo']['id'] .'">';
+							} else { 
+								$weekdays .='<input type="hidden" name="user" value="'. $userInfo['userID'] .'">';
+							}
+							$weekdays .= '<input type="hidden" name="weekID" value="'. $week['id'] .'">
 								<input type="hidden" name="redirect" value="'. $redirect .'">
 								<input type="hidden" name="scheduleOp" value="edit">
 								<input type="hidden" name="day" value="'. $d .'">
@@ -50,9 +57,15 @@ foreach ($weeks as $week) {
 								<input type="submit" class="event btn btn-block btn-light-green agenda-event-button d-block" value="'. $schActivity[$period['id']]['name'] .'" '. $disable .' '. $tooltip .'>
 							</form>';
 						} else {
-							$weekdays .= '<form method="post" action="/schedule-activities/">
-								<input type="hidden" name="user" value="'. $userInfo['userID'] .'">
-								<input type="hidden" name="weekID" value="'. $week['id'] .'">
+							$weekdays .= '<form method="post" action="/schedule-activities/">';
+							if ($camperAdmin) {
+								$weekdays .= '<input type="hidden" name="uID" value="'. $userInfo['userID'] .'">';
+								$weekdays .= '<input type="hidden" name="thisUserName" value="'. $userInfo['userInfo']['firstName'] .' '. $userInfo['userInfo']['lastName'] .'">';
+								$weekdays .= '<input type="hidden" name="bunkID" value="'. $userInfo['bunkInfo']['id'] .'">';
+							} else { 
+								$weekdays .='<input type="hidden" name="user" value="'. $userInfo['userID'] .'">';
+							}
+							$weekdays .= '<input type="hidden" name="weekID" value="'. $week['id'] .'">
 								<input type="hidden" name="redirect" value="'. $redirect .'">
 								<input type="hidden" name="scheduleOp" value="add">
 								<input type="hidden" name="day" value="'. $d .'">

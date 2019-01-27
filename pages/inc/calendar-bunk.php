@@ -2,7 +2,10 @@
 
 $periods = getPeriods('',false,false,'array',$con);
 $weeks = getWeeks('array','',false,false,$con);
-$campers = getBunkRoster($_SESSION['userBunk'],$_SESSION['userID'],$con);
+$bunk = (isset($_POST['bunk']) ? $_POST['bunk'] : (!empty($_SESSION['userBunk']) ? $_SESSION['userBunk'] : 0));
+$counselor = (isset($_POST['counselor']) ? $_POST['counselor'] : (!empty($_SESSION['userID']) ? $_SESSION['userID'] : 0));
+$campers = getBunkRoster($bunk,$counselor,$con);
+$bunkInfo = (isset($bunkInfo) ? $bunkInfo : (is_array($_SESSION['bunkInfo']) ? $_SESSION['bunkInfo'] : array()));
 
 $content .= '<div id="list-group-edit" class="list-group list-group-flush list-group-admin">';
 foreach ($weeks as $week) {
@@ -22,7 +25,7 @@ foreach ($weeks as $week) {
 	$weekdays = '';
 	if (is_array($campers)) {
 		foreach ($campers as $camper) {
-			if (in_array($week['id'],(explode(',',$camper['week'])))) {
+			//if (in_array($week['id'],(explode(',',$camper['week'])))) {
 				$weekdays .= '<div class="row border border-right-0 border-bottom-0">';
 				$weekdays .= '<div class="day col-sm p-2 border border-left-0 border-top-0">
 								<h5 class="camper-name">'. $camper['lastName'] .', '. $camper['firstName'] .'</h5>
@@ -42,7 +45,7 @@ foreach ($weeks as $week) {
 									</h5>';
 
 					foreach ($periods as $period) {
-						if ((is_array($_SESSION['bunkInfo']) && (in_array($_SESSION['bunkInfo']['group'],$period['groups'])))) {
+						if (in_array($bunkInfo['group'],$period['groups'])) {
 							if ($period['days'][$day['number']]==1) {
 								$weekdays .= '<div class="period"><h6>'. $period['name'] .'</h6>';
 								if (!empty($schActivity[$period['id']])) {
@@ -81,7 +84,7 @@ foreach ($weeks as $week) {
 					$d++;
 				} // foreach day
 				$weekdays .= '</div><!-- /camper row -->';
-			}
+			//}
 		} // foreach camper
 	} else {
 		$weekdays .= '<div class="row border border-right-0 border-bottom-0">';

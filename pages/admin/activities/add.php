@@ -49,7 +49,7 @@
 						<datalist id="typeList">'. getActivityTypes($con) .'</datalist>
 						<input type="hidden" name="type" id="typeInput-hidden" class="hiddenInput"></p>
 						
-						<p class="oneTime hide">
+						<p class="oneTime">
 							<input type="hidden" name="oneTime" value="0">
 							<input type="checkbox" name="oneTime" value="1"> <label for="oneTime">Check if this is a One-Time-Only Activity
 						</p>

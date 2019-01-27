@@ -105,14 +105,16 @@ function checkUser($con) {
 		$userInfo = array(
 			'userID'=>$_POST['uID'],
 			'userName'=>$_POST['thisUserName'],
-			'bunkInfo'=>getBunkInfo($_POST['bunkID'],'',$con)
+			'bunkInfo'=>getBunkInfo($_POST['bunkID'],'',$con),
+			'userInfo'=>getUserInfo($_POST['uID'],$con)
 		);
 	} else {
 		$userInfo = array(
 			'userID'=>$_SESSION['userID'],
-			//'userName'=>$_SESSION['userFirstName'] .' '. $_SESSION['userLastName'],
-			'userName'=>$_SESSION['userName'],
-			'bunkInfo'=>$_SESSION['bunkInfo']
+			'userName'=>$_SESSION['userFirstName'] .' '. $_SESSION['userLastName'],
+			//'userName'=>$_SESSION['userName'],
+			'bunkInfo'=>$_SESSION['bunkInfo'],
+			'userInfo'=>getUserInfo($_SESSION['userID'],$con)
 		);
 	}
 	return $userInfo;
@@ -440,6 +442,7 @@ function getBunkInfo($bunkID,$counselorID,$con) {
 	$query = 'SELECT b.*, u.firstName, u.lastName FROM bunks b LEFT JOIN users u ON (b.counselor = u.id) WHERE b.id='. $bunkID .' LIMIT 1'; 
 	if($result = $con->query($query)) {
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+			$outputArray['id'] = $row['id'];
 			$outputArray['name'] = $row['name'];
 			$outputArray['group'] = $row['groups'];
 			$outputArray['counselor'] = $row['firstName'] .' '. $row['lastName'];
@@ -558,7 +561,7 @@ function getActivitySignups($actID,$con) {
 
 // Get Activites for the week
 function getWeekActivities($week,$con) {
-	$sql = 'SELECT a.*, t.name FROM activities a LEFT JOIN activity_types t ON (a.type = t.id) WHERE a.week='. $week .' ORDER BY t.name';  
+	$sql = 'SELECT a.*, t.id AS type, t.name, t.oneTime FROM activities a LEFT JOIN activity_types t ON (a.type = t.id) WHERE a.week='. $week .' ORDER BY t.name';  
 	$monday = array();
 	$tuesday = array();
 	$wednesday = array();
@@ -573,11 +576,13 @@ function getWeekActivities($week,$con) {
 			$friSpace = (($act['friday']) ? $act['capacity']-$act['regFriday'] : 0);
 			$activity = array(
 				'id'=>$act['id'],
+				'type'=>$act['type'],
 				'name'=>$act['name'],
 				'week'=>$act['week'],
 				'period'=>$act['period'],
 				'prerequisites'=>$act['prerequisites'],
 				'restrictions'=>$act['restrictions'],
+				'oneTime'=>$act['oneTime'],
 				'space'=>array(
 					'monday'=>$monSpace,
 					'tuesday'=>$tuesSpace,
@@ -662,6 +667,8 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled,
 						// Mark as active if scheduling is complete
 						$active = '';
 						$checked = ''; 
+						$actClass = '';
+						$actData = ''; 
 						if (is_array($actScheduled)) {
 							if(isset($actScheduled[$period])) {
 								$scheduleID = $actScheduled[$period]['id'];
@@ -713,7 +720,24 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled,
 								}
 							}
 							
-########################### // Disable if this is a one-time activity and the camper has already done it ###################################################
+							// Disable if this is a one-time activity and the camper has already done it 
+							if ($activity['oneTime']) {
+								//$activities .= '<li>oneTime</li>';
+								$column = date('Y'); // Camp Year Column
+								$sql = "SELECT `". $column ."` FROM user_activities WHERE user=". $userID; 
+								if ($result = $con->query($sql)) {
+									$actClass .= 'onetime onetime-'. $activity['id'];
+									$actData .= 'data-onetime="onetime-'. $activity['id'] .'"';
+									$userActAll = $result->fetch_array(MYSQLI_ASSOC);
+									$userAct = explode(',',$userActAll[$column]);
+									if (in_array($activity['type'],$userAct)) {
+										$disable = 'disabled="disabled"';	
+										$disableClass = 'disabled';
+										$actData .= ' data-previous="yes"';
+										$tooltip = 'data-toggle="tooltip" data-placement="top" title="'. $activity['name'] .' can only be taken once per summer"';
+									}
+								} 
+							} 
 							
 							// Disable for Campers if Full
 							if ($activity['space'][strtolower($day)]<=0) { 
@@ -723,9 +747,9 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled,
 							}
 						}
 						
-						$activities .= '<li '. $tooltip .'>
+						$activities .= '<li '. $tooltip .' class="schedule-item '. $actClass .'">
 							<input type="radio" class="schedule-radio '. $active .'" id="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" name="activity-'. $week .'-'. $day .'-'. $period .'" value="'. $activity['id'] .'" data-rule-required="'. $required .'" data-msg-required="Please Select an Activity" '. $checked .' '. $disable .' data-scheduleID="'. $scheduleID .'">
-							<label for="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" class="btn btn-light schedule-button '. $active .' '. $disableClass .'">'. $activity['name'] .'
+							<label for="activity-'. $week .'-'. $day .'-'. $period .'-'. $activity['id'] .'" class="btn btn-light schedule-button '. $active .' '. $disableClass .'" '. $actData .'>'. $activity['name'] .'
 								<div class="small">'. $activity['space'][strtolower($day)] .' spots left</div>
 							</label>
 						</li>';
@@ -752,7 +776,7 @@ function showScheduledActivities($week,$user,$prereqs,$con) {
 			if (empty($prerequisites)) {
 				$canSchedule = true;	
 			} else {
-				$prerequisites = (!is_array($r['prerequisites']) ? explode(',',$r['prerequisites']  ) : $r['prerequisites']);
+				$prerequisites = (!is_array($r['prerequisites']) ? explode(',',$r['prerequisites']) : $r['prerequisites']);
 				if (in_array($r['activity'],$prerequisites)) {
 					$canSchedule = true;
 				}
@@ -788,7 +812,8 @@ function showScheduledActivities($week,$user,$prereqs,$con) {
 		unset($thurs);
 		unset($fri);
 	} else {
-		$scheduledActivities = array(1=>'',2=>'',3=>'',4=>'',5=>'',); 
+		//$scheduledActivities = array(1=>'',2=>'',3=>'',4=>'',5=>'',);
+		$scheduledActivities = '';
 	}
 	return $scheduledActivities;
 }

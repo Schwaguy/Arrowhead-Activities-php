@@ -17,7 +17,7 @@ global $today, $now;
 date_default_timezone_set("America/New_York");
 $today = date('Y-m-d');
 $now = date('Y-m-d H:i:s');
-$now = date('2019-06-27 19:01:00'); 
+$now = date('2019-06-22 19:01:00'); 
 
 global $weekdays;
 $weekdays = array(
@@ -27,6 +27,10 @@ $weekdays = array(
 	4=>'thursday',
 	5=>'friday',
 );
+
+global $adminAccessLevels,$camperAccessLevels;
+$adminAccessLevels = array(1,2);
+$camperAccessLevels = array(4,5);
 
 // Global Element File
 global $URL, $ROOTPATH, $SITEURL;

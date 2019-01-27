@@ -33,7 +33,7 @@ if ($_SESSION['userAuth']==3) {
 	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'my-bunk') : array('li'=>'','sr'=>''));
 	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/my-bunk/">My Bunk'. $linkInfo['sr'] .'</a></li>';
 }
-if ($_SESSION['userAuth']<3) {
+if (in_array($_SESSION['userAuth'],$adminAccessLevels)) {
 	// Activity Admin
 	$linkInfo = (!empty($sp) ? checkPageLink($sp,'activities') : array('li'=>'','sr'=>''));
 	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/activities/overview/" title="'. siteVar('act','singular','capital') .' Admin">'. siteVar('act','plural','capital') . $linkInfo['sr'] .'</a></li>';

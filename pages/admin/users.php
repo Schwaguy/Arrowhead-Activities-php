@@ -54,8 +54,12 @@
 							<label for="password_repeat">Repeat Password</label>
 							<input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter Password Again" data-rule-required="false" data-msg-required="Password Confirmation is Required">
 						</div>
-						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
-							'. getWeeks('select','',true,false,$con) .'
+						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle"></div>
+					</div>
+					<div class="row row-flex form-row">
+						<div class="col-12 col-xs-12 col-sm-12 col-md-12 align-middle">
+							<label for="prerequisites">Prerequisites</label>
+							<div class="col-12 checkbox-wrap">'. getPrerequisites('',$con) .'</div>
 						</div>
 					</div>
 					<div class="col-12 text-center">
@@ -103,11 +107,26 @@
 								<button class="btn btn-danger btn-sm adminBtn" data-op="delete">Delete</button>
 							</form>
 						</div>
+						
+						<div col-12 div-xs-col-12 div-sm-col-12 div-md-col-12 text-center">
+							<form method="post" class="" action="/reports/camper-activities/">
+								<input type="hidden" name="uID" value="'. $user['id'] .'">
+								<input type="hidden" name="thisUserName" value="'. $user['firstName'] .' '. $user['lastName'] .'">
+								<input type="hidden" name="bunkID" value="'. $user['bunk'] .'">
+								'. ((in_array($user['access_level'],$camperAccessLevels)) ? '<button class="btn btn-mdb-color btn-sm adminBtn">Activities</button>' : '') .'
+							</form>
+						</div>
+						
 					</div>
 				</td>
 			</tr>';
 		}
 		$content .= '</tbody></table></div></div>';
+		
+
+		
+		
+		
 	} 
 
 	$content .= '</div><!-- /col -->
