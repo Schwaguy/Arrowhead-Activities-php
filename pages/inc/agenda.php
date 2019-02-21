@@ -58,8 +58,11 @@ for ($d=1;$d<=5;$d++) {
 				<td class="agenda-date" class="active" rowspan="'. $count .'">
                 	<div class="dayofmonth">'. $dayOfMonth .'</div>
                   	<div class="dayofweek">'. $dayOfWeek .'</div>
-                  	<div class="shortdate text-muted">'. $monthYear .'</div>
-              	</td>'. $agenda;
+                  	<div class="shortdate text-muted">'. $monthYear .'</div>';
+				if ($_SESSION['userPermissions']['report'] == 1) {
+					$content .= '<a class="btn btn-light printLink" data-camper="" data-week="'. $week['id'] .'" data-activity="" data-date="'. $date->format('Y-m-d') .'">Print Signups</a>';
+				}
+	$content .= '</td>'. $agenda;
 }
 $content .= '</tbody>
             </table>

@@ -59,14 +59,55 @@ if ($_POST) {
 			}
 		}
 	}
+	
+	// Update Bunks if this is a counselor
+	if (($table=='users') && ($_POST['access_level']==3)) { 
+		if ($_POST['bunk']>0) {
+			// Check to see if a councelor is already assigned to this bunk, if so, update old counselor
+			$sql = "SELECT counselor FROM bunks WHERE id=". $_POST['bunk'] ." LIMIT 1" ; 
+			if ($result = $con->query($sql)) {
+				$row = mysqli_fetch_assoc($result);
+				if ($row['counselor']>0) {
+					$sql = "UPDATE users SET bunk=0 WHERE id=". $row['counselor']; 
+					$result = $con->query($sql);
+				}
+			}
+			// Update bunks to set new Counselor
+			$sql = "UPDATE bunks SET counselor=". $id ." WHERE id=". $_POST['bunk'];	
+			$result = $con->query($sql);
+		}
+	} 
+	
+	//echo 'HERE'; 
+	// Update Counselor's user record if this is a Bunk edit
+	if (($table=='bunks') && !empty($_POST['counselor'])) {
+		$sql = "SELECT counselor FROM bunks WHERE id=". $id ." LIMIT 1";
+		//echo '<p>'. $sql .'</p>'; 
+		if ($result = $con->query($sql)) {
+			$row = mysqli_fetch_assoc($result);
+			if ($row['counselor']>0) {
+				$sql = "UPDATE users SET bunk=0 WHERE id=". $row['counselor']; 
+				//echo '<p>'. $sql .'</p>';
+				$result = $con->query($sql);
+			}
+		}
+		// Update bunks to set new Counselor
+		$sql = "UPDATE users SET bunk=". $id ." WHERE id=". $_POST['counselor'];
+		//cho '<p>'. $sql .'</p>';
+		$result = $con->query($sql);
+	}
+	
 	$updates = implode(', ',$updates);
 	$sql = "UPDATE ". $table ." SET ". $updates ." WHERE id=". $id ." LIMIT 1";
+	//echo '<p>'. $sql .'</p>';
 	$result = $con->query($sql);
 	
 	$output = (($result) ? array('update'=>$id,'op'=>'update','table'=>$table,'updateString'=>'update successful','feedback'=>'UPDATE COMPLETE','redirect'=>$redirect) : array('update'=>'0','op'=>'update','table'=>$table,'updateString'=>strtoupper($table) .' UPDATE ERROR : '. $sql,'feedback'=>strtoupper($table) .' UPDATE ERROR : '. $sql,'redirect'=>''));
 } else {
 	$output = array('update'=>'0','op'=>'update','table'=>'','updateString'=>'NO INFO','feedback'=>'','redirect'=>''); 	
 }
+//exit;
+//end;
 
 if ($con) $con->close(); 
 header('Content-Type: application/json; charset=utf-8', true); 

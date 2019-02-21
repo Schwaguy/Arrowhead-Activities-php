@@ -24,7 +24,7 @@ function checkPassword($uName,$uPass,$con) {
 // Get User Information for Valid Login
 function logUserIn($uName,$pwCheck,$today,$con) {
 	$loggedin = false;
-	$query = 'SELECT u.*, a.super, a.admin, a.manage, a.edit, a.schedule FROM users u LEFT JOIN access_levels a ON (u.access_level = a.id) WHERE u.username="' . $uName . '"';
+	$query = 'SELECT u.*, a.super, a.admin, a.manage, a.edit, a.schedule, a.report FROM users u LEFT JOIN access_levels a ON (u.access_level = a.id) WHERE u.username="' . $uName . '"';
 	if ($pwCheck) { $query .= ' AND u.password="'. $pwCheck .'"'; }
 	if ($result = $con->query($query)) {
 		$row = $result->fetch_array(MYSQLI_ASSOC);
@@ -35,6 +35,7 @@ function logUserIn($uName,$pwCheck,$today,$con) {
 				'super'=>$row['super'],
 				'admin'=>$row['admin'],
 				'manage'=>$row['manage'],
+				'report'=>$row['report'],
 				'edit'=>$row['edit'],
 				'schedule'=>$row['schedule']
 			);
@@ -147,6 +148,195 @@ function getName($id,$table,$con) {
 		$output = $row['name'];
 	}
 	return $output;
+}
+
+// Get Week Info
+function getWeekInfo($weekID,$con) {
+	$week = ''; 
+	$query = 'SELECT * FROM weeks WHERE id='. $weekID .' LIMIT 1'; 
+	if($result = $con->query($query)) {
+		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+			$week['id'] = $row['id'];
+			$week['name'] = $row['name'];
+			$week['startDate'] = $row['startDate'];
+			$week['endDate'] = $row['endDate'];
+			$week['signupStartDate'] = $row['signupStartDate'];
+			$week['signupEndDate'] = $row['signupEndDate'];
+			$week['days'] = array(
+				array(
+					'number'=>1,
+					'name'=>'monday',
+					'date'=>$row['startDate'],
+					'nicedate'=>date_format(date_create($row['startDate']),'F jS')
+				),
+				array(
+					'number'=>2,
+					'name'=>'tuesday',
+					'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 1 days')),
+					'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 1 days'))
+				),
+				array(
+					'number'=>3,
+					'name'=>'wednesday',
+					'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 2 days')),
+					'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 2 days'))
+				),
+				array(
+					'number'=>4,
+					'name'=>'thursday',
+					'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 3 days')),
+					'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 3 days'))
+				),
+				array(
+					'number'=>5,
+					'name'=>'friday',
+					'date'=>date('Y-m-d', strtotime($row['startDate']. ' + 4 days')),
+					'nicedate'=>date('F jS', strtotime($row['startDate']. ' + 4 days'))
+				)
+			);
+		}
+	}
+	return $week;
+}
+
+// Show Camper Schedule
+function showCamperSchedule($weekID,$camper,$week,$showName,$bunkInfo,$periods,$con) {
+	$content = '<div class="row border border-right-0 border-bottom-0">';
+	if($showName) {
+		$content .= '<div class="day col-sm p-2 border border-left-0 border-top-0"><h5 class="camper-name">'. $camper['lastName'] .', '. $camper['firstName'] .'</h5></div>';
+	}
+	$scheduledActivities = showScheduledActivities($weekID,$camper['id'],$camper['prerequisites'],$con);
+			
+	$d = 1;
+	foreach ($week['days'] as $day) {
+		$schActivity = ((isset($scheduledActivities)) ? $scheduledActivities[$d] : '');
+
+		$content .= '<div class="day col-sm p-2 border border-left-0 border-top-0 text-truncate">
+									<h5 class="row align-items-center">
+										<span class="date col-1 d-sm-none nicedate">'. $day['nicedate'] .'</span>
+										<small class="col d-sm-none text-center text-muted dayname">'. $day['name'] .'</small>
+										<span class="col-1"></span>
+									</h5>';
+		foreach ($periods as $period) {
+			if (in_array($bunkInfo['group'],$period['groups'])) {
+				if ($period['days'][$day['number']]==1) {
+					$content .= '<div class="period"><h6>'. $period['name'] .'</h6>';
+					if (!empty($schActivity[$period['id']])) {
+						$content .= '<div class="event btn btn-block btn-light-green agenda-event-button d-block view-only">'. $schActivity[$period['id']]['name'] .'</div>';
+					} else {
+						$content .= '<div class="btn btn-block btn-light agenda-event-button d-block view-only disabled">Not Scheduled</div>';
+					}
+					$content .= '</div><!-- /period -->';
+				}
+			}
+		} // foreach period
+		$content .= '</div><!-- /day -->';
+		$d++;
+	} // foreach day
+	$content .= '</div><!-- /camper row -->';
+	return $content;
+}
+
+// Show Activity Signups
+function showActivitySignups($activity,$day,$signups,$con) {
+	$periods = getPeriods('',false,false,'array',$con);
+	if ($day) {
+		switch ($day) {
+			case 'Monday':
+				$d = 1;
+				break;
+			case 'Tuesday':
+				$d = 2;
+				break;
+			case 'Wednesday':
+				$d = 3;
+				break;
+			case 'Thursday':
+				$d = 4;
+				break;
+			case 'Friday':
+				$d = 5;
+				break;
+		}
+		
+		$count = 1;
+		$p = (($periods[1]['days'][$d] == 1) ? 1 : 2);
+		for ($v=0;$v<count($periods);$v++) {
+			if ((!isset($p)) && $v==$activity['period]']){
+				$p = $v;
+			}
+		}
+
+		$actSignups = '';  
+		if ($periods[$p]['days'][$d]==1) {
+			$campers = (is_array($signups[$d]) ? $signups[$d] : '');
+			if (!empty($campers)) {
+				$actSignups .= '<p class="text-muted"><em>Listed in signup order</em></p><ol class="signupList">';
+				foreach ($campers as $camper) {
+					$actSignups .= '<li>'. $camper['user']['lastName'] .', '. $camper['user']['firstName'] . ($camper['bunk']['name'] ? ' ('. $camper['bunk']['name'] .')' : '') .'</li>';
+				}
+				$actSignups .= '</ol><!-- /signupList -->';
+			} else {
+				$actSignups .= '<p class="text-muted"><em>No Signups Yet</em></p>';	
+			}
+		} else {
+			$actSignups .= '<p class="text-muted"><em>No Signups Yet</em></p>'; 
+		}
+		
+		$content .= '<div class="agenda">'. $actSignups .'</div>';
+	} else {
+		$tableHead = ''; 
+		$tableBody = '';
+		for ($d=1;$d<=5;$d++) {
+			$agenda = '';
+			$startDate = $activity['startDate'];
+			$date = date_create($startDate);
+			date_add($date, date_interval_create_from_date_string(($d-1) .' days'));
+			$dayOfMonth = date_format($date,'d');
+			$dayOfWeek = date_format($date,'l');
+			$monthYear = date_format($date,'F, Y');
+
+			// Show first Activity Period
+			$count = 1;
+			$p = (($periods[1]['days'][$d] == 1) ? 1 : 2);
+
+			for ($v=0;$v<count($periods);$v++) {
+				if ((!isset($p)) && $v==$activity['period]']){
+					$p = $v;
+				}
+			}
+
+			$actSignups = '';  
+			if ($periods[$p]['days'][$d]==1) {
+				$campers = (is_array($signups[$d]) ? $signups[$d] : '');
+				if (!empty($campers)) {
+					$actSignups .= '<p class="text-muted"><em>Listed in signup order</em></p><ol class="signupList">';
+					foreach ($campers as $camper) {
+						$actSignups .= '<li>'. $camper['user']['lastName'] .', '. $camper['user']['firstName'] . ($camper['bunk']['name'] ? ' ('. $camper['bunk']['name'] .')' : '') .'</li>';
+					}
+					$actSignups .= '</ol><!-- /signupList -->';
+				} else {
+					$actSignups .= '<p class="text-muted"><em>No Signups Yet</em></p>';	
+				}
+			} else {
+				$actSignups .= '<p class="text-muted"><em>No Signups Yet</em></p>'; 
+			}
+			$tableBody .= '<td>'. $actSignups .'</td>';
+
+			$tableHead .= '<th class="agenda-date"><div class="dayofmonth">'. $dayOfMonth .'</div><div class="dayofweek">'. $dayOfWeek .'</div><div class="shortdate text-muted">'. $monthYear .'</div></th>';
+		}
+		$content .= '<div class="agenda">
+			<div class="table-responsive">
+				<table class="table table-condensed table-bordered">
+					<thead class="thead-dark">
+						<tr>'. $tableHead .'</tr>
+					</thead>
+					<tbody><tr>'. $tableBody .'</tr></tbody>
+				</table>
+			</div>
+		</div>';
+	}
+	return $content;
 }
 
 // Get Users
@@ -490,7 +680,7 @@ function checkSchedulDate($now,$signupStart,$tipEarly,$signupEnd,$tipLate) {
 
 // Get Activity Info
 function getActivityinfo($actID,$con) {
-	$query = 'SELECT a.*, t.name, t.oneTime, w.startDate FROM activities a LEFT JOIN activity_types t ON (a.type = t.id) LEFT JOIN weeks w ON (a.week = w.id) WHERE a.id='. $actID .' LIMIT 1';  
+	$query = 'SELECT a.*, t.name, t.oneTime, w.startDate, w.name AS weekname FROM activities a LEFT JOIN activity_types t ON (a.type = t.id) LEFT JOIN weeks w ON (a.week = w.id) WHERE a.id='. $actID .' LIMIT 1';  
 	if($result = $con->query($query)) {
 		while ($act=$result->fetch_array(MYSQLI_ASSOC)) {
 			$activity = array(
@@ -502,6 +692,7 @@ function getActivityinfo($actID,$con) {
 				'capacity'=>$act['capacity'],
 				'groups'=>explode(',',$act['groups']),
 				'week'=>$act['week'],
+				'weekname'=>$act['weekname'],
 				'startDate'=>$act['startDate'],
 				'period'=>$act['period'],
 				'days'=>array(
@@ -606,6 +797,28 @@ function getWeekActivities($week,$con) {
 		'friday'=>$friday,
 	);
 	return $weekActivities;
+}
+
+// Get Activites for the Day
+function getDayActivities($week,$day,$con) {
+	$sql = 'SELECT a.*, t.id AS type, t.name, t.oneTime FROM activities a LEFT JOIN activity_types t ON (a.type = t.id) WHERE a.week='. $week .' AND '. strtolower($day) .'=1 ORDER BY t.name';  
+	if ($res = $con->query($sql)) {
+		while ($act=$res->fetch_array(MYSQLI_ASSOC)) {
+			$activity = array(
+				'id'=>$act['id'],
+				'type'=>$act['type'],
+				'name'=>$act['name'],
+				'week'=>$act['week'],
+				'period'=>$act['period'],
+				'prerequisites'=>$act['prerequisites'],
+				'restrictions'=>$act['restrictions'],
+				'oneTime'=>$act['oneTime'],
+				'space'=>(($act[strtolower($day)]) ? $act['capacity']-$act['reg'. $day] : 0)
+			);
+			$dayActivities[$act['id']] = $activity;
+		}
+	}
+	return $dayActivities;
 }
 
 // Get Scheduled Activities
@@ -824,7 +1037,7 @@ function getBunkRoster($bunkID,$counselorID,$con) {
 		$getID = mysqli_fetch_assoc(mysqli_query($con, 'SELECT id FROM bunks WHERE counselor='. $counselorID));
 		$bunkID = $getID['id'];
 	} 
-	$query = 'SELECT id, firstName, lastName, email, lastLogin, week, prerequisites, bunk FROM users WHERE bunk='. $bunkID .' AND active=1 ORDER by lastName ASC, firstName ASC';
+	$query = 'SELECT id, firstName, lastName, email, lastLogin, week, prerequisites, bunk FROM users WHERE bunk='. $bunkID .' AND active=1 AND access_level!=3 ORDER by lastName ASC, firstName ASC';
 	if ($result = $con->query($query)) {
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 			$user = array(

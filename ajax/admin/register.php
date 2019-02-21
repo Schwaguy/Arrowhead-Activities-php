@@ -34,6 +34,23 @@ if ($_POST) {
 			} else {
 				include('inc/addrow-users.php');
 			}
+			
+			// Update Bunks if this is a counselor
+			if (($access_level==3) && ($bunk>0)) {
+				// Check to see if a councelor is already assigned to this bunk, if so, update old counselor
+				$sql = "SELECT counselor FROM bunks WHERE id=". $bunk ." LIMIT 1" ; 
+				if ($result = $con->query($sql)) {
+					$row = mysqli_fetch_assoc($result);
+					if ($row['counselor'] > 0) {
+						$sql = "UPDATE users SET bunk=0 WHERE id=". $row['counselor']; 
+						$result = $con->query($sql);
+					}
+				}
+				// Update bunks to set new Counselor
+				$sql = "UPDATE bunks SET counselor=". $id ." WHERE id=". $bunk;
+				$result = $con->query($sql);
+			}
+			
 			$output = array('update'=>$id,'accountCreated'=>'true','feedback'=>'User Account Created','redirect'=>$redirect,'updateString'=>$addRow);
 		} else {
 			$output = array('update'=>'0','accountCreated'=>'false','feedback'=>'We\'ve encountered an error.<br>Please try again.','redirect'=>$redirect);	

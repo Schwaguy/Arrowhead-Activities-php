@@ -17,18 +17,35 @@
 			5=>(($activity['days']['friday']==1) ? 'checked' : '')
 		);
 		
-		$content .= '<div class="container main">
-			
-			<div class="quick-buttons">
-				<form method="post" action="/admin/activities/view-signups/">
+		$content .= '<div class="container main">';
+		/*	
+		$content .= '<div class="quick-buttons">
+				<form method="post" action="/admin/activities/view-signups/" class="inline">
 					<input type="hidden" name="id" value="'. $activity['id'] .'">
 					<input type="submit" class="btn btn-primary" value="View Signups">
-				</form>
+				</form>';
+		
+		if ($_SESSION['userPermissions']['report'] == 1) {
+			$content .= ' <a class="btn btn-primary printLink inline" data-camper="" data-week="" data-bunk="" data-activity="'. $activity['id'] .'">Print Signups</a>';
+		}
+		
+		$content .= '</div>';*/
+		
+		$content .= '<div class="row">
+			<div class="col-12 col-xs-12 col-sm-6 col-md-6 col-lg-6">
+				<h1 class="page-title">Edit '. siteVar('act','singular','capital') .'</h1>
 			</div>
+			<div class="col-12 col-xs-12 col-sm-6 col-md-6 col-lg-6 text-right">
+				<form method="post" action="/admin/activities/view-signups/" class="inline">
+					<input type="hidden" name="id" value="'. $activity['id'] .'">
+					<input type="submit" class="btn btn-primary" value="View Signups">
+				</form>';
+		if ($_SESSION['userPermissions']['report'] == 1) {
+			$content .= ' <a class="btn btn-primary printLink inline" data-camper="" data-week="" data-bunk="" data-activity="'. $activity['id'] .'">Print Signups</a>';
+		}
+		$content .= '</div></div>';
 			
-			<h1 class="page-title">Edit '. siteVar('act','singular','capital') .'</h1>
-			
-			<div class="row justify-content-md-center">
+		$content .= '<div class="row justify-content-md-center">
 				<div class="col-12 col-xs-12 col-sm-12 col-md-10 col-lg-10">';
 
 		// New Activity Form

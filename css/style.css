@@ -291,6 +291,7 @@ a:active {
 .btn:disabled:hover {
   -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  cursor: default;
 }
 .btn.btn-block {
   margin: inherit;
@@ -2805,6 +2806,20 @@ a:active {
   float: right;
   padding: 0.5em 0 0 0;
 }
+.btn.view-only {
+  cursor: default !important;
+}
+.print .btn:hover,
+.print .btn:focus,
+.print .btn:active,
+.btn.view-only:hover,
+.btn.view-only:focus,
+.btn.view-only:active {
+  cursor: default !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+}
 .activity-signup-buttons {
   position: relative;
   margin: 0;
@@ -3237,6 +3252,9 @@ p.checkbox {
 .hide {
   display: none;
 }
+.inline {
+  display: inline-block !important;
+}
 .list-group .list-group-item:first-child {
   -webkit-border-top-left-radius: 0.125rem;
   border-top-left-radius: 0.125rem;
@@ -3507,6 +3525,9 @@ table.dataTable thead .sorting_desc_disabled:after {
 .add-item-box {
   margin-bottom: 2em;
 }
+.signupList {
+  padding-left: 1em;
+}
 @media (max-width: 991px) {
   .collapse:not(.show) {
     display: none !important;
@@ -3532,6 +3553,9 @@ table.dataTable thead .sorting_desc_disabled:after {
 }
 .agenda .agenda-date .shortdate {
   font-size: 0.75em;
+}
+.agenda .agenda-date .printLink {
+  margin-top: 1em;
 }
 /* Times */
 .agenda .agenda-time {
@@ -3611,7 +3635,7 @@ input[type='submit'].d-block {
 @media (min-width: 576px) {
   .day {
     height: auto;
-    min-height: 12vw;
+    min-height: 10vw;
   }
 }
 /* Footer */
@@ -3710,4 +3734,23 @@ input[type='submit'].d-block {
     text-align: center;
     margin-top: 2em;
   }
+}
+/* Printed Reports */
+.print h2 {
+  padding-top: 1em;
+}
+.print .day {
+  min-height: 5vw;
+}
+.print .agenda-event-button {
+  padding: 0.5rem 0.5rem;
+}
+.print .p-1 {
+  padding: .15rem .15rem 0 .15rem !important;
+}
+.print .p-2 {
+  padding: 0 0.5rem !important;
+}
+.schedule-wrap {
+  page-break-inside: avoid;
 }

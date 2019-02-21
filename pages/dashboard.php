@@ -124,7 +124,7 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) { // Admin/Office
 } elseif ($_SESSION['userAuth']==6) {  // Directors
 	$content .= '<div class="row d-flex justify-content-around" id="dash-icons">
 				<div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
-					<a class="panel panel-yellow" href="/my-bunk/">
+					<a class="panel panel-yellow" href="/admin/bunks/" title="Bunk Schedules">
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-12 text-center">
@@ -132,10 +132,10 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) { // Admin/Office
                                 </div>
                             </div>
                         </div>
-						<div class="panel-footer text-center">
-                        	<p class="clearfix"><span class="pull-left">My Bunk</span>
-                          	<span class="pull-right"><i class="far fa-arrow-circle-right"></i></span></p>
-                     	</div>
+                        <div class="panel-footer text-center">
+                        	<p class="clearfix"><span class="pull-left">Bunk Schedules</span>
+                            <span class="pull-right"><i class="far fa-arrow-circle-right"></i></span></p>
+                        </div>
                     </a>
                 </div>
                 <div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
@@ -190,7 +190,7 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) { // Admin/Office
                 </div>
             </div>
             <!-- /.row -->';
-} elseif ($_SESSION['userAuth']==3) {  // Counsilors
+} elseif ($_SESSION['userAuth']==3) {  // Counselors
 	$content .= '<div class="row d-flex justify-content-around" id="dash-icons">
 				<div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
 					<a class="panel panel-yellow" href="/my-bunk/">

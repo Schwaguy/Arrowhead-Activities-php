@@ -179,7 +179,7 @@ jQuery(document).ready(function($) {
 			var frm = $(this).closest('.adminForm');
 			var ajaxUrl = '/ajax/admin/'+ op +'.php'; 
 			var formData = 'op=' + op + '&' + $(frm).serialize();
-			//formData+ "&op=" + op;
+			//console.log(ajaxUrl +'?'+ formData);
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
@@ -236,7 +236,45 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
-	// Disable One-Time-Only Options when one is sclected
+	// Print Report
+	$('body').on('click', '.printLink', function() {
+		$('#feedback').show();
+		$('#processing').show();
+		var camper = ($(this).data('camper') ? $(this).data('camper') : '');
+		var bunk = ($(this).data('bunk') ? $(this).data('bunk') : '');
+		var week = ($(this).data('week') ? $(this).data('week') : '');
+		var activity = ($(this).data('activity') ? $(this).data('activity') : '');
+		var date = ($(this).data('date') ? $(this).data('date') : '');
+		var ajaxUrl = '/ajax/report/print-schedule.php'; 
+		var formData = 'camper='+ camper +'&week='+ week +'&bunk='+ bunk +'&activity='+ activity +'&date='+ date;
+		console.log(ajaxUrl +'?'+ formData);
+		
+		$.ajax({
+			type: 'POST',
+			url: ajaxUrl,
+			data: formData
+		})
+		.done(function(data){ // if getting done then call.
+			if (data.output){
+				var myWindow=window.open('','','');
+				myWindow.document.write(data.output);
+				myWindow.document.close();
+				myWindow.focus();
+				myWindow.print();
+				myWindow.close();
+				$('#feedback').hide();
+				$('#processing').hide();
+			} else {
+				$('#response').html('No Output');
+			}
+		})
+		.fail(function() { // if fail then getting message
+			$('#response').html('POST FAILED');
+		});
+		return false;
+	});
+	
+	// Disable One-Time-Only Options when one is selected
 	$('body').on('click','form.scheduleForm .activity-signup-buttons .schedule-button', function() {
 		var thisForm = $('form.scheduleForm');
 		var $thisBtn = $(this).parent('.schedule-item');
@@ -286,13 +324,8 @@ jQuery(document).ready(function($) {
 				} else {
 					console.log('array is empty');
 				}
-				
-				
-				
 			}
 		}
-		
-		
 	});
 	
 	// Remove Empty Elements form Array
@@ -311,9 +344,6 @@ jQuery(document).ready(function($) {
 		return result;
 	}
 
-	
-	
-	
 	// Update Groups when period changed on Activity Admin Froms
 	$('body').on('change','form.activity-admin .period-select', function() {
 		var selected = $(this).children("option:selected").val(); 
@@ -399,15 +429,7 @@ jQuery(document).ready(function($) {
 								$('#feedback').fadeOut();
 							}, 2000);
 						}
-					} /*else if (data.output.op == 'delete') {
-						$('#processing').hide();
-						$('#response').show().html(data.output.feedback);
-						var deleteID = '#form-'+ data.output.update;
-						$.when($(deleteID).animate({ backgroundColor: '#fbc7c7' }, 'fast').animate({ opacity: 'hide' }, 'slow')).then(function() { 
-							$(deleteID).remove();
-							$('#feedback').fadeOut();
-						});
-					}*/
+					} 
 				} else {
 					$('#response').html('No Output');
 				}
@@ -421,7 +443,6 @@ jQuery(document).ready(function($) {
 	
 	// Link Form Submits
 	$('body').on('click', '.submitLink', function() {
-		console.log('Clicky');
 		$(this).parent('form').submit();
 		return false;
 	});

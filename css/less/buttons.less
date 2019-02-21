@@ -51,7 +51,9 @@
     padding: 0.3rem 1rem; }
 .btn.disabled:active, .btn.disabled:focus, .btn.disabled:hover, .btn:disabled:active, .btn:disabled:focus, .btn:disabled:hover {
     -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12); }
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12); 
+	cursor: default;
+}
 .btn.btn-block {
     margin: inherit; }
 .btn.btn-link {
@@ -1740,6 +1742,20 @@
 .quick-buttons {
 	float: right;
 	padding: 0.5em 0 0 0;
+}
+.btn.view-only {
+	cursor: default !important;
+}
+.print .btn:hover,
+.print .btn:focus,
+.print .btn:active,
+.btn.view-only:hover,
+.btn.view-only:focus,
+.btn.view-only:active {
+	cursor: default !important;
+	-webkit-box-shadow: none !important;
+	   -moz-box-shadow: none !important;
+   			box-shadow: none !important;
 }
 
 // Activity Selection Form
