@@ -6,7 +6,7 @@ $weekActivities = getWeekActivities($week['id'],$con);
 $content .= '<div class="agenda">
         <div class="table-responsive">
             <table class="table table-condensed table-bordered">
-                <thead class="thead-dark">
+                <thead class="thead-dark no-mobile">
                     <tr>
                         <th>Date</th>
                         <th>Period</th>
@@ -56,9 +56,11 @@ for ($d=1;$d<=5;$d++) {
 	}
 	$content .= '<tr>
 				<td class="agenda-date" class="active" rowspan="'. $count .'">
-                	<div class="dayofmonth">'. $dayOfMonth .'</div>
-                  	<div class="dayofweek">'. $dayOfWeek .'</div>
-                  	<div class="shortdate text-muted">'. $monthYear .'</div>';
+					<div class="date-wrap">
+						<div class="dayofmonth">'. $dayOfMonth .'</div>
+						<div class="dayofweek">'. $dayOfWeek .'</div>
+						<div class="shortdate text-muted">'. $monthYear .'</div>
+					</div>';
 				if ($_SESSION['userPermissions']['report'] == 1) {
 					$content .= '<a class="btn btn-light printLink" data-camper="" data-week="'. $week['id'] .'" data-activity="" data-date="'. $date->format('Y-m-d') .'">Print Signups</a>';
 				}

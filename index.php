@@ -20,6 +20,5 @@
 <body>
 	<?=$content?>
 	<?php include('inc/doc-foot.php'); ?>
-	<div id="feedback"><div id="processing"><i class="fas fa-spinner fa-pulse fa-spin"></i></div><div id="response" class="container">Feedback Goes Here</div></div>
 </body>
 </html>

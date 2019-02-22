@@ -16,7 +16,4 @@
 		$thisPg = $_REQUEST['tp'];
 		$tp = $_REQUEST['tp'];
 	} 
-	/*if (empty($thisPg)) {
-		$thisPg = 'home'; 
-	}*/
 ?>

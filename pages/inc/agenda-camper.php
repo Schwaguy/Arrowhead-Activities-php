@@ -23,8 +23,6 @@ for ($d=1;$d<=5;$d++) {
 	
 	$actArray = $weekActivities[strtolower($dayOfWeek)];
 	
-	//$schActivity = ((isset($scheduledActivities)) ? $scheduledActivities[$d] : '');
-	
 	if (!empty($scheduledActivities)) { 
 		$schActivity = $scheduledActivities[$d];
 		if (is_array( $schActivity)) { $actScheduled = $actScheduled+1; }
@@ -41,7 +39,7 @@ for ($d=1;$d<=5;$d++) {
 		}
 		$agenda .= '<td class="agenda-time period">
 						'. $periods[$p]['name'] .'
-						<div class="text-muted">'. date_format((date_create($startDate .' '. $periods[$p]['startTime'])),'g:iA')  .' - '. date_format((date_create($startDate .' '. $periods[$p]['endTime'])),'g:iA')  .'</div>
+						<div class="text-muted period-times">'. date_format((date_create($startDate .' '. $periods[$p]['startTime'])),'g:iA')  .' - '. date_format((date_create($startDate .' '. $periods[$p]['endTime'])),'g:iA')  .'</div>
 					</td>
 					<td class="agenda-events">';
 		
@@ -61,7 +59,7 @@ for ($d=1;$d<=5;$d++) {
 					$agenda .= '<tr>
 							<td class="agenda-time">
 								'. $periods[$r]['name'] .'
-								<div class="text-muted">'. date_format((date_create($startDate .' '. $periods[$r]['startTime'])),'g:iA')  .' - '. date_format((date_create($startDate .' '. $periods[$r]['endTime'])),'g:iA')  .'</div>
+								<div class="text-muted period-times">'. date_format((date_create($startDate .' '. $periods[$r]['startTime'])),'g:iA')  .' - '. date_format((date_create($startDate .' '. $periods[$r]['endTime'])),'g:iA')  .'</div>
 							</td>
 							<td class="agenda-events">';
 					if ($periods[$p]['days'][$d]==1) {
@@ -110,14 +108,13 @@ $content .= '<div class="agenda">
 				<input type="hidden" name="redirect" value="'. $redirect .'">
 				<table class="table table-condensed table-bordered">
 					<thead class="thead-dark">
-						<tr>
+						<tr class="no-mobile">
 							<th>Date</th>
 							<th>Period</th>
 							<th>'. siteVar('act','plural','capital') .'</th>
 						</tr>
 					</thead>
 					<tbody>';
-
 
 $content .= $formRows;
 

@@ -20,11 +20,14 @@
 										<input class="form-control" placeholder="Password" name="uPass" type="password" value="">
 									</div>
 									<div class="row">
-										<div class="col col-xs-12 col-sm-12 col-md-6 text-left">
+										<div class="col col-xs-12 col-sm-12 col-md-3 text-left">
 											<input type="submit" class="btn btn-default btn-lg" value="Login" />
 										</div>
-										<div class="col col-xs-12 col-sm-12 col-md-6 text-right">
+										<div class="col col-xs-12 col-sm-12 col-md-3 text-center">
 											<a href="#register" class="btn btn-default btn-lg scroll-link btn-register" title="Register" data-toggle="collapse" data-target="#register" aria-expanded="false" aria-controls="register">Register</a>
+										</div>
+										<div class="col col-xs-12 col-sm-12 col-md-6 text-right">
+											<a href="#forgot" class="btn btn-default btn-lg scroll-link btn-register" title="Forgot Password" data-toggle="collapse" data-target="#forgot" aria-expanded="false" aria-controls="forgot">Forgot Password</a>
 										</div>
 									</div>
 								</fieldset>
@@ -50,10 +53,6 @@
 										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="lastName" placeholder="Your Last Name" required></div>
 									</div>
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Your Bunk</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle">'. getBunks('','select',$con) .'</div>
-									</div>
-									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Username</label></div>
 										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="username" placeholder="Your Username" required></div>
 									</div>
@@ -72,7 +71,26 @@
 									<div class="text-right"><input type="submit" class="btn btn-default btn-lg" value="Register" /></div>
 								</form>
 							</div>
-						</div>
+						</div><!-- / register -->
+						
+						<div class="collapse" id="forgot">
+  							<div class="card card-body">
+								<h3 class="card-title">Enter Your Username or Email Address</h3>
+								<form id="forgotForm" class="forgotForm" name="forgotForm" method="post">
+									<input type="hidden" name="redirect" value="/forgot/">
+									<div class="row form-row align-middle">
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Username</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="username" placeholder="Your Username" required></div>
+									</div>
+									<div class="row form-row align-middle">
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Email</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="email" class="form-control" name="email" placeholder="Your Email Address"></div>
+									</div>
+									<div class="text-right"><input type="submit" class="btn btn-default btn-lg" value="Reset Password" /></div>
+								</form>
+							</div>
+						</div><!-- / register -->
+						
 					</div><!-- /.login-panel --> 
 				</div><!-- /.login --> 
             </div>

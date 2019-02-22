@@ -47,14 +47,15 @@
 							<input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter Password Again" data-rule-required="false" data-msg-required="Password Confirmation is Required">
 						</div>
 					</div>';
-	if (in_array($user['access_level'],array(4,5))) {
-		$content .= '<div class="row row-flex form-row">
+	$prereqDisplay = (($_SESSION['userPermissions']['edit']==1) ? '' : 'style="display: none"');
+	//if (in_array($user['access_level'],array(4,5))) {
+		$content .= '<div class="row row-flex form-row" '. $prereqDisplay .'>
 			<div class="col-12 col-xs-12 col-sm-12 col-md-12 align-middle">
 				<label for="prerequisites">Prerequisites</label>
 				<div class="col-12 checkbox-wrap">'. getPrerequisites(explode(',',$user['prerequisites']),$con) .'</div>
 			</div>
 		</div>'; 
-	}
+	//}
 	$content .= '<div class="row row-flex form-row">
 					<div class="col-12 text-center">
 						<button type="button" class="btn btn-dark-green adminBtn" data-op="update">Save Updates</button>

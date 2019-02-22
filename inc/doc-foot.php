@@ -1,5 +1,6 @@
 </div><!-- /side-collapse-container -->
 
+<?php if (!empty($thisPg) && ($thisPage!='logout')) : ?>
 <footer id="site-footer">
 	<div class="container">
 		<div class="row">
@@ -8,6 +9,9 @@
 		</div>
 	</div>	
 </footer>
+<?php endif ?>
+
+<div id="feedback"><div id="processing"><i class="fas fa-spinner fa-pulse fa-spin"></i></div><div id="response" class="container"></div></div>
 
 <!-- JQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

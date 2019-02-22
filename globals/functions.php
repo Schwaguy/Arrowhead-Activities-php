@@ -124,8 +124,9 @@ function checkUser($con) {
 // Get Auth
 function getAuth($selected,$required,$userAuth,$disabled,$con) {
 	$req = ($required ? 'true' : 'false');
-	$dis = ($disabled ? 'disabled' : '');
-	$output = '<select name="access_level" class="form-control browser-default custom-select" data-rule-required="'. $req .'" data-msg-required="Please Select Access Level" '. $dis .'><option value="">&lt; select access level &gt;</option>'; 
+	$dis= (($disabled || $_SESSION['userPermissions']['edit']!=1) ? 'readonly="readonly"' : '');
+	$authSelDisableClass = (($disabled || $_SESSION['userPermissions']['edit']!=1) ? 'readonly' : '');
+	$output = '<select name="access_level" class="form-control browser-default custom-select '. $authSelDisableClass .'" data-rule-required="'. $req .'" data-msg-required="Please Select Access Level" '. $dis .'><option value="">&lt; select access level &gt;</option>'; 
 	$queryParam = (($userAuth>1) ? 'AND id>1' : '');
 	$query = 'SELECT * FROM access_levels WHERE active=1 '. $queryParam .' ORDER BY ID DESC';
 	$result = $con->query($query);
@@ -424,7 +425,9 @@ function getBunks($selected,$return,$con) {
 	if ($return == 'select') {
 		$query = 'SELECT b.id as bunkID, b.name AS bunkName, a.age_min, a.name AS groupName FROM bunks b LEFT JOIN bunk_age_groups a ON (b.groups = a.id) WHERE active=1 ORDER BY a.age_min ASC, a.name DESC';
 		$result = $con->query($query);
-		$output = '<select name="bunk" class="form-control browser-default custom-select" data-rule-required="false" data-msg-required="Please Select Bunk"><option value="">&lt; select bunk &gt;</option>'; 
+		$bunkSelDisable = (($_SESSION['userPermissions']['edit']==1) ? '' : 'readonly="readonly"');
+		$bunkSelDisableClass = (($_SESSION['userPermissions']['edit']==1) ? '' : 'readonly');
+		$output = '<select name="bunk" class="form-control browser-default custom-select '. $bunkSelDisableClass .'" data-rule-required="false" data-msg-required="Please Select Bunk" '. $bunkSelDisable .'><option value="">&lt; select bunk &gt;</option>'; 
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 			$output .= '<option value="'. $row['bunkID'] .'"';
 			if ($row['bunkID'] == $selected)
@@ -566,9 +569,9 @@ function getPrerequisites($selected,$con) {
 	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 		$output .= '<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox"><input type="hidden" name="prerequisites['. $x .']" value="0"><input type="checkbox" name="prerequisites['. $x .']" value="'. $row['id'] .'"';
 		if (is_array($selected)) {
-			if (in_array($row['id'],$selected)) { $output .= ' checked'; }
+			if (in_array($row['id'],$selected)) { $output .= ' checked="checked"'; }
 		} else {
-			if ($row['id'] == $selected) { $output .= ' checked'; }
+			if ($row['id'] == $selected) { $output .= ' checked="checked"'; }
 		}
 		$output .= '> <label>'. $row['name'] .'</label></p></div>';
 		$x++;
@@ -588,9 +591,9 @@ function getRestrictions($selected,$return,$con) {
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 			$output .= '<div class="col-12 col-xs-12 col-sm-6 col-md-auto"><p class="checkbox"><input type="hidden" name="restrictions['. $x .']" value="0"><input type="checkbox" name="restrictions['. $x .']" value="'. $row['id'] .'"';
 			if (is_array($selected)) {
-				if (in_array($row['id'],$selected)) { $output .= ' checked'; }
+				if (in_array($row['id'],$selected)) { $output .= ' checked="checked"'; }
 			} else {
-				if ($row['id'] == $selected) { $output .= ' checked'; }
+				if ($row['id'] == $selected) { $output .= ' checked="checked"'; }
 			}
 			$output .= '> <label>'. $row['name'] .'</label></p></div>';
 			$x++;
