@@ -29,11 +29,9 @@ if ($_POST) {
 
 				$sql = "UPDATE users SET resetKey='". $key ."' WHERE id=". $row['id'];
 				if ($result = $con->query($sql)) {
-
+					// Send Password Email	
 					/* Using SendGrid smtp service: https://sendgrid.com/marketing/login */ 
 					require('../../inc/sendgrid-php/sendgrid-php.php');
-
-					// Live Info
 					$toEmail = $row['email'];
 					//$toEmail = 'josh@comocreative.com'; // Testing
 					$toEmailName = $row['firstName'] .' '. $row['lastName'];
@@ -46,7 +44,7 @@ if ($_POST) {
 					if($toEmail) {
 						// Email Message
 						$subject = $companyName .' Password Reset'; 
-						$message = '<p>A password reset has been requested for your '. $companyName .' activity scheduling account.</p><p>Please <a href="'. $SITEURL .'/reset/'. $row['id'] .'/'. $key .'">click here</a> to reset your password.</p>';
+						$message = '<p>A password reset has been requested for your '. $companyName .' '. siteVar('act','singular','lowercase') .' scheduling account.</p><p>Please <a href="'. $SITEURL .'/reset/'. $row['id'] .'/'. $key .'">click here</a> to reset your password.</p>';
 						$sendgrid = new SendGrid($mailUN,$mailPW);
 						$email = new SendGrid\Email();
 						$email
@@ -63,7 +61,7 @@ if ($_POST) {
 
 						$output = array('feedback'=>'Please check your email for Password Reset Instructions','redirect'=>$redirect);
 					} else {
-						$output = array('feedback'=>'We\'ve encountered an error.<br>Please visit the Camp Office to reset your password.','redirect'=>'/');
+						$output = array('feedback'=>'We\'ve encountered an error.<br>Please visit the Camp Office to reset your password or email <a href="mailto:'. $formFromEmail .'">'. $formFromEmail .'</a>.','redirect'=>'/');
 					}
 				} else {
 					$output = array('feedback'=>'We\'ve encountered an error.<br>Please try again.','redirect'=>'/');	

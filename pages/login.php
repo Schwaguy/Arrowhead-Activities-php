@@ -27,7 +27,7 @@
 											<a href="#register" class="btn btn-default btn-lg scroll-link btn-register" id="btnRegister" title="Register" data-toggle="collapse" data-target="#register" aria-expanded="false" aria-controls="register">Register</a>
 										</div>
 										<div class="col col-xs-12 col-sm-12 col-md-6 text-right">
-											<a href="#forgot" class="btn btn-default btn-lg scroll-link btn-register" id="btnForgot" title="Forgot Password" data-toggle="collapse" data-target="#forgot" aria-expanded="false" aria-controls="forgot">Forgot Password</a>
+											<a href="#forgot" class="btn btn-light btn-lg scroll-link btn-register" id="btnForgot" title="Forgot Password" data-toggle="collapse" data-target="#forgot" aria-expanded="false" aria-controls="forgot">Forgot Password</a>
 										</div>
 									</div>
 								</fieldset>
@@ -58,7 +58,7 @@
 									</div>
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="email">Email</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="email" class="form-control" name="email" placeholder="Your Email Address"></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="email" class="form-control" name="email" placeholder="Your Email Address" required></div>
 									</div>
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="password">Password</label></div>

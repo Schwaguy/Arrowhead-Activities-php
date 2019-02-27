@@ -26,55 +26,58 @@ foreach ($weeks as $week) {
 							</h5>';
 
 			foreach ($periods as $period) {
-				if ((isset($userInfo['bunkInfo'])) && (in_array($userInfo['bunkInfo']['group'],$period['groups']))) {
-					if ($period['days'][$day['number']]==1) {
-						$weekdays .= '<div class="period"><h6>'. $period['name'] .'</h6>';
-						$activityScheduled = false; 	
-							
-						$disable = (($_SESSION['userPermissions']['edit'] || ($now <= $week['signupEndDate'])) ? '' : 'disabled="disabled"');
-								
-						$tooltip = (($now>$week['signupEndDate']) ? 'data-toggle="tooltip" data-placement="top" title="Scheduling for this week is closed"' : '');
-							
-						if (!empty($schActivity[$period['id']])) {
-							$checkSchedule = checkSchedulDate($now,$week['signupStartDate'],'Scheduling for this week is not available yet',$week['signupEndDate'],'Scheduling for this week is closed');
-							$disable = $checkSchedule['disable'];
-							$tooltip = $checkSchedule['tooltip'];
-								
-							$weekdays .= '<form method="post" class="scheduled-activity" action="/schedule-activities/">';
-							if ($camperAdmin) {
-								$weekdays .= '<input type="hidden" name="uID" value="'. $userInfo['userID'] .'">';
-								$weekdays .= '<input type="hidden" name="thisUserName" value="'. $userInfo['userInfo']['firstName'] .' '. $userInfo['userInfo']['lastName'] .'">';
-								$weekdays .= '<input type="hidden" name="bunkID" value="'. $userInfo['bunkInfo']['id'] .'">';
-							} else { 
-								$weekdays .='<input type="hidden" name="user" value="'. $userInfo['userID'] .'">';
+				if (isset($userInfo['bunkInfo'])) {
+					//if ((isset($userInfo['bunkInfo'])) && (in_array($userInfo['bunkInfo']['group'],$period['groups']))) {
+					if (isset($userInfo['bunkInfo']['group']) && (in_array($userInfo['bunkInfo']['group'],$period['groups']))) {
+						if ($period['days'][$day['number']]==1) {
+							$weekdays .= '<div class="period"><h6>'. $period['name'] .'</h6>';
+							$activityScheduled = false; 	
+
+							$disable = (($_SESSION['userPermissions']['edit'] || ($now <= $week['signupEndDate'])) ? '' : 'disabled="disabled"');
+
+							$tooltip = (($now>$week['signupEndDate']) ? 'data-toggle="tooltip" data-placement="top" title="Scheduling for this week is closed"' : '');
+
+							if (!empty($schActivity[$period['id']])) {
+								$checkSchedule = checkSchedulDate($now,$week['signupStartDate'],'Scheduling for this week is not available yet',$week['signupEndDate'],'Scheduling for this week is closed');
+								$disable = $checkSchedule['disable'];
+								$tooltip = $checkSchedule['tooltip'];
+
+								$weekdays .= '<form method="post" class="scheduled-activity" action="/schedule-activities/">';
+								if ($camperAdmin) {
+									$weekdays .= '<input type="hidden" name="uID" value="'. $userInfo['userID'] .'">';
+									$weekdays .= '<input type="hidden" name="thisUserName" value="'. $userInfo['userInfo']['firstName'] .' '. $userInfo['userInfo']['lastName'] .'">';
+									$weekdays .= '<input type="hidden" name="bunkID" value="'. $userInfo['bunkInfo']['id'] .'">';
+								} else { 
+									$weekdays .='<input type="hidden" name="user" value="'. $userInfo['userID'] .'">';
+								}
+								$weekdays .= '<input type="hidden" name="weekID" value="'. $week['id'] .'">
+									<input type="hidden" name="redirect" value="'. $redirect .'">
+									<input type="hidden" name="scheduleOp" value="edit">
+									<input type="hidden" name="day" value="'. $d .'">
+									<input type="hidden" name="period" value="'. $period['id'] .'">
+									<input type="hidden" name="startDate" value="'. $week['days'][0]['date'] .'">
+									<input type="submit" class="event btn btn-block btn-light-green agenda-event-button d-block" value="'. $schActivity[$period['id']]['name'] .'" '. $disable .' '. $tooltip .'>
+								</form>';
+							} else {
+								$weekdays .= '<form method="post" action="/schedule-activities/">';
+								if ($camperAdmin) {
+									$weekdays .= '<input type="hidden" name="uID" value="'. $userInfo['userID'] .'">';
+									$weekdays .= '<input type="hidden" name="thisUserName" value="'. $userInfo['userInfo']['firstName'] .' '. $userInfo['userInfo']['lastName'] .'">';
+									$weekdays .= '<input type="hidden" name="bunkID" value="'. $userInfo['bunkInfo']['id'] .'">';
+								} else { 
+									$weekdays .='<input type="hidden" name="user" value="'. $userInfo['userID'] .'">';
+								}
+								$weekdays .= '<input type="hidden" name="weekID" value="'. $week['id'] .'">
+									<input type="hidden" name="redirect" value="'. $redirect .'">
+									<input type="hidden" name="scheduleOp" value="add">
+									<input type="hidden" name="day" value="'. $d .'">
+									<input type="hidden" name="period" value="'. $period['id'] .'">
+									<input type="hidden" name="startDate" value="'. $week['days'][0]['date'] .'">
+									<input type="submit" class="btn btn-light agenda-event-button" value="Click to Schedule '. siteVar('act','plural','capital') .'" '. $disable .' '. $tooltip .'>
+								</form>';
 							}
-							$weekdays .= '<input type="hidden" name="weekID" value="'. $week['id'] .'">
-								<input type="hidden" name="redirect" value="'. $redirect .'">
-								<input type="hidden" name="scheduleOp" value="edit">
-								<input type="hidden" name="day" value="'. $d .'">
-								<input type="hidden" name="period" value="'. $period['id'] .'">
-								<input type="hidden" name="startDate" value="'. $week['days'][0]['date'] .'">
-								<input type="submit" class="event btn btn-block btn-light-green agenda-event-button d-block" value="'. $schActivity[$period['id']]['name'] .'" '. $disable .' '. $tooltip .'>
-							</form>';
-						} else {
-							$weekdays .= '<form method="post" action="/schedule-activities/">';
-							if ($camperAdmin) {
-								$weekdays .= '<input type="hidden" name="uID" value="'. $userInfo['userID'] .'">';
-								$weekdays .= '<input type="hidden" name="thisUserName" value="'. $userInfo['userInfo']['firstName'] .' '. $userInfo['userInfo']['lastName'] .'">';
-								$weekdays .= '<input type="hidden" name="bunkID" value="'. $userInfo['bunkInfo']['id'] .'">';
-							} else { 
-								$weekdays .='<input type="hidden" name="user" value="'. $userInfo['userID'] .'">';
-							}
-							$weekdays .= '<input type="hidden" name="weekID" value="'. $week['id'] .'">
-								<input type="hidden" name="redirect" value="'. $redirect .'">
-								<input type="hidden" name="scheduleOp" value="add">
-								<input type="hidden" name="day" value="'. $d .'">
-								<input type="hidden" name="period" value="'. $period['id'] .'">
-								<input type="hidden" name="startDate" value="'. $week['days'][0]['date'] .'">
-								<input type="submit" class="btn btn-light agenda-event-button" value="Click to Schedule '. siteVar('act','plural','capital') .'" '. $disable .' '. $tooltip .'>
-							</form>';
+							$weekdays .= '</div>';
 						}
-						$weekdays .= '</div>';
 					}
 				}
 			}

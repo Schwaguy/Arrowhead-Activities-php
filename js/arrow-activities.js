@@ -73,7 +73,6 @@ jQuery(document).ready(function($) {
 		$('[data-toggle="tooltip"]').tooltip();
 	});
 	
-	
 	/*$('#tabs').responsiveTabs({
 		startCollapsed: 'accordion',
 		animation: 'slide',
@@ -105,6 +104,7 @@ jQuery(document).ready(function($) {
 		submitHandler: function(form) {
 			var ajaxUrl = '/ajax/admin/register.php'; 
 			var formData = $(form).serialize();
+			console.log(ajaxUrl +'?'+ formData);
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
@@ -423,10 +423,12 @@ jQuery(document).ready(function($) {
 				$(this).children('.schedule-radio').prop('checked', false);
 				$(this).children('.schedule-radio').prop('disabled', true);
 				$(this).children('.schedule-button').addClass('disabled');
-				$(this).data('toggle','tooltip');
-				$(this).data('placement','top');
-				$(this).prop('title','This can only be taken once per summer');
- 			});
+				//$(this).data('toggle','tooltip');
+				//$(this).data('placement','top');
+				//var toolTitle = 'This can only be taken once per summer';
+				//$(this).data('original-title',toolTitle);
+				//$(this).prop('title',toolTitle);
+			});
 		} else {
 			var btnGroup = $(this).closest('.activity-signup-buttons');
 			var oneTimers = new Array();

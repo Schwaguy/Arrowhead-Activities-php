@@ -16,7 +16,7 @@ if ($_POST) {
 		$lastName = mysqli_real_escape_string($con, (trim($_POST['lastName'])));
 		$username = mysqli_real_escape_string($con, (trim($_POST['username'])));
 		$email = mysqli_real_escape_string($con, (trim($_POST['email'])));
-		$bunk = mysqli_real_escape_string($con, (trim($_POST['bunk'])));
+		$bunk = (($_POST['bunk']) ? mysqli_real_escape_string($con, (trim($_POST['bunk']))) : 0);
 		$password = mysqli_real_escape_string($con, (trim($_POST['password'])));
 		$access_level = mysqli_real_escape_string($con, (trim($_POST['access_level'])));
 		$secPW = generateHashWithSalt($password);	
@@ -29,7 +29,7 @@ if ($_POST) {
 		if (mysqli_num_rows($result)>0) {
 			$output = array('update'=>'0','accountCreated'=>'false','feedback'=>'This username already exists.<br>Please try another username.','redirect'=>$redirect);
 		} else {
-			$sql = "INSERT INTO users (id,firstname,lastName,username,bunk,password,salt,access_level,lastLogin,active) VALUES ('','". $firstName ."','". $lastName ."','". $username ."','". $bunk ."','". $pass ."','". $salt ."','". $access_level ."','" . $now . "','1')";
+			$sql = "INSERT INTO users (id,firstname,lastName,username,email,bunk,password,salt,access_level,lastLogin,active) VALUES ('','". $firstName ."','". $lastName ."','". $username ."','". $email ."','". $bunk ."','". $pass ."','". $salt ."','". $access_level ."','" . $now . "','1')";
 			if ($result = $con->query($sql)) {
 				$id = mysqli_insert_id($con);
 				if ($newRegistration) {
@@ -54,7 +54,39 @@ if ($_POST) {
 					$sql = "UPDATE bunks SET counselor=". $id ." WHERE id=". $bunk;
 					$result = $con->query($sql);
 				}
-
+				
+				
+				// Registration Confirmation Email
+				/* Using SendGrid smtp service: https://sendgrid.com/marketing/login */ 
+				require('../../inc/sendgrid-php/sendgrid-php.php');
+				$toEmail = $email;
+				//$toEmail = 'josh@comocreative.com'; // Testing
+				$toEmailName = $firstName .' '. $lastName;
+				$fromEmail = 'register@arrowheaddaycamp.com';
+				$fromName = $formFrom; 
+				$replytoEmail = $formFromEmail;
+				$mailUN = 'Arrowhead'; 
+				$mailPW = '@rrowEmailSend1!';
+					
+				if($toEmail) {
+					// Email Message
+					$subject = $companyName .' Registration Confirmation'; 
+					$message = '<p>Thank you for registering for your '. $companyName .' '. siteVar('act','singular','lowercase') .' scheduling account.</p><p>Please see below for login information:</p><p><strong>Username: </strong>'. $username .'<br><strong>Password: </strong>'. $password .'</p><p>If you have any questions, please visit the Camp Office to reset your password  or email <a href="mailto:'. $formFromEmail .'">'. $formFromEmail .'</a>.</p>';
+					$sendgrid = new SendGrid($mailUN,$mailPW);
+					$email = new SendGrid\Email();
+					$email
+						->setFrom($fromEmail)
+						->setFromName($fromName)
+						->setReplyTo($replytoEmail)
+						->setSubject($subject)
+						->setHtml($message)
+					;
+					$emails = array($toEmail,'josh@comocreative.com','josh@computerwc.com');
+					$email->setTos($emails);
+					$sendgrid->send($email);
+					unset($email);
+				}
+				
 				$output = array('update'=>$id,'accountCreated'=>'true','feedback'=>'User Account Created','redirect'=>$redirect,'updateString'=>$addRow);
 			} else {
 				$output = array('update'=>'0','accountCreated'=>'false','feedback'=>'We\'ve encountered an error.<br>Please try again.','redirect'=>$redirect);	
@@ -68,4 +100,5 @@ if ($_POST) {
 if ($con) $con->close(); 
 header('Content-Type: application/json; charset=utf-8', true); 
 echo json_encode(array("output"=>$output));
+
 ?>

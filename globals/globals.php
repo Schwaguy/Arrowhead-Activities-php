@@ -34,12 +34,14 @@ $camperAccessLevels = array(4,5);
 
 // Global Element File
 global $URL, $ROOTPATH, $SITEURL;
-$URL = 'http://' .$_SERVER['SERVER_NAME'];
+$URL = 'https://' .$_SERVER['SERVER_NAME'];
 $ROOTPATH = '.'; 
-$SITEURL = 'http://activities.arrowheaddaycamp.com'; 
+$SITEURL = 'https://activities.arrowheaddaycamp.com'; 
 
-global $comanyName;
+global $comanyName, $formFrom, $formFromEmail;
 $companyName = 'Arrowhead Day Camp';
+$formFrom = $companyName;
+$formFromEmail = 'chiefarrowhead@comcast.net'; 
 
 global $content, $redirect;
 $content = '';

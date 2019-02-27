@@ -3,8 +3,10 @@ RewriteEngine on
 
 RewriteCond %{REQUEST_FILENAME} -f [NC,OR] 
 RewriteCond %{REQUEST_FILENAME} -d [NC] 
-RewriteRule .* - [L]
+#RewriteRule .* - [L]
 RewriteBase /
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ https://%1$1 [R=301,L]
 
 RewriteRule ^([a-zA-Z\_\-]+)$ index.php?pg=$1 [NC]
 RewriteRule ^([a-zA-Z\_\-]+)/$ index.php?pg=$1 [NC]

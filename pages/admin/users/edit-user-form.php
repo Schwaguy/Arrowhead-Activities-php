@@ -26,7 +26,7 @@
 					<div class="row row-flex form-row">
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for"">Email</label>
-							<input type="email" class="form-control" name="email" value="'. $user['email'] .'" placeholder="Email" data-rule-required="false" data-msg-required="Email is Required">
+							<input type="email" class="form-control" name="email" value="'. $user['email'] .'" placeholder="Email" data-rule-required="true" data-msg-required="Email is Required">
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="bunk">Bunk</label>

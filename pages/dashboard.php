@@ -260,12 +260,14 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) { // Admin/Office
             </div>
             <!-- /.row -->';
 } else { // Campers/CITs
+	
+	// Assigned Bunk & Counselor
 	$content .= '<div class="row d-flex justify-content-around" id="dash-icons">
                 	<div class="col-lg-4 col-md-4">
-						<p><strong>My Bunk:</strong> '. $_SESSION['bunkInfo']['name'] .'</p>
+						<p><strong>My Bunk:</strong> '. ((isset($_SESSION['bunkInfo']['name'])) ? $_SESSION['bunkInfo']['name'] : 'Not Assigned Yet') .'</p>
 					</div>
 					<div class="col-lg-4 col-md-4">
-						<p><strong>My Counselor:</strong> '. $_SESSION['bunkInfo']['counselor'] .'</p>
+						<p><strong>My Counselor:</strong> '. ((isset($_SESSION['bunkInfo']['counselor'])) ? $_SESSION['bunkInfo']['counselor'] : 'Not Assigned Yet') .'</p>
 					</div>
 				</div>';
 	$content .= '<div class="row d-flex justify-content-around" id="dash-icons">

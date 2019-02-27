@@ -950,7 +950,7 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled,
 							
 							// Disable if this is a one-time activity and the camper has already done it 
 							if ($activity['oneTime']) {
-								//$activities .= '<li>oneTime</li>';
+								$tooltip = 'data-toggle="tooltip" data-placement="top" title="'. $activity['name'] .' can only be taken once per summer"';
 								$column = date('Y'); // Camp Year Column
 								$sql = "SELECT `". $column ."` FROM user_activities WHERE user=". $userID; 
 								if ($result = $con->query($sql)) {
@@ -962,7 +962,7 @@ function showAgendaActivities($week,$day,$actArray,$period,$admin,$actScheduled,
 										$disable = 'disabled="disabled"';	
 										$disableClass = 'disabled';
 										$actData .= ' data-previous="yes"';
-										$tooltip = 'data-toggle="tooltip" data-placement="top" title="'. $activity['name'] .' can only be taken once per summer"';
+										//$tooltip = 'data-toggle="tooltip" data-placement="top" title="'. $activity['name'] .' can only be taken once per summer"';
 									}
 								} 
 							} 
