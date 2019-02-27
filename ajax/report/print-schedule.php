@@ -118,24 +118,18 @@ if ($_REQUEST) {
 	}
 	$customCSS .= '}';
 	
-	$reportContent = '<!doctype html><html><head><meta charset="utf-8">
-		<title>'. $title .'</title>
+	$headerContent = '<title>'. $title .'</title>
 		<link rel="stylesheet" href="/css/bootstrap.min.css" media="all">
 		<link rel="stylesheet" href="/css/style.css" media="all"> 
-		<style type="text/css">'. $customCSS .'</style>
-	</head>
-	<body>
-		<div class="container print">
-			'. $content .'
-		</div>
-	</body></html>';
-	$result = $reportContent;
+		<style type="text/css">'. $customCSS .'</style>'; 
 	
+	$bodyContent = '<div class="container print">'. $content .'</div>'; 
+	
+	$reportContent = '<!doctype html><html><head><meta charset="utf-8">'. $headerContent .'</head>
+	<body>'.$bodyContent .'</body></html>';
+	
+	$result = array('full'=>$reportContent,'header'=>$headerContent,'body'=>$bodyContent);
 	$output = $result;
-	
-	
-	
-	//$output = (($result) ? array('update'=>$id,'op'=>'update','table'=>$table,'updateString'=>'update successful','feedback'=>'UPDATE COMPLETE','redirect'=>$redirect) : array('update'=>'0','op'=>'update','table'=>$table,'updateString'=>strtoupper($table) .' UPDATE ERROR : '. $sql,'feedback'=>strtoupper($table) .' UPDATE ERROR : '. $sql,'redirect'=>''));
 } else {
 	$output = 'NO INFO'; 	
 }

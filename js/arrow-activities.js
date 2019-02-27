@@ -351,13 +351,44 @@ jQuery(document).ready(function($) {
 		.done(function(data){ // if getting done then call.
 			if (data.output){
 				var myWindow=window.open('','','');
-				myWindow.document.write(data.output);
+				
+				var isChrome = false;
+				if (navigator.userAgent.toLowerCase().indexOf("chrome") > -1) {
+					isChrome = true;
+				}
+				
+				myWindow.document.write('<!doctype html><html><head><meta charset="utf-8">');
+				myWindow.document.write(data.output.header);
+				myWindow.document.write('</head><body>');
+				if (isChrome) {
+					myWindow.document.write('<div class="container"><div class="text-right"><a class="btn btn-primary btn-print" onclick="printPage()">Print Page</a></div></div>');
+				}
+				myWindow.document.write(data.output.body);
+				if (isChrome) {
+					myWindow.document.write("<script>function printPage() { window.print(); window.close(); }</script>");
+				}
+				myWindow.document.write('</body></html>');
+				
+				//myWindow.document.write(data.output.full); 
+				//myWindow.document.head.innerHTML = data.output.header; 
+				//myWindow.document.body.innerHTML = data.output.body; 
 				myWindow.document.close();
-				myWindow.focus();
-				myWindow.print();
-				myWindow.close();
+				myWindow.focus(); // necessary for IE >= 10
+				if (!isChrome) {
+					myWindow.print();
+					myWindow.close();
+				}
+				
+				/*if (myWindow.document.readyState == "complete") {
+					myWindow.focus(); // necessary for IE >= 10
+					myWindow.print();
+					myWindow.close();
+				}*/
+				
+				//var myDelay = setInterval(checkReadyState(myWindow,myDelay), 10);
 				$('#feedback').hide();
 				$('#processing').hide();
+				return true;
 			} else {
 				$('#response').html('No Output');
 			}
@@ -367,6 +398,15 @@ jQuery(document).ready(function($) {
 		});
 		return false;
 	});
+	
+	function checkReadyState(myWindow,myDelay) {
+		if (myWindow.document.readyState == "complete") {
+			clearInterval(myDelay);
+			myWindow.focus(); // necessary for IE >= 10
+			myWindow.print();
+			myWindow.close();
+		}
+	}
 	
 	// Disable One-Time-Only Options when one is selected
 	$('body').on('click','form.scheduleForm .activity-signup-buttons .schedule-button', function() {
