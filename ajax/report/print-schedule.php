@@ -7,6 +7,7 @@ $phpself = basename(__FILE__);
 require_once($PATH  .'globals/globals.php');
 
 if ($_REQUEST) {
+	$customCSS = '@media print {'; 
 	$camperID = ((isset($_REQUEST['camper'])) ? $_REQUEST['camper'] : '');
 	$weekID = ((isset($_REQUEST['week'])) ? $_REQUEST['week'] : '');
 	$bunkID = ((isset($_REQUEST['bunk'])) ? $_REQUEST['bunk'] : '');
@@ -20,10 +21,11 @@ if ($_REQUEST) {
 		$activity = getActivityinfo($activityID,$con);
 		$signups = getActivitySignups($activityID,$con);
 		$title = $activity['name'] .' - '. $activity['weekname'];
-		$content .= '<div class="schedule-wrap">';
+		$content .= '<div class="schedule-wrap print-page">';
 		$content .= '<h2>'. $title .'</h2>';
 		$content .= showActivitySignups($activity,'',$signups,$con);
-		$content .= '</div><!-- /schedule-wrap -->';
+		$content .= '</div>';
+		$customCSS .= '@page { size: landscape !important; }';
 	} elseif (!empty($date)) {
 		// Return All Activity Signups for Specified Day 
 		$day = date('l', strtotime($date));
@@ -31,10 +33,10 @@ if ($_REQUEST) {
 		$title = 'Activities for '. date('l, F jS Y', strtotime($date)); 
 		foreach($activities as $activity) {
 			$signups = getActivitySignups($activity['id'],$con);
-			$content .= '<div class="schedule-wrap">';
+			$content .= '<div class="schedule-wrap print-page">';
 			$content .= '<h2>'. $activity['name'] .' - '. date('l, F jS Y', strtotime($date)) .'</h2>';
 			$content .= showActivitySignups($activity['id'],$day,$signups,$con);
-			$content .= '</div><!-- /schedule-wrap -->';
+			$content .= '</div>';
 		}
 	} elseif (!empty($camperID)) {
 		$camper = getUserInfo($camperID,$con);
@@ -45,15 +47,15 @@ if ($_REQUEST) {
 			// Return Camper  Activities for Single Week
 			$week = getWeekInfo($weekID,$con);
 			$title = $camper['firstName'] .' '. $camper['lastName'] .'\'s '. $week['name'] .' Activities'; 
-			$content .= '<div class="schedule-wrap">';
+			$content .= '<div class="schedule-wrap print-page">';
 			$content .= '<h2>'. $title .'</h2>'; 
 			$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white">';
 			foreach ($week['days'] as $day) {
-				$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
+				$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<span class="nicedate">'. $day['nicedate'] .'</span></h5></a>';
 			}
 			$content .= '</div>'; 
 			$content .= showCamperSchedule($weekID,$camper,$week,false,$bunkInfo,$periods,$con);
-			$content .= '</div><!-- /schedule-wrap -->';
+			$content .= '</div>';
 		} else {
 			// Return Camper Activities for All Weeks
 			$weeks = getWeeks('array','',false,false,$con);
@@ -68,7 +70,7 @@ if ($_REQUEST) {
 				}
 				$content .= '</div>'; 
 				$content .= showCamperSchedule($week['id'],$camper,$week,false,$bunkInfo,$periods,$con);
-				$content .= '</div><!-- /schedule-wrap -->';
+				$content .= '</div>';
 			}
 		}
 	} elseif (!empty($bunkID)) {
@@ -90,7 +92,7 @@ if ($_REQUEST) {
 				foreach ($campers as $camper) {
 					$content .= '<div class="schedule-wrap">';
 					$content .= showCamperSchedule($weekID,$camper,$week,true,$bunkInfo,$periods,$con);
-					$content .= '</div><!-- /schedule-wrap -->';
+					$content .= '</div>';
 				}
 			}
 		} else {
@@ -108,17 +110,19 @@ if ($_REQUEST) {
 					foreach ($campers as $camper) {
 						$content .= '<div class="schedule-wrap">';
 						$content .= showCamperSchedule($week['id'],$camper,$week,true,$bunkInfo,$periods,$con);
-						$content .= '</div><!-- /schedule-wrap -->';
+						$content .= '</div>';
 					}
 				}
 			}
 		}
 	}
+	$customCSS .= '}';
 	
 	$reportContent = '<!doctype html><html><head><meta charset="utf-8">
 		<title>'. $title .'</title>
-		<link rel="stylesheet" href="/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/css/style.css"> 
+		<link rel="stylesheet" href="/css/bootstrap.min.css" media="all">
+		<link rel="stylesheet" href="/css/style.css" media="all"> 
+		<style type="text/css">'. $customCSS .'</style>
 	</head>
 	<body>
 		<div class="container print">

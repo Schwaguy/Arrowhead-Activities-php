@@ -141,6 +141,100 @@ jQuery(document).ready(function($) {
 			return false;
 		}
 	});
+	$('body').on('click','#btnRegister',function() {
+		$('#forgot').removeClass('show');
+	});
+	
+	// Forgot Password Form
+	$('#forgotForm').validate({
+		rules: {
+			usernameForgot: {
+				required: function(element) {
+					return $("#emailForgot").is(':blank');
+				}
+			},
+			emailForgot: {
+				required: function(element) {
+					return $("#usernameForgot").is(':blank');
+				}
+			}
+		},
+		submitHandler: function(form) {
+			var ajaxUrl = '/ajax/admin/password.php'; 
+			var formData = $(form).serialize();
+			$.ajax({
+				type: 'POST',
+				url: ajaxUrl,
+				data: formData
+			})
+			.done(function(data){ // if getting done then call.
+				$('#feedback').show();
+				$('#processing').show();
+				if (data.output.feedback) {
+					$('#processing').hide();
+					$('#response').show().html(data.output.feedback);
+					if (data.output.redirect) {
+						window.location.replace(data.output.redirect);
+					} else {
+						console.log('FAILURE');
+					}
+					setTimeout(function() {
+						$('#feedback').fadeOut();
+					}, 3000);
+				} else {
+					console.log('NO ACCOUNT');
+				}
+			})
+			.fail(function() { 
+				console.log('FAILURE 3');
+			});
+			return false;
+		}
+	});
+	$('body').on('click','#btnForgot',function() {
+		$('#register').removeClass('show');
+	});
+	
+	// Reset Password Form
+	$('#resetForm').validate({
+		rules: {
+			password: "required",
+			password_repeat: {
+				equalTo: "#password"
+			}
+		},
+		submitHandler: function(form) {
+			var ajaxUrl = '/ajax/admin/password.php'; 
+			var formData = $(form).serialize();
+			$.ajax({
+				type: 'POST',
+				url: ajaxUrl,
+				data: formData
+			})
+			.done(function(data){ // if getting done then call.
+				$('#feedback').show();
+				$('#processing').show();
+				if (data.output.feedback) {
+					$('#processing').hide();
+					$('#response').show().html(data.output.feedback);
+					if (data.output.redirect) {
+						window.location.replace(data.output.redirect);
+					} else {
+						console.log('FAILURE');
+					}
+					setTimeout(function() {
+						$('#feedback').fadeOut();
+					}, 3000);
+				} else {
+					console.log('NO ACCOUNT');
+				}
+			})
+			.fail(function() { 
+				console.log('FAILURE 3');
+			});
+			return false;
+		}
+	});
 	
 	// Handle Admin Forms
 	var checkboxes = '';

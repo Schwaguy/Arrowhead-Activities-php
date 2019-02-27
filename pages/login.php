@@ -24,10 +24,10 @@
 											<input type="submit" class="btn btn-default btn-lg" value="Login" />
 										</div>
 										<div class="col col-xs-12 col-sm-12 col-md-3 text-center">
-											<a href="#register" class="btn btn-default btn-lg scroll-link btn-register" title="Register" data-toggle="collapse" data-target="#register" aria-expanded="false" aria-controls="register">Register</a>
+											<a href="#register" class="btn btn-default btn-lg scroll-link btn-register" id="btnRegister" title="Register" data-toggle="collapse" data-target="#register" aria-expanded="false" aria-controls="register">Register</a>
 										</div>
 										<div class="col col-xs-12 col-sm-12 col-md-6 text-right">
-											<a href="#forgot" class="btn btn-default btn-lg scroll-link btn-register" title="Forgot Password" data-toggle="collapse" data-target="#forgot" aria-expanded="false" aria-controls="forgot">Forgot Password</a>
+											<a href="#forgot" class="btn btn-default btn-lg scroll-link btn-register" id="btnForgot" title="Forgot Password" data-toggle="collapse" data-target="#forgot" aria-expanded="false" aria-controls="forgot">Forgot Password</a>
 										</div>
 									</div>
 								</fieldset>
@@ -43,31 +43,32 @@
 									<input type="hidden" name="new-registration" value="true">
 									<input type="hidden" name="access_level" value="4">
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">First Name</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="firstName">First Name</label></div>
 										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle">
 											<input type="text" class="form-control first-input" name="firstName" placeholder="Your First Name" required>
 										</div>
 									</div>
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Last Name</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="lastName">Last Name</label></div>
 										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="lastName" placeholder="Your Last Name" required></div>
 									</div>
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Username</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="username">Username</label></div>
 										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="username" placeholder="Your Username" required></div>
 									</div>
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Email</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="email">Email</label></div>
 										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="email" class="form-control" name="email" placeholder="Your Email Address"></div>
 									</div>
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Password</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="password">Password</label></div>
 										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="password" class="form-control" id="password" name="password" placeholder="Enter Your Password" required></div>
 									</div>
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Repeat Password</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="password_repeat">Repeat Password</label></div>
 										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter Your Password Again" required></div>
 									</div>
+									<div class="anti"><input type="text" name="anti" value=""></div>
 									<div class="text-right"><input type="submit" class="btn btn-default btn-lg" value="Register" /></div>
 								</form>
 							</div>
@@ -75,17 +76,19 @@
 						
 						<div class="collapse" id="forgot">
   							<div class="card card-body">
-								<h3 class="card-title">Enter Your Username or Email Address</h3>
+								<h3 class="card-title text-center">Please enter your Username <br>and/or Email Address</h3>
 								<form id="forgotForm" class="forgotForm" name="forgotForm" method="post">
-									<input type="hidden" name="redirect" value="/forgot/">
+									<input type="hidden" name="redirect" value="/reset-message/">
+									<input type="hidden" name="action" value="forgot">
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Username</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="username" placeholder="Your Username" required></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="usernameFrogot">Username</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="usernameForgot" id="usernameForgot" placeholder="Your Username"></div>
 									</div>
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for"">Email</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="email" class="form-control" name="email" placeholder="Your Email Address"></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="emailForgot">Email</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="email" class="form-control" name="emailForgot" id="emailForgot" placeholder="Your Email Address"></div>
 									</div>
+									<div class="anti"><input type="text" name="anti" value=""></div>
 									<div class="text-right"><input type="submit" class="btn btn-default btn-lg" value="Reset Password" /></div>
 								</form>
 							</div>

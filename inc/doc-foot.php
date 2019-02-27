@@ -1,6 +1,6 @@
 </div><!-- /side-collapse-container -->
 
-<?php if (!empty($thisPg) && ($thisPage!='logout')) : ?>
+<?php if ((!empty($thisPg)) && ($thisPg!='logout') && ($thisPg!='reset') && ($thisPg!='reset-message')) : ?>
 <footer id="site-footer">
 	<div class="container">
 		<div class="row">

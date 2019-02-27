@@ -272,7 +272,7 @@
   width: 0%;
   left: 50%;
 }
-@media (min-width: 992px) {
+@media screen and (min-width: 992px) {
 	.mobile-only {
 		display: none !important;
 	}
@@ -300,7 +300,7 @@
     			transition: all 0.3s;
  	}
 }
-@media (max-width: 991px) {
+@media screen and (max-width: 991px) {
 	.hide-mobile {
 		display: none !important; 
 	}
@@ -342,6 +342,10 @@
   	.side-collapse.in {
     	left: -300px;
   	}
+	.navbar-nav .nav-link {
+		padding-right: 1em;
+		padding-left: 1em;
+	}
 	.navbar-custom .dropdown-menu {
 		//display: none !important;
 	}

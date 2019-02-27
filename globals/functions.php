@@ -21,6 +21,16 @@ function checkPassword($uName,$uPass,$con) {
 	return $pwCheck;
 }
 
+// Generate Random Key
+function randomKey($length) {
+  	$max = ceil($length / 32);
+  	$random = '';
+  	for ($i = 0; $i < $max; $i ++) {
+    	$random .= md5(microtime(true).mt_rand(10000,90000));
+  	}
+  	return substr($random, 0, $length);
+}
+
 // Get User Information for Valid Login
 function logUserIn($uName,$pwCheck,$today,$con) {
 	$loggedin = false;
@@ -324,7 +334,9 @@ function showActivitySignups($activity,$day,$signups,$con) {
 			}
 			$tableBody .= '<td>'. $actSignups .'</td>';
 
-			$tableHead .= '<th class="agenda-date"><div class="dayofmonth">'. $dayOfMonth .'</div><div class="dayofweek">'. $dayOfWeek .'</div><div class="shortdate text-muted">'. $monthYear .'</div></th>';
+			//$tableHead .= '<th class="agenda-date"><div class="dayofmonth">'. $dayOfMonth .'</div><div class="dayofweek">'. $dayOfWeek .'</div><div class="shortdate text-muted">'. $monthYear .'</div></th>';
+			
+			$tableHead .= '<th class="agenda-date"><table class="no-border"><tr><td class="dayofmonth">'. $dayOfMonth .'</td><td><div class="dayofweek">'. $dayOfWeek .'</div><div class="shortdate text-muted">'. $monthYear .'</div></td></tr></table></th>';
 		}
 		$content .= '<div class="agenda">
 			<div class="table-responsive">

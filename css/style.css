@@ -132,12 +132,12 @@ body {
   float: none;
   vertical-align: top;
 }
-@media (max-width: 960px) {
+@media screen and (max-width: 960px) {
   body {
     font-size: 14px;
   }
 }
-@media (max-width: 568px) {
+@media screen and (max-width: 568px) {
   .container.main {
     padding: 2em 1em 5em 1em;
   }
@@ -217,7 +217,7 @@ a:active {
   background-color: #212529;
   border-color: #32383e;
 }
-@media (max-width: 736px) {
+@media screen and (max-width: 736px) {
   .small {
     font-size: 1em;
   }
@@ -2923,6 +2923,11 @@ textarea.readonly,
 select.readonly {
   pointer-events: none;
 }
+.anti {
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
 /* Main Nav */
 /* ---------- Main Nav ---------- */
 .navbar-custom {
@@ -3192,7 +3197,7 @@ select.readonly {
   width: 0%;
   left: 50%;
 }
-@media (min-width: 992px) {
+@media screen and (min-width: 992px) {
   .mobile-only {
     display: none !important;
   }
@@ -3220,7 +3225,7 @@ select.readonly {
     transition: all 0.3s;
   }
 }
-@media (max-width: 991px) {
+@media screen and (max-width: 991px) {
   .hide-mobile {
     display: none !important;
   }
@@ -3265,6 +3270,10 @@ select.readonly {
   }
   .side-collapse.in {
     left: -300px;
+  }
+  .navbar-nav .nav-link {
+    padding-right: 1em;
+    padding-left: 1em;
   }
 }
 /* Content */
@@ -3555,12 +3564,12 @@ table.dataTable thead .sorting_desc_disabled:after {
 .signupList {
   padding-left: 1em;
 }
-@media (max-width: 991px) {
+@media screen and (max-width: 991px) {
   .collapse:not(.show) {
     display: none !important;
   }
 }
-@media (max-width: 767px) {
+@media screen and (max-width: 767px) {
   .adminForm.list-group-item p.input-spacer {
     margin-bottom: 1em;
   }
@@ -3651,12 +3660,12 @@ input[type='submit'].d-block {
   min-width: 100% !important;
   float: none !important;
 }
-@media (min-width: 768px) {
+@media screen and (min-width: 768px) {
   .mobile-only {
     display: none !important;
   }
 }
-@media (max-width: 767px) {
+@media screen and (max-width: 767px) {
   tr.mobile-only {
     display: table-row !important;
   }
@@ -3711,7 +3720,7 @@ input[type='submit'].d-block {
     margin-top: 0;
   }
 }
-@media (max-width: 575px) {
+@media screen and (max-width: 575px) {
   .display-4 {
     font-size: 1.5rem;
   }
@@ -3730,7 +3739,7 @@ input[type='submit'].d-block {
     padding-left: 4px;
   }
 }
-@media (min-width: 576px) {
+@media screen and (min-width: 576px) {
   .day {
     height: auto;
     min-height: 10vw;
@@ -3810,12 +3819,12 @@ input[type='submit'].d-block {
   -khtml-opacity: 1;
   opacity: 1;
 }
-@media (max-width: 960px) {
+@media screen and (max-width: 960px) {
   #site-footer {
     font-size: 0.75em;
   }
 }
-@media (max-width: 736px) {
+@media screen and (max-width: 736px) {
   #menu-footer-nav {
     text-align: center;
   }
@@ -3834,42 +3843,80 @@ input[type='submit'].d-block {
   }
 }
 /* Printed Reports */
+.print {
+  font-family: "Roboto", sans-serif;
+  color: #282828 !important;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1.25 !important;
+}
+.print h2 {
+  padding-top: 1em;
+}
+.print .day {
+  min-height: 5vw;
+}
+.print .agenda-event-button {
+  padding: 0.5rem 0.5rem;
+}
+.print .p-1 {
+  padding: .15rem .15rem 0 .15rem !important;
+}
+.print .p-2 {
+  padding: 0 0.5rem !important;
+}
+.print .schedule-wrap {
+  page-break-inside: avoid;
+}
+.print-page {
+  page-break-after: always;
+}
+.print table {
+  border: 1px solid #ccc;
+}
+.print .agenda .thead-dark,
+.print .agenda .thead-dark tr .print .agenda .thead-dark th {
+  background: none;
+  color: #000;
+}
+.print .agenda .agenda-date {
+  padding: 1px;
+}
+.print .agenda .agenda-date .dayofmonth {
+  font-size: 2.5em;
+  line-height: 1;
+}
+.agenda .agenda-date .shortdate {
+  font-size: 0.75em;
+}
+.print .bg-dark {
+  background: none;
+}
+.print .text-white {
+  color: #000;
+}
+.print .no-border,
+.print .no-border td {
+  border: none !important;
+}
+/*.print h6 {
+	font-weight: bold;
+}*/
 @media print {
   @page {
-    size: landscape;
+    size: a3;
+  }
+  body {
+    font-family: "Roboto", sans-serif !important;
+    color: #282828 !important;
+    font-size: 20px !important;
+    font-weight: 300 !important;
+    line-height: 1.25 !important !important;
   }
   * {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
     transition: none !important;
-  }
-  .print {
-    font-family: "Roboto", sans-serif;
-    color: #282828 !important;
-    font-size: 20px;
-    font-weight: 300;
-    line-height: 1.25 !important;
-  }
-  .print h2 {
-    padding-top: 1em;
-  }
-  .print .day {
-    min-height: 5vw;
-  }
-  .print .agenda-event-button {
-    padding: 0.5rem 0.5rem;
-  }
-  .print .p-1 {
-    padding: .15rem .15rem 0 .15rem !important;
-  }
-  .print .p-2 {
-    padding: 0 0.5rem !important;
-  }
-  .print .schedule-wrap {
-    page-break-inside: avoid;
-  }
-  .print table {
-    border: 1px solid #ccc;
   }
   *,
   *::before,
@@ -3908,9 +3955,6 @@ input[type='submit'].d-block {
   h3 {
     page-break-after: avoid;
   }
-  @page {
-    size: a3;
-  }
   body {
     min-width: 992px !important;
   }
@@ -3925,6 +3969,7 @@ input[type='submit'].d-block {
   }
   .table {
     border-collapse: collapse !important;
+    border: 1px solid #ccc;
   }
   .table td,
   .table th {
@@ -3946,5 +3991,14 @@ input[type='submit'].d-block {
   .table .thead-dark th {
     color: inherit;
     border-color: #dee2e6;
+  }
+  .bg-dark {
+    background: none;
+  }
+  .text-white {
+    color: #000;
+  }
+  .print .btn {
+    border: 1px solid #eee;
   }
 }

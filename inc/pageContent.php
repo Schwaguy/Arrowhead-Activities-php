@@ -26,17 +26,6 @@ if (!empty($_REQUEST['op'])) {
 		}
 	}
 } else {
-	/*if (!empty($thisPg)) {
-		include('pages/'. $thisPg .'.php');
-	} else {
-		if ($_SESSION['userAuth']<=2) { 
-			include('pages/dashboard-admin.php');
-		} elseif ($_SESSION['userAuth']==3) {
-			include('pages/dashboard-counselor.php');
-		} else {
-			include('pages/dashboard-camper.php');
-		}
-	}*/
 	if (!empty($tp)) {
 		include('pages/'. $pg .'/'. $sp .'/'. $tp .'.php');
 	} elseif (!empty($sp)) {
@@ -45,14 +34,6 @@ if (!empty($_REQUEST['op'])) {
 		include('pages/'. $pg .'.php');
 	} else {
 		include($ROOT .'/pages/dashboard.php');
-		/*if ($_SESSION['userAuth']<=2) { 
-			include($ROOT .'/pages/dashboard-admin.php');
-		} elseif ($_SESSION['userAuth']==3) {
-			//window.location('/my-bunk/');
-			include($ROOT .'/pages/dashboard-counselor.php');
-		} else {
-			include($ROOT .'/pages/dashboard-camper.php');
-		}*/
 	}
 }
 
