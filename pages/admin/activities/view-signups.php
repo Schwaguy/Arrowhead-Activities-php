@@ -5,6 +5,8 @@
 		$signups = getActivitySignups($_POST['id'],$con);
 	}
 
+	$clearBtn = (($_SESSION['userPermissions']['admin'] == 1) ? ' <a class="btn btn-danger btn-clear btn-clear-weeks" data-toggle="tooltip" data-placement="top" title="This will clear all '. $activity['name'] .' signups" data-op="clear" data-user="" data-week="" data-activity="'. $activity['id'] .'">Clear Signups</a>' : ''); 
+
 	$content .= '<div class="container main">
 		<h1 class="page-title">'. siteVar('act','singular','capital') .' Signups</h1>
 		
@@ -14,7 +16,7 @@
 			</div>';
 
 		if ($_SESSION['userPermissions']['report'] == 1) {
-			$content .= '<div class="col-12 col-xs-12 col-sm-6 col-md-6 col-lg-6 text-right"><a class="btn btn-primary printLink" data-camper="" data-week="" data-bunk="" data-activity="'. $activity['id'] .'">Print Signups</a></div>';
+			$content .= '<div class="col-12 col-xs-12 col-sm-6 col-md-6 col-lg-6 text-right"><a class="btn btn-primary printLink" data-camper="" data-week="" data-bunk="" data-activity="'. $activity['id'] .'">Print Signups</a>'. $clearBtn .'</div>';
 		}
 	$content .= '</div>';
 

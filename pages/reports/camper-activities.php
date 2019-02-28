@@ -4,9 +4,9 @@
 
 	$header = '<div class="row">';
 	$header .= '<div class="col-12 col-xs-12 col-sm-6 col-md-8 col-lg-8"><h1 class="page-title">'. $userInfo['userName'] .'\'s '. siteVar('act','plural','capital') .'</h1></div>';
-	if ($_SESSION['userPermissions']['report'] == 1) {
-		$header .= '<div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-4 text-right"><a class="btn btn-light printLink" data-camper="'. $userInfo['userID'] .'">Print Activities</a></div>'; 
-	}
+	//if ($_SESSION['userPermissions']['report'] == 1) {
+		$header .= '<div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-4 text-right"><a class="btn btn-light printLink" data-camper="'. $userInfo['userID'] .'">Print All Signups</a></div>'; 
+	//}
 	$header .= '</div>';
 
 	$content .= '<div class="container main">

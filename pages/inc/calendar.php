@@ -11,8 +11,12 @@ foreach ($weeks as $week) {
 		//$scheduledActivities = showScheduledActivities($week['id'],$userInfo['userID'],$_SESSION['userPrereqs'],$con);
 		$scheduledActivities = showScheduledActivities($week['id'],$userInfo['userID'],$userInfo['userInfo']['prerequisites'],$con);		
 		$weekdays = '';
-
-		$header = '<header><h4 class="display-4 mb-1 text-center">'. $week['name'] .'</h4><div class="row d-none d-sm-flex p-1 bg-dark text-white">';
+		
+		$clearBtn = (($_SESSION['userPermissions']['admin'] == 1) ? '<a class="btn btn-danger btn-clear btn-clear-weeks" data-toggle="tooltip" data-placement="top" title="This will clear all '. $userInfo['userName'] .'\'s '. $week['name'] .' signups" data-op="clear" data-user="'. $userInfo['userID'] .'" data-week="'. $week['id'] .'" data-activity="">Clear Signups</a>' : ''); 
+		
+		$printBtn = '<a class="btn btn-light printLink btn-print-week" data-camper="'. $userInfo['userID'] .'" data-week="'. $week['id'] .'">Print '. $week['name'] .' Signups</a>'; 
+		
+		$header = '<header><h4 class="display-4 mb-1 text-center">'. $week['name'] . $clearBtn . $printBtn .'</h4><div class="row d-none d-sm-flex p-1 bg-dark text-white">';
 		$weekdays .= '<div class="row border border-right-0 border-bottom-0">';
 		$d = 1;
 		foreach ($week['days'] as $day) {

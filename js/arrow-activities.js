@@ -603,7 +603,52 @@ jQuery(document).ready(function($) {
 	});*/
 	
 	
-	/*$('body').on('click', '.btn-register', function() { 
-		$('#register .first-input').focus();
-	});*/
+	$('body').on('click', '.btn-clear', function() { 
+		if (confirm("Are you sure you want to delete this schedule?")) {
+    		 clearSchedule(this);
+  		} 
+	});
+	
+	function clearSchedule(thisBtn) {
+		$('#feedback').show();
+		$('#processing').show();
+		var op = $(thisBtn).data('op');
+		var user = $(thisBtn).data('user');
+		var week = $(thisBtn).data('week');
+		var activity = $(thisBtn).data('activity');
+		var ajaxUrl = '/ajax/schedule/'+ op +'.php'; 
+		var formData = 'user=' + user + '&week=' + week + '&activity=' + activity;
+			
+		console.log(ajaxUrl);
+		console.log(formData);
+			
+		$.ajax({
+			type: 'POST',
+			url: ajaxUrl,
+			data: formData
+		})
+		.done(function(data){ // if getting done then call.
+			if (data.output.op){
+				$('#processing').hide();
+				$('#response').show().html(data.output.feedback);
+				console.log(data.output.feedback);
+				if (data.output.result == 'success') {
+					setTimeout(function() {
+						$('#feedback').fadeOut();
+						window.location.reload();
+					}, 2000);
+				} else {
+					setTimeout(function() {
+						$('#feedback').fadeOut();
+					}, 2000);
+				}
+			} else {
+				$('#response').html('No Output');
+			}
+		})
+		.fail(function() { // if fail then getting message
+			$('#response').html('POST FAILED');
+		});
+		return false;
+	}
 });
