@@ -283,7 +283,6 @@ jQuery(document).ready(function($) {
 				if (data.output.op){
 					if (data.output.op == 'update') {
 						$('#processing').hide();
-						console.log(data.output.feedback);
 						$('#response').show().html(data.output.feedback);
 						if (data.output.redirect) {
 							setTimeout(function() {
@@ -314,10 +313,16 @@ jQuery(document).ready(function($) {
 						$('#processing').hide();
 						$('#response').show().html(data.output.feedback);
 						var deleteID = '#form-'+ data.output.update;
-						$.when($(deleteID).animate({ backgroundColor: '#fbc7c7' }, 'fast').animate({ opacity: 'hide' }, 'slow')).then(function() { 
-							$(deleteID).remove();
-							$('#feedback').fadeOut();
-						});
+						if (data.output.redirect) {
+							setTimeout(function() {
+								window.location.replace(data.output.redirect);
+							}, 2000);
+						} else {
+							$.when($(deleteID).animate({ backgroundColor: '#fbc7c7' }, 'fast').animate({ opacity: 'hide' }, 'slow')).then(function() { 
+								$(deleteID).remove();
+								$('#feedback').fadeOut();
+							});
+						}
 					}
 				} else {
 					$('#response').html('No Output');

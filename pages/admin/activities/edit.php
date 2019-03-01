@@ -18,18 +18,6 @@
 		);
 		
 		$content .= '<div class="container main">';
-		/*	
-		$content .= '<div class="quick-buttons">
-				<form method="post" action="/admin/activities/view-signups/" class="inline">
-					<input type="hidden" name="id" value="'. $activity['id'] .'">
-					<input type="submit" class="btn btn-primary" value="View Signups">
-				</form>';
-		
-		if ($_SESSION['userPermissions']['report'] == 1) {
-			$content .= ' <a class="btn btn-primary printLink inline" data-camper="" data-week="" data-bunk="" data-activity="'. $activity['id'] .'">Print Signups</a>';
-		}
-		
-		$content .= '</div>';*/
 		
 		$content .= '<div class="row">
 			<div class="col-12 col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -50,27 +38,32 @@
 
 		// New Activity Form
 		$periodsArr = getPeriods('',false,false,'array',$con);
-		$content .= '<form id="form-edit" class="adminForm activity-admin">
+		if ($_SESSION['userPermissions']['admin'] == 1) {
+			$content .= '<form id="form-edit" class="adminForm activity-admin">
 						<input type="hidden" name="id" value="'. $activity['id'] .'">
 						<input type="hidden" name="table" value="activities">
 						<input type="hidden" name="updated" value="'. $now .'">
 						<input type="hidden" name="updateBy" value="'. $_SESSION['userID'] .'">
 						<input type="hidden" name="active" value="1">
-						<input type="hidden" name="redirect" value="/admin/activities/overview/">
-
-						<div class="col-12">
+						<input type="hidden" name="redirect" value="/admin/activities/overview/">';
+			$disableClass = ''; 
+			$disableAttr = ''; 
+		} else {
+			$disableClass = 'readonly'; 
+			$disableAttr = 'readonly';	
+		}
+		$content .= '<div class="col-12">
 							<p><label for="type">Activity Type</label><br>
-							<input type="text" list="typeList" id="typeInput" class="form-control combobox typeInput" value="'. $activity['name'] .'" placeholder="'. siteVar('act','singular','capital') .' Type" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Type is Required">
+							<input type="text" list="typeList" id="typeInput" class="form-control combobox typeInput '. $disableClass  .'" value="'. $activity['name'] .'" placeholder="'. siteVar('act','singular','capital') .' Type" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Type is Required">
 							<datalist id="typeList">'. getActivityTypes($con) .'</datalist>
 							<input type="hidden" name="type" id="typeInput-hidden" class="hiddenInput" value="'. $activity['type'] .'"></p>
 
 							<p class="oneTime">
 								<input type="hidden" name="oneTime" value="0">
-								<input type="checkbox" name="oneTime" class="oneTimeCheck" value="1"> <label for="oneTime">Check if this is a One-Time-Only Activity
+								<input type="checkbox" name="oneTime" class="oneTimeCheck '. $disableClass  .'" value="1"> <label for="oneTime">Check if this is a One-Time-Only Activity
 							</p>
 							
-							
-							<p><label for="description">Description</label><br><textarea name="description" class="form-control" placeholder="'. siteVar('act','singular','capital') .' Description">'. $activity['description'] .'</textarea></p>
+							<p><label for="description">Description</label><br><textarea name="description" class="form-control '. $disableClass  .'" placeholder="'. siteVar('act','singular','capital') .' Description">'. $activity['description'] .'</textarea></p>
 						</div>
 
 						<div class="row d-flex">
@@ -78,10 +71,10 @@
 								<div class="col-12 col-sm-12 col-md-12 col-md-12 col-lg-8">
 									<div class="row">
 										<div class="col-12 col-sm-12 col-md-6 col-md-6 col-lg-6">
-											<p><label for="location">Location</label><br><input type="text" name="location" class="form-control" value="'. $activity['location'] .'" placeholder="Location" data-rule-required="false" data-msg-required="Location is Required"></p>
+											<p><label for="location">Location</label><br><input type="text" name="location" class="form-control '. $disableClass  .'" value="'. $activity['location'] .'" placeholder="Location" data-rule-required="false" data-msg-required="Location is Required"></p>
 										</div>
 										<div class="col-12 col-sm-12 col-md-6 col-lg-6">
-											<p><label for="capacity">Capacity</label><br><input type="number" name="capacity" class="form-control" value="'. $activity['capacity'] .'" placeholder="Capacity" min="0" data-rule-required="true" data-msg-required="Capacity is Required"></p>
+											<p><label for="capacity">Capacity</label><br><input type="number" name="capacity" class="form-control '. $disableClass  .'" value="'. $activity['capacity'] .'" placeholder="Capacity" min="0" data-rule-required="true" data-msg-required="Capacity is Required"></p>
 										</div>
 									</div>
 									<div class="row">
@@ -130,13 +123,27 @@
 								<h4>Restrictions</h4>
 								<div class="col-12 checkbox-wrap">'. getRestrictions(explode(',',$activity['restrictions']),'checkboxes',$con) .'</div>
 							</div></div>
-						</div>
-						<div class="row">
-							<div class="col-12"><div class="col-12 text-center">
-								<button type="button" class="btn btn-dark-green adminBtn" data-op="update">Update '. siteVar('act','singular','capital') .'</button>
-							</div></div> 
-						</div>
-					</form>';
+						</div>';
+					if ($_SESSION['userPermissions']['admin'] == 1) {
+						$content .= '<div class="row">
+								<div class="col-12"><div class="col-12 text-center">
+									<button type="button" class="btn btn-dark-green adminBtn" data-op="update">Update '. siteVar('act','singular','capital') .'</button> 
+								</div></div> 
+							</div>
+						</form>';
+					} 
+					if ($_SESSION['userPermissions']['admin'] == 1) {
+						$content .= '<div class="row">
+								<div class="col-12"><div class="col-12 text-center">
+									<form method="post" class="adminForm">
+										<input type="hidden" name="table" value="activities">
+										<input type="hidden" name="id" value="'. $activity['id'] .'">
+										<input type="hidden" name="redirect" value="/admin/activities/overview/">
+										<button class="btn btn-danger adminBtn" data-op="delete">Delete Activity</button>
+									</form>
+								</div></div>
+							</div><!-- /row -->'; 
+					}
 
 			$content .= '</div><!-- /col -->
 			</div><!-- /row -->

@@ -133,10 +133,25 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) { // Admin/Office
                             </div>
                         </div>
                         <div class="panel-footer text-center">
-                        	<p class="clearfix"><span class="pull-left">Bunk Schedules</span>
+                        	<p class="clearfix"><span class="pull-left">Bunk Reports</span>
                             <span class="pull-right"><i class="far fa-arrow-circle-right"></i></span></p>
                         </div>
                     </a>
+                </div>
+				<div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
+					<a class="panel panel-primary" href="/admin/activities/overview/" title="'. siteVar('act','singular','capital') .' Reports">
+						<div class="panel-heading">
+							<div class="row">
+								<div class="col-12 text-center">
+									<i class="far fa-calendar-edit fa-5x"></i>
+								</div>
+							</div>
+						</div>
+						<div class="panel-footer text-center">
+							<p class="clearfix"><span class="pull-left">'. siteVar('act','singular','capital') .' Reports</span>
+							<span class="pull-right"><i class="far fa-arrow-circle-right"></i></span></p>
+						</div>
+					</a>
                 </div>
                 <div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
 					<form class="dropdown-form" method="post" action="/my-account/">
@@ -155,21 +170,6 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) { // Admin/Office
 							</div>
 						</a>
 					</form>
-                </div>
-                <div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
-					<a class="panel panel-primary" href="/my-activities/" title="My '. siteVar('act','plural','capital') .'">
-						<div class="panel-heading">
-							<div class="row">
-								<div class="col-12 text-center">
-									<i class="far fa-calendar fa-5x"></i>
-								</div>
-							</div>
-						</div>
-						<div class="panel-footer text-center">
-							<p class="clearfix"><span class="pull-left">My '. siteVar('act','plural','capital') .'</span>
-							<span class="pull-right"><i class="far fa-arrow-circle-right"></i></span></p>
-						</div>
-					</a>
                 </div>
                 <div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
 					<a class="panel panel-yellow" href="/logout/">
@@ -300,6 +300,21 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) { // Admin/Office
 						</div>
 						<div class="panel-footer text-center">
 							<p class="clearfix"><span class="pull-left">My Activities</span>
+							<span class="pull-right"><i class="far fa-arrow-circle-right"></i></span></p>
+						</div>
+					</a>
+                </div>
+				<div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
+					<a class="panel panel-primary" href="#" title="Demo Video" data-toggle="modal" data-target="#demo-modal">
+						<div class="panel-heading">
+							<div class="row">
+								<div class="col-12 text-center">
+									<i class="far fa-film fa-5x"></i>
+								</div>
+							</div>
+						</div>
+						<div class="panel-footer text-center">
+							<p class="clearfix"><span class="pull-left">Demo Video</span>
 							<span class="pull-right"><i class="far fa-arrow-circle-right"></i></span></p>
 						</div>
 					</a>

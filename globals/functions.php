@@ -767,7 +767,7 @@ function getActivitySignups($actID,$con) {
 
 // Get Activites for the week
 function getWeekActivities($week,$con) {
-	$sql = 'SELECT a.*, t.id AS type, t.name, t.oneTime FROM activities a LEFT JOIN activity_types t ON (a.type = t.id) WHERE a.week='. $week .' ORDER BY t.name';  
+	$sql = 'SELECT a.*, t.id AS type, t.name, t.oneTime FROM activities a LEFT JOIN activity_types t ON (a.type = t.id) WHERE a.week='. $week .' AND a.active=1 ORDER BY t.name';  
 	$monday = array();
 	$tuesday = array();
 	$wednesday = array();

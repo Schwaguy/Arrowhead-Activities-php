@@ -16,7 +16,7 @@ if ($_POST) {
 		} elseif ($key == 'redirect') {
 			$redirect = $value;
 		} elseif ($key == 'id') {
-			$id = $value;
+			$id = $value; 
 		} 
 	}
 	$sql = "UPDATE ". $table ." SET active=0 WHERE id=". $id ." LIMIT 1";

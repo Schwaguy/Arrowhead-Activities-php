@@ -4,14 +4,18 @@
 <footer id="site-footer">
 	<div class="container">
 		<div class="row">
-			<div class="col-6"><?=$backBtn?></div>
-			<div class="col-6"></div>	
+			<div class="col-6 text-left"><?=$backBtn?></div>
+			<div class="col-6 text-right"><a id="logout" class="btn btn-default" href="/logout/">Log Out</a></div>	
 		</div>
 	</div>	
 </footer>
 <?php endif ?>
 
 <div id="feedback"><div id="processing"><i class="fas fa-spinner fa-pulse fa-spin"></i></div><div id="response" class="container"></div></div>
+
+<?php
+	include($ROOT  .'/pages/inc/modal-demo-video.php');
+?>
 
 <!-- JQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -22,10 +26,10 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
 <script type="text/javascript" src="/js/popper.min.js"></script>
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-<!--<script type="text/javascript" src="/js/mdb.min.js"></script>-->
 <script type="text/javascript" src="/js/addons/datatables.min.js"></script>
 <script type="text/javascript" src="/js/redirect.jquery.js"></script>
 <script type="text/javascript" src="/js/arrow-activities.js"></script>
+<script src='https://vjs.zencdn.net/7.4.1/video.js'></script>
 
 <?php
 require_once('globals/phpDebug.php');

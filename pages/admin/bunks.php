@@ -1,10 +1,12 @@
 <?php
 
-	$content .= '<div class="container main">
+	$content .= '<div class="container main">';
+
+	if ($_SESSION['userPermissions']['admin'] == 1) {
+		$content .= '<div class="quick-buttons"><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addBunk" aria-expanded="false" aria-controls="addBunk">Add New Bunk</button></div>';
+	}
 		
-		<div class="quick-buttons"><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addBunk" aria-expanded="false" aria-controls="addBunk">Add New Bunk</button></div>
-		
-		<h1 class="page-title">Bunks</h1>
+	$content .= '<h1 class="page-title">Bunks</h1>
 		
 		<div class="row justify-content-md-center">
 			<div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12">';

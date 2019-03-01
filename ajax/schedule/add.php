@@ -123,9 +123,9 @@ if ($_POST) {
 		}
 		$result = $con->query($sql);
 		
-		$output = array('op'=>'add','feedback'=>'Addition Complete','redirect'=>$redirect);
+		$output = array('op'=>'add','feedback'=>'Schedule Complete','redirect'=>$redirect);
 	} else {
-		$output = array('op'=>'add','feedback'=>'ADDITION ERROR','redirect'=>'');
+		$output = array('op'=>'add','feedback'=>'SCHEDULE ERROR','redirect'=>'');
 	}
 } else {
 	$output = array('op'=>'add','feedback'=>'ERROR','redirect'=>''); 	

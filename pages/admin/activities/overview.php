@@ -1,9 +1,9 @@
 <?php
-	$content .= '<div class="container main">
-		
-		<div class="quick-buttons"><a href="/admin/activities/add/" class="btn btn-primary" type="button" aria-expanded="false" aria-controls="addActivity">Add New '. siteVar('act','singular','capital') .'</a></div>
-		
-		<h1 class="page-title">Arrowhead Club '. siteVar('act','plural','capital') .'</h1>
+	$content .= '<div class="container main">';
+	if ($_SESSION['userPermissions']['admin'] == 1) {
+		$content .= '<div class="quick-buttons"><a href="/admin/activities/add/" class="btn btn-primary" type="button" aria-expanded="false" aria-controls="addActivity">Add New '. siteVar('act','singular','capital') .'</a></div>';
+	}
+	$content .= '<h1 class="page-title">Arrowhead Club '. siteVar('act','plural','capital') .'</h1>
 		
 		<div class="row justify-content-md-center clearfix">
 			<div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12">';

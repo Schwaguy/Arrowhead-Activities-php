@@ -122,11 +122,6 @@
 			</tr>';
 		}
 		$content .= '</tbody></table></div></div>';
-		
-
-		
-		
-		
 	} 
 
 	$content .= '</div><!-- /col -->

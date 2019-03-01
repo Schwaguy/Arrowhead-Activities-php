@@ -288,6 +288,39 @@ table.dataTable thead .sorting_desc_disabled:after {
 	padding-left: 1em;
 }
 
+/* =Responsive iFrame
+-------------------------------------------------------------- */
+.iframe-rwd  {
+	position: relative;
+	padding-bottom: 65.25%;
+	padding-top: 30px;
+	margin: 22px 0 10px 0;
+	height: 0;
+	overflow: hidden;
+	-webkit-box-shadow:  1px 1px 3px 2px rgba(204, 204, 204, 0.65);
+	-moz-box-shadow:  1px 1px 3px 2px rgba(204, 204, 204, 0.65);
+    box-shadow:  1px 1px 3px 2px rgba(204, 204, 204, 0.65);
+	behavior: url('/PIE/PIE.php');
+}
+.iframe-rwd iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+// Responsive Video
+div.videocontent {
+	position: relative;
+	margin: 1em auto;
+	width:80%;
+	max-width:800px;
+	-webkit-box-shadow: 0 0 5px 1px rgba(0,0,0,0.1);
+	   -moz-box-shadow: 0 0 5px 1px rgba(0,0,0,0.1);
+			box-shadow: 0 0 5px 1px rgba(0,0,0,0.1);
+}
+
 @media screen and (max-width: 991px) {
 	.collapse:not(.show) {
 		display: none !important;

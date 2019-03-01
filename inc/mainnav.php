@@ -1,6 +1,8 @@
 <?php
 $mainnav = '';
 
+$camperArray = array(4,5,7);
+
 $content .= '<!--Navbar-->
 <nav class="navbar navbar-expand-lg navbar-fixed-top navbar-dark primary-color navbar-custom">
 
@@ -24,8 +26,8 @@ $content .= '<!--Navbar-->
 $linkInfo = checkPageLink($thisPg,'home');
 $content .= '<!-- Links -->
 		<ul class="navbar-nav mr-auto">
-			<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/">Home'. $linkInfo['sr'] .'</a></li>';
-if ($_SESSION['userAuth']>=3) {
+			<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/">Dashboard'. $linkInfo['sr'] .'</a></li>';
+if (in_array($_SESSION['userAuth'],$camperArray)) {
 	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'my-activities') : array('li'=>'','sr'=>''));
 	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/my-activities/">My Activities'. $linkInfo['sr'] .'</a></li>';
 }
@@ -58,9 +60,21 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) {
 		$content .= '<a class="dropdown-item '. $linkInfo['li'] .'" href="/admin/periods/" title="Period Admin">Periods</a>';
 
 	$content .= '</div></li>'; 
-	
-	
 }
+if ($_SESSION['userAuth']==6) {
+	
+	// Bunk Reports
+	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'bunks') : array('li'=>'','sr'=>''));
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/bunks/" title="Bunk Reports">Bunk Reports</a></li>';
+	
+	// Activity Reports
+	$linkInfo = (!empty($sp) ? checkPageLink($sp,'activities') : array('li'=>'','sr'=>''));
+	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/admin/activities/overview/" title="'. siteVar('act','singular','capital') .' Reports">'. siteVar('act','singular','capital') . ' Reports' . $linkInfo['sr'] .'</a></li>';
+}
+
+// Demo Video
+$content .= '<li class="nav-item"><a class="nav-link" href="#" title="Demo Video" data-toggle="modal" data-target="#demo-modal">Demo</a></li>';
+
 $content .= '</ul><!-- Links -->';
 
 // Right Links

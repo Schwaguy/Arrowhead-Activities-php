@@ -34,8 +34,12 @@ for ($d=1;$d<=5;$d++) {
              	</td>
                 <td class="agenda-events">';
 	$agenda .= showAgendaActivities($week['id'],$dayOfWeek,$actArray,$periods[$p]['id'],true,'','',$con);
-	$agenda .= '<form class="agenda-form" method="post" action="/admin/activities/add/">
+	
+	
+	if ($_SESSION['userPermissions']['admin'] == 1) {
+		$agenda .= '<form class="agenda-form" method="post" action="/admin/activities/add/">
 				<input type="hidden" name="week" value="'. $week['id'] .'"><input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $periods[$p]['id'] .'"><input type="submit" class="btn btn-light-green agenda-event-button" value="Add New Activity"></form>'; 
+	}
 	$agenda .= '</td></tr>';
 	
 	// Show additional Activity Periods
@@ -48,8 +52,10 @@ for ($d=1;$d<=5;$d++) {
 					</td>
 					<td class="agenda-events">';
 			$agenda .= showAgendaActivities($week['id'],$dayOfWeek,$actArray,$periods[$r]['id'],true,'','',$con);
-			$agenda .= '<form class="agenda-form" method="post" action="/admin/activities/add/">
-				<input type="hidden" name="week" value="'. $week['id'] .'"><input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $periods[$r]['id'] .'"><input type="submit" class="btn btn-light-green agenda-event-button" value="Add New '. siteVar('act','singular','capital') .'"></form>'; 
+			if ($_SESSION['userPermissions']['admin'] == 1) {
+				$agenda .= '<form class="agenda-form" method="post" action="/admin/activities/add/">
+					<input type="hidden" name="week" value="'. $week['id'] .'"><input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $periods[$r]['id'] .'"><input type="submit" class="btn btn-light-green agenda-event-button" value="Add New '. siteVar('act','singular','capital') .'"></form>'; 
+			}
 			$agenda .= '</td></tr>';
 			$count++;
 		}
