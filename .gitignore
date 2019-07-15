@@ -11,3 +11,9 @@ _notes/
 /ajax/report/error_log
 /ajax/bunks/error_log
 /ajax/admin/error_log
+/js/addons/
+/js/jQuery-Plugin-for-Adding-Custom-Value-to-Dropdown-List-Custom-Combo-Box/
+/js/modules/
+/inc/data-tables/
+/inc/PHPMailer/
+/inc/sendgrid-php/
