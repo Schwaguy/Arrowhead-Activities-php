@@ -20,7 +20,7 @@ global $today, $now;
 date_default_timezone_set("America/New_York");
 $today = date('Y-m-d');
 $now = date('Y-m-d H:i:s');
-$now = date('2019-06-22 19:01:00'); 
+//$now = date('2019-06-22 19:01:00'); 
 
 global $weekdays;
 $weekdays = array(
@@ -33,13 +33,13 @@ $weekdays = array(
 
 global $adminAccessLevels,$camperAccessLevels;
 $adminAccessLevels = array(1,2);
-$camperAccessLevels = array(4,5);
+$camperAccessLevels = array(4,5,7);
 
 // Global Element File
 global $URL, $ROOTPATH, $SITEURL;
 $URL = 'https://' .$_SERVER['SERVER_NAME'];
 $ROOTPATH = '.'; 
-$SITEURL = 'https://activities.arrowheaddaycamp.com'; 
+$SITEURL = 'https://dev.arrowheadclubday.com/'; 
 
 global $comanyName, $formFrom, $formFromEmail;
 $companyName = 'Arrowhead Day Camp';

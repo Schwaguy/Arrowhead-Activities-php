@@ -13,6 +13,6 @@ global $host, $un, $pw, $db;
 $host = 'localhost';
 $un = 'atoo_arrowhead_a';
 $pw = 'kidsH@veFun!active';
-$db = 'atoo_arrowhead_activities';
+$db = 'atoo_arrowhead_activities_test';
 
 ?>

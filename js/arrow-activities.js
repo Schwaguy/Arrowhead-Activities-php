@@ -31,18 +31,6 @@ jQuery(document).ready(function($) {
 		$(this).datepicker('show');
 	});
 	
-	/*$('.timepicker').timepicker({
-		timeFormat: 'h:mm p',
-		interval: 60,
-		minTime: '9',
-		maxTime: '6:00pm',
-		defaultTime: '9',
-		startTime: '9:00am',
-		dynamic: false,
-		dropdown: true,
-		scrollbar: true
-	});*/
-	
 	// Handle Combo Boxes
 	if ($('input[list]').length > 0){
 		document.querySelector('input[list]').addEventListener('input', function(e) {
@@ -73,13 +61,6 @@ jQuery(document).ready(function($) {
 		$('[data-toggle="tooltip"]').tooltip();
 	});
 	
-	/*$('#tabs').responsiveTabs({
-		startCollapsed: 'accordion',
-		animation: 'slide',
-		duration: 500,
-		scrollToAccordion: true
-	});*/
-	
 	// Post Link
 	$('body').on('click','.postLink', function() {
 		var linkPage = $(this).attr('href');
@@ -90,6 +71,39 @@ jQuery(document).ready(function($) {
 			postObject[keys[i]] = values[i];
 		});
 		$.redirect(linkPage, postObject);
+		return false;
+	});
+	
+	$('body').on('click','.showPW', function() {
+		var pwField = $(this).data('pw-field');
+		if ($(pwField).attr('type') === 'password') {
+			$(pwField).attr('type', 'text');
+		} else {
+			$(pwField).attr('type', 'password');
+		}
+	});
+	
+	// Check for existing username
+	$('body').on('blur', '.input-username', function() {
+		var username = $(this).val();
+		var ajaxUrl = '/ajax/admin/checkUsername.php'; 
+		var formData = 'username='+ username;
+		//console.log(ajaxUrl +'?'+ formData);
+		$.ajax({
+			type: 'POST',
+			url: ajaxUrl,
+			data: formData
+		})
+		.done(function(data){ // if getting done then call.
+			if (data.output.usernameExists > 0) {
+				$('.unExist').html(data.output.feedback);
+			} else {
+				$('.unExist').html('');
+			}
+		})
+		.fail(function() { // if fail then getting message
+			$('#response').html('POST FAILED');
+		});
 		return false;
 	});
 	
@@ -104,7 +118,6 @@ jQuery(document).ready(function($) {
 		submitHandler: function(form) {
 			var ajaxUrl = '/ajax/admin/register.php'; 
 			var formData = $(form).serialize();
-			console.log(ajaxUrl +'?'+ formData);
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
@@ -273,7 +286,6 @@ jQuery(document).ready(function($) {
 			var frm = $(this).closest('.adminForm');
 			var ajaxUrl = '/ajax/admin/'+ op +'.php'; 
 			var formData = 'op=' + op + '&' + $(frm).serialize();
-			//console.log(ajaxUrl +'?'+ formData);
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
@@ -346,8 +358,6 @@ jQuery(document).ready(function($) {
 		var date = ($(this).data('date') ? $(this).data('date') : '');
 		var ajaxUrl = '/ajax/report/print-schedule.php'; 
 		var formData = 'camper='+ camper +'&week='+ week +'&bunk='+ bunk +'&activity='+ activity +'&date='+ date;
-		console.log(ajaxUrl +'?'+ formData);
-		
 		$.ajax({
 			type: 'POST',
 			url: ajaxUrl,
@@ -373,24 +383,12 @@ jQuery(document).ready(function($) {
 					myWindow.document.write("<script>function printPage() { window.print(); window.close(); }</script>");
 				}
 				myWindow.document.write('</body></html>');
-				
-				//myWindow.document.write(data.output.full); 
-				//myWindow.document.head.innerHTML = data.output.header; 
-				//myWindow.document.body.innerHTML = data.output.body; 
 				myWindow.document.close();
 				myWindow.focus(); // necessary for IE >= 10
 				if (!isChrome) {
 					myWindow.print();
 					myWindow.close();
 				}
-				
-				/*if (myWindow.document.readyState == "complete") {
-					myWindow.focus(); // necessary for IE >= 10
-					myWindow.print();
-					myWindow.close();
-				}*/
-				
-				//var myDelay = setInterval(checkReadyState(myWindow,myDelay), 10);
 				$('#feedback').hide();
 				$('#processing').hide();
 				return true;
@@ -419,7 +417,9 @@ jQuery(document).ready(function($) {
 		var $thisBtn = $(this).parent('.schedule-item');
 		var $thisBtnGrp = $(this).parents('.activity-signup-buttons');
 		$thisBtnGrp.children('.schedule-item').not($thisBtn).each(function(){
-			$(this).children('.schedule-radio').prop('checked', false);
+			$(this).children('.schedule-button').removeClass('active');
+			$(this).children('.schedule-radio').removeClass('active');
+			$(this).children('.schedule-radio').removeAttr('checked');
 		});
 		if ($(this).data('onetime')) {
 			var btnClass = '.'+ $(this).data('onetime');
@@ -428,11 +428,6 @@ jQuery(document).ready(function($) {
 				$(this).children('.schedule-radio').prop('checked', false);
 				$(this).children('.schedule-radio').prop('disabled', true);
 				$(this).children('.schedule-button').addClass('disabled');
-				//$(this).data('toggle','tooltip');
-				//$(this).data('placement','top');
-				//var toolTitle = 'This can only be taken once per summer';
-				//$(this).data('original-title',toolTitle);
-				//$(this).prop('title',toolTitle);
 			});
 		} else {
 			var btnGroup = $(this).closest('.activity-signup-buttons');
@@ -529,10 +524,7 @@ jQuery(document).ready(function($) {
 			var frm = $(this).closest('.scheduleForm');
 			var ajaxUrl = '/ajax/schedule/'+ op +'.php'; 
 			var formData = 'op=' + op + '&' + $(frm).serialize();
-			
-			console.log(ajaxUrl);
-			console.log(formData);
-			
+			//console.log(ajaxUrl + '?' + formData);
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
@@ -543,7 +535,6 @@ jQuery(document).ready(function($) {
 					if (data.output.op == 'update') {
 						$('#processing').hide();
 						$('#response').show().html(data.output.feedback);
-						console.log(data.output.feedback);
 						if (data.output.redirect) {
 							setTimeout(function() {
 								$('#feedback').hide();
@@ -555,12 +546,8 @@ jQuery(document).ready(function($) {
 							}, 2000);
 						}
 					} else if (data.output.op == 'add') {
-						console.log(data.output.feedback);
-						//$('#list-group-edit').append(data.output.updateString);
 						$('#processing').hide();
 						$('#response').show().html(data.output.feedback);
-						//$('.add-form').trigger('reset');
-						//$('.collapse-form').removeClass('show');
 						if (data.output.redirect) {
 							setTimeout(function() {
 								window.location.replace(data.output.redirect);
@@ -600,18 +587,10 @@ jQuery(document).ready(function($) {
 	$('.table-data-table').DataTable();
 	$('.dataTables_length').addClass('bs-select');
 	
-	
-	/*$('body').on('click', '.schedule-radio', function() {
-		console.log('click id: '+ $(this).attr('id'));
-		//$(this).closest('.radio-list').children('.schedule-button').not(this).removeClass('active'); 
-		//$(this).parent('.schedule-button').addClass('active');
-	});*/
-	
-	
 	$('body').on('click', '.btn-clear', function() { 
 		if (confirm("Are you sure you want to delete this schedule?")) {
-    		 clearSchedule(this);
-  		} 
+			clearSchedule(this);
+		} 
 	});
 	
 	function clearSchedule(thisBtn) {
@@ -623,10 +602,6 @@ jQuery(document).ready(function($) {
 		var activity = $(thisBtn).data('activity');
 		var ajaxUrl = '/ajax/schedule/'+ op +'.php'; 
 		var formData = 'user=' + user + '&week=' + week + '&activity=' + activity;
-			
-		console.log(ajaxUrl);
-		console.log(formData);
-			
 		$.ajax({
 			type: 'POST',
 			url: ajaxUrl,
@@ -636,11 +611,27 @@ jQuery(document).ready(function($) {
 			if (data.output.op){
 				$('#processing').hide();
 				$('#response').show().html(data.output.feedback);
-				console.log(data.output.feedback);
 				if (data.output.result == 'success') {
 					setTimeout(function() {
 						$('#feedback').fadeOut();
-						window.location.reload();
+						if (data.output.info) {
+							if (data.output.info.activity) {
+								$('#activity-signups').find('td').each(function() {
+									$(this).html('<p class="text-muted"><em>No Signups Yet</em></p>');
+								});
+							} else if (data.output.info.week) {
+								$('#week-' + data.output.info.week).find('.period').each(function() {
+									$(this).children('form').removeClass('scheduled-activity');
+									var $thisInput = $(this).find('input.event');
+									$thisInput.removeClass('btn-block btn-light-green d-block').addClass('btn-light').val('Click to Schedule Activities');
+								});
+							}
+							setTimeout(function() {
+								$('#feedback').fadeOut();
+							}, 2000);
+						} else {
+							window.location.reload();
+						}
 					}, 2000);
 				} else {
 					setTimeout(function() {

@@ -32,6 +32,7 @@ for ($d=1;$d<=5;$d++) {
 			foreach ($campers as $camper) {
 				$actSignups .= '<li><form method="post" action="/schedule-activities/">
 					<input type="hidden" name="uID" value="'. $camper['user']['id'] .'">
+					<input type="hidden" name="thisUserName" value="'. $camper['user']['username'] .'">
 					<input type="hidden" name="bunkID" value="'. $camper['bunk']['id'] .'">
 					<input type="hidden" name="weekID" value="'. $activity['week'] .'">
 					<input type="hidden" name="startDate" value="'. $startDate .'">
@@ -56,7 +57,7 @@ $content .= '<div class="agenda">
                 <thead class="thead-dark">
                     <tr>'. $tableHead .'</tr>
                 </thead>
-                <tbody><tr>'. $tableBody .'</tr></tbody>
+                <tbody id="activity-signups"><tr>'. $tableBody .'</tr></tbody>
             </table>
         </div>
     </div>';

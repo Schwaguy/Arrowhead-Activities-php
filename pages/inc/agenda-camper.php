@@ -103,6 +103,7 @@ $content .= '<div class="agenda">
 			<form id="'. $formName .'" class="scheduleForm" name="'. $formName .'" method="post">
 				<input type="hidden" name="user" value="'. $userInfo['userID'] .'">
 				'. $registered .'
+				<input type="hidden" name="userAuth" value="'. $_SESSION['userAuth'] .'"> 
 				<input type="hidden" name="updated" value="'. $now .'">
 				<input type="hidden" name="updatedBy" value="'. $_SESSION['userID'] .'">
 				<input type="hidden" name="redirect" value="'. $redirect .'">

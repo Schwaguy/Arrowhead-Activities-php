@@ -10,24 +10,31 @@ $ignore = array('PHPSESSID');
 $success = false;
 $redirect = ''; 
 $test = ''; 
+$info[] = '';
 if ($_REQUEST) {
 	$redirect = $_REQUEST['redirect'];
 	$sql = "SELECT s.id AS signupID, s.user, s.activity, s.week, s.day, t.id AS typeID, t.oneTime FROM activity_signups s LEFT JOIN activities a ON (a.id = s.activity) LEFT JOIN activity_types t ON (t.id = a.type) WHERE s.active=1";
 	if (!empty($_REQUEST['user'])) {
-		$sql .= " AND s.user='". $_REQUEST['user'] ."'"; 
+		$sql .= " AND s.user='". $_REQUEST['user'] ."'";
+		$info['user'] = $_REQUEST['user'];
 		if (!empty($_REQUEST['week'])) {
 			$sql .= " AND s.week='". $_REQUEST['week'] ."'";
+			$info['week'] = $_REQUEST['week'];
 		}
 	} elseif (!empty($_REQUEST['activity'])) {
 		$sql .= " AND s.activity='". $_REQUEST['activity'] ."'";
+		$info['activity'] = $_REQUEST['activity'];
 		if (!empty($_REQUEST['week'])) {
 			$sql .= " AND s.week='". $_REQUEST['week'] ."'";
+			$info['week'] = $_REQUEST['week'];
 			if (!empty($_REQUEST['day'])) {
 				$sql .= " AND s.day='". $_REQUEST['day'] ."'";
+				$info['day'] = $_REQUEST['day'];
 			}
 		}
 	} elseif (!empty($_REQUEST['week'])) {
 		$sql .= " AND s.week='". $_REQUEST['week'] ."'";	
+		$info['week'] = $_REQUEST['week'];
 	} 
 	
 	$test .= '<p>SQL: '. $sql .'</p>'; 
@@ -72,7 +79,7 @@ if ($_REQUEST) {
 	} else {
 		$success = false;
 	}
-	$output = (($success) ? array('op'=>'clear','feedback'=>'Update Complete','redirect'=>$redirect,'result'=>'success') : array('op'=>'clear','feedback'=>'UPDATE ERROR','redirect'=>'','result'=>'error'));
+	$output = (($success) ? array('op'=>'clear','feedback'=>'Schdule Cleared','redirect'=>$redirect,'result'=>'success','info'=>$info) : array('op'=>'clear','feedback'=>'UPDATE ERROR','redirect'=>'','result'=>'error'));
 } else {
 	$output = array('op'=>'clear','feedback'=>'ERROR','redirect'=>'','result'=>'error'); 	
 }

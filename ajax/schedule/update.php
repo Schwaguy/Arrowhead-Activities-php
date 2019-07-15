@@ -6,11 +6,13 @@ $PATH = '../../';
 $phpself = basename(__FILE__);
 require_once($PATH  .'globals/globals.php');
 
-$ignore = array('PHPSESSID');
+$ignore = array('PHPSESSID','userAuth');
 $success = false;
+$feedback = 'Update Complete'; 
 $redirect = ''; 
-if ($_POST) {
-	foreach($_POST as $key => $value) {
+$activityFull = false;
+if ($_REQUEST) {
+	foreach($_REQUEST as $key => $value) {
 		if (!in_array($key,$ignore)) {
 			if ($key == 'op') {
 				$op = $value;
@@ -19,6 +21,7 @@ if ($_POST) {
 			} elseif ($key == 'redirect') {
 				$redirect = $value;
 			} else {
+				//echo $key .'<br>'; 
 				if (strpos($key,'schedule-') !== false) {
 					$schInfo = explode('-',$key);
 					$arrID = $schInfo[1] .'-'. $schInfo[2] .'-'. $schInfo[3];
@@ -34,7 +37,8 @@ if ($_POST) {
 						'day'=>$actInfo[2],
 						'period'=>$actInfo[3]
 					);
-
+					if (!$_POST) { echo '<p>ACTIVITY: '. $value .'</p>'; }
+					
 					// Get Activity Type
 					$sql = "SELECT type FROM activities WHERE id=". $value ." LIMIT 1"; 
 					$getType = mysqli_fetch_assoc(mysqli_query($con, $sql));
@@ -61,76 +65,112 @@ if ($_POST) {
 	}
 	$uID = $fields['user'];
 	
+	if (!$_POST) { echo '<p>Activity Count: '. count($activities) .'</p>'; } 
+	
 	if (count($activities)>0) {
 		foreach ($activities as $k => $act) {
-			$actID = $schedules[$k];
+			if (!$_POST) { echo '<p>----------</p>'; }
+			$schID = $schedules[$k];
+			$newActID = $act['id'];
+			//echo '$schID: '. $schID .'<br>';
 			$udKeys = $keys;
 			$udValues = $values;
 			$udKeys[] = 'id';
-			$udValues[] = $actID;
+			$udValues[] = "'". $schID ."'";
 			$udKeys[] = 'activity';
-			$udValues[] = $act['id'];
+			$udValues[] = "'". $newActID ."'";
 			$udKeys[] = 'week';
-			$udValues[] = $act['week'];
+			$udValues[] = "'". $act['week'] ."'";
 			$udKeys[] = 'day';
 			$udValues[] = "'". $act['day'] ."'";
 			$udKeys[] = 'period';
-			$udValues[] = $act['period'];
+			$udValues[] = "'". $act['period'] ."'";
+			$schedulingWeek = 'week-'. $act['week'];
 			
-			// Get existing activity ID
-			if ($actID) {
-				$sql = 'SELECT activity FROM activity_signups WHERE id='. $actID .' LIMIT 1'; 
-				$getAct = mysqli_fetch_assoc(mysqli_query($con, $sql));
+			// Check Activity Signups
+			
+			if (!$_POST) { echo '<p>checkSignups('. $newActID .', '. $act['day'] .', '. $_REQUEST['userAuth'] .', '. implode('-',$camperAccessLevels) .',$con)</p>'; 	}
+			
+			$activityFull = checkSignups($newActID,$act['day'],$_REQUEST['userAuth'],$camperAccessLevels,$con);
+			if (!$_POST) { echo '<p>activityFull: '. $activityFull .'</p>'; }
+			if ($activityFull) {
+				if (!$_POST) { echo '<p> - full - </p>'; }
+				$feedback = 'Some of the activities you selected are now full. Please try again.';
+				//$redirectHash = $schedulingWeek;
+				$success = true;
+			} else {
+				// Get existing activity ID
+				if ($schID) {
+					$sql = 'SELECT activity, registered FROM activity_signups WHERE id='. $schID .' LIMIT 1'; 
+					if (!$_POST) { echo 'SCH QUERY: '. $sql . '<br>'; }
 
-				if ($getAct = mysqli_fetch_assoc(mysqli_query($con, $sql))) {
-					$oldActID = $getAct['activity'];
+					if ($getAct = mysqli_fetch_assoc(mysqli_query($con, $sql))) {
+						$oldActID = $getAct['activity'];
+						$registered = $getAct['registered'];
+						if (!$_POST) { echo '<p>OLD: '. $oldActID .'<br>NEW: '. $newActID .'</p>'; }
+						if ($oldActID != $newActID) {
+							// Get Old Activity Type
+							$sql = "SELECT type FROM activities WHERE id=". $oldActID ." LIMIT 1"; 
+							if (!$_POST) { echo $sql . '<br>'; }
+							$getType = mysqli_fetch_assoc(mysqli_query($con, $sql));
+							$oldType = $getType['type'];
 
-					if ($oldActID != $act['id']) {
-						// Get Old Activity Type
-						$sql = "SELECT type FROM activities WHERE id=". $oldActID ." LIMIT 1"; 
-						$getType = mysqli_fetch_assoc(mysqli_query($con, $sql));
-						$oldType = $getType['type'];
+							// if old act is one time
+							if (checkOneTimeAct($oldType,$con)) {
+								$column = date('Y'); // Camp Year Column
+								$sql = "SELECT `". $column ."` FROM user_activities WHERE user=". $uID; 
+								if (!$_POST) { echo $sql . '<br>'; } 
 
-						// if old act is one time
-						if (checkOneTimeAct($oldType,$con)) {
-							$column = date('Y'); // Camp Year Column
-							$sql = "SELECT `". $column ."` FROM user_activities WHERE user=". $uID; 
+								if ($result = $con->query($sql)) {
+									$userActAll = $result->fetch_array(MYSQLI_ASSOC);
+									$userActCurrent = explode(',',$userActAll[$column]);
 
-							if ($result = $con->query($sql)) {
-								$userActAll = $result->fetch_array(MYSQLI_ASSOC);
-								$userActCurrent = explode(',',$userActAll[$column]);
-
-								// Search and remove old Activity if one time activity
-								if (in_array($oldType,$userActCurrent)) {	
-									$pos = array_search($oldType, $userActCurrent);
-									unset($userActCurrent[$pos]);
-									$sql = "UPDATE user_activities SET `". $column ."`='". implode(',',$userActCurrent) ."' WHERE user=". $uID;
-									$result = $con->query($sql);
+									// Search and remove old Activity if one time activity
+									if (in_array($oldType,$userActCurrent)) {	
+										$pos = array_search($oldType, $userActCurrent);
+										unset($userActCurrent[$pos]);
+										$sql = "UPDATE user_activities SET `". $column ."`='". implode(',',$userActCurrent) ."' WHERE user=". $uID;
+										$result = $con->query($sql);
+									}
 								}
 							}
 						}
-
-						// Update Activity Signup by ID
-						$sql = "UPDATE activity_signups SET activity=". $act['id'] .", updated='". $now ."', updatedBy='". $_SESSION['userID'] ."' WHERE id=". $actID;
-						if ($result = $con->query($sql)) {
-							$success = true;
-							$var = 'reg'. $act['day']; 
-
-							// Adjust Old Activity Attendance
-							$sql = "UPDATE activities SET ". $var ."=". $var ."-1 WHERE id=". $oldActID;
-							$result = $con->query($sql);
-
-							// Adjust New Activity Attendance
-							$sql = "UPDATE activities SET ". $var ."=". $var ."+1 WHERE id=". $act['id'];
-							$result = $con->query($sql);
-						} else {
-							$success = false;
-						}
 					}
+					//$sql = "UPDATE activity_signups SET activity=". $newActID .", updated='". $now ."', updatedBy='". $_SESSION['userID'] ."' WHERE id=". $schID;	
+					
+				} else {
+					if (!$_POST) { echo '<p>NO SID</p>'; } 	
+					//$sql = "INSERT INTO activity_signups (id, activity, week, day, period, user, registered,  updated', updatedBy, active) VALUES ('', '". $newActID ."','". $act['week'] ."','". $act['day'] ."','". $act['period'] ."','". $uID ."','". $now ."', updatedBy='". $_SESSION['userID'] ."' WHERE id=". $schID)';
+					$registered = $now;
+				}
+				
+				// Update Activity Signup by ID
+				//$sql = "UPDATE activity_signups SET activity=". $newActID .", updated='". $now ."', updatedBy='". $_SESSION['userID'] ."' WHERE id=". $schID;
+				
+				$sql = "REPLACE INTO activity_signups (id, activity, week, day, period, user, registered,  updated, updatedBy, active) VALUES ('', ". $newActID .",". $act['week'] .",'". $act['day'] ."',". $act['period'] .",". $uID .",'". $now ."','". $registered ."',". $_SESSION['userID'] .",1 )";
+				
+				if (!$_POST) { echo '<h2>SUPDATE: '. $sql .'</h2>'; } 
+				
+				if ($result = $con->query($sql)) {
+					$var = 'reg'. $act['day']; 
+
+					// Adjust Old Activity Attendance
+					$sql = "UPDATE activities SET ". $var ."=". $var ."-1 WHERE id=". $oldActID;
+					if (!$_POST) { echo '<p>Old Activity Update: '. $sql .'</p>'; } 
+					$result = $con->query($sql);
+
+					// Adjust New Activity Attendance
+					$sql = "UPDATE activities SET ". $var ."=". $var ."+1 WHERE id=". $newActID;
+					if (!$_POST) { echo '<p>New Activity Update: '. $sql .'</p>'; } 
+					$result = $con->query($sql);
+					$success = true;
+				} else {
+					$success = false;
 				}
 			}
 			unset($udKeys);
 			unset($udValues);
+			//$redirectHash = $schedulingWeek;
 		}
 		
 		if ($success) {
@@ -148,12 +188,21 @@ if ($_POST) {
 			}
 		}
 	}
-	$output = (($success) ? array('op'=>'add','feedback'=>'Update Complete','redirect'=>$redirect) : array('op'=>'add','feedback'=>'UPDATE ERROR','redirect'=>''));
+	
+	
+	$redirect = (($schedulingWeek) ? $redirect .'#'. $schedulingWeek : $redirect);
+	
+	if ($_SESSION['userID'] != $uID) { $redirect = ''; }
+	$output = (($success) ? array('op'=>'update','feedback'=>$feedback,'redirect'=>$redirect) : array('op'=>'update','feedback'=>'UPDATE ERROR','redirect'=>''));
 } else {
-	$output = array('op'=>'add','feedback'=>'ERROR','redirect'=>''); 	
+	$output = array('op'=>'update','feedback'=>'ERROR','redirect'=>''); 	
 }
 
 if ($con) $con->close(); 
-header('Content-Type: application/json; charset=utf-8', true); 
-echo json_encode(array("output"=>$output));
+if (!$_POST) {
+	echo ($success ? 'SUCCESS!' : 'We got issues');
+} else {
+	header('Content-Type: application/json; charset=utf-8', true); 
+	echo json_encode(array("output"=>$output));
+}
 ?>

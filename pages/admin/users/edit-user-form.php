@@ -1,7 +1,7 @@
 <?php
 	$editAuth = ((($_SESSION['userAuth']>2) || (($_SESSION['userAuth']==2) && ($_SESSION['userAuth']==$user['id']))) ? true : false);
 
-	//$canEdit = ($editAuth ? '' : 'disabled');
+	$unCheck = (($_SESSION['userPermissions']['admin']==1) ? '' : (!empty($user['username']) ? 'disabled' : ''));
 
 	// User Edit Form
 	$content .= '<form id="form-edit" class="adminForm">
@@ -20,7 +20,8 @@
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="username">Username</label>
-							<input type="text" class="form-control" name="username" value="'. $user['username'] .'" placeholder="Username" data-rule-required="true" data-msg-required="Username is Required" '. (!empty($user['username']) ? 'disabled' : '').'>
+							<input type="text" class="form-control input-username" name="username" value="'. $user['username'] .'" placeholder="Username" data-rule-required="true" data-msg-required="Username is Required" '. $unCheck .'>
+							<div class="unExist error"></div>
 						</div>
 					</div>
 					<div class="row row-flex form-row">
@@ -41,10 +42,12 @@
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="password">New Password</label>
 							<input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" data-rule-required="false" data-msg-required="Password is Required">
+							<input type="checkbox" class="showPW" data-pw-field="#password"> Show Password
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="password_repeat">Repeat New Password</label>
 							<input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter Password Again" data-rule-required="false" data-msg-required="Password Confirmation is Required">
+							<input type="checkbox" class="showPW" data-pw-field="#password_repeat"> Show Password
 						</div>
 					</div>';
 	$prereqDisplay = (($_SESSION['userPermissions']['edit']==1) ? '' : 'style="display: none"');

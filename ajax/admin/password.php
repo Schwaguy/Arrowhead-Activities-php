@@ -54,7 +54,7 @@ if ($_POST) {
 							->setSubject($subject)
 							->setHtml($message)
 						;
-						$emails = array($toEmail,'josh@comocreative.com','josh@computerwc.com');
+						$emails = array($toEmail);
 						$email->setTos($emails);
 						$sendgrid->send($email);
 						unset($email);

@@ -96,7 +96,7 @@ foreach ($weeks as $week) {
 		$startDate =  strtotime($week['signupStartDate']);
 		$weekdays = '<h5 class="text-muted text-center"><em>Scheduling for '. $week['name'] .' will be available on '. date('l, F jS',$startDate) .' at '. date('g:ia',$startDate) .'</em></h5>'; 
 	}
-	$activityWeeks .= '<div class="container-fluid week-view">'. $header . $weekdays .'</div><!-- /week-view -->';
+	$activityWeeks .= '<div id="week-'. $week['id'] .'" class="container-fluid week-view">'. $header . $weekdays .'</div><!-- /week-view -->';
 }
 
 $content .= ($activityWeeks ? $activityWeeks : '<h2 class="text-muted"><em>No Scheduling is available yet.  Please check back.</em></h2>'); 

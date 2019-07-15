@@ -28,7 +28,8 @@
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="username">Username</label>
-							<input type="text" class="form-control" name="username" placeholder="Username" data-rule-required="true" data-msg-required="Username is Required">
+							<input type="text" class="form-control input-username" name="username" placeholder="Username" data-rule-required="true" data-msg-required="Username is Required">
+							<div class="unExist error"></div>
 						</div>
 					</div>
 					<div class="row row-flex form-row">

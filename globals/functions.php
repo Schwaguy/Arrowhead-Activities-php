@@ -727,13 +727,14 @@ function getActivityinfo($actID,$con) {
 
 // Get Activity Signups
 function getActivitySignups($actID,$con) {
-	$query = 'SELECT a.id AS sID, a.user, a.day, u.firstName, u.lastName, b.id AS bID, b.name FROM activity_signups a LEFT JOIN users u ON (a.user = u.id) LEFT JOIN bunks b ON (u.bunk = b.id) WHERE a.activity='. $actID .' AND a.active=1 AND u.active=1 ORDER BY a.id';  
+	$query = 'SELECT a.id AS sID, a.user, a.week, a.day, u.firstName, u.lastName, u.username, b.id AS bID, b.name FROM activity_signups a LEFT JOIN users u ON (a.user = u.id) LEFT JOIN bunks b ON (u.bunk = b.id) WHERE a.activity='. $actID .' AND a.active=1 AND u.active=1 ORDER BY a.id';  
 	if($result = $con->query($query)) {
 		while ($sup=$result->fetch_array(MYSQLI_ASSOC)) {
 			$signup = array(
 				'id'=>$sup['sID'],
-				'user'=>array('id'=>$sup['user'],'firstName'=>$sup['firstName'],'lastName'=>$sup['lastName']),
-				'bunk'=>array('id'=>$sup['bID'],'name'=>$sup['name'])
+				'user'=>array('id'=>$sup['user'],'firstName'=>$sup['firstName'],'lastName'=>$sup['lastName'],'username'=>$sup['username']),
+				'bunk'=>array('id'=>$sup['bID'],'name'=>$sup['name']),
+				'week'=>array('id'=>$sup['week'],'week'=>$sup['week'])
 			);
 			switch ($sup['day']) {
 				case 'Monday':
@@ -1259,6 +1260,18 @@ function substrws( $text, $len=180 ) {
     }
     return $text;
 } 
+
+// Check Activity Signups
+function checkSignups($id,$day,$auth,$camperAccess,$con) {
+	$sql = "SELECT type, capacity, reg". $day ." AS regNumber FROM activities WHERE id=". $id ." LIMIT 1"; 
+	$getType = mysqli_fetch_assoc(mysqli_query($con, $sql));
+	if (($getType['regNumber'] >= $getType['capacity']) && (in_array($auth,$camperAccess))) {
+		$activityFull = true; 
+	} else {
+		$activityFull = false;
+	}
+	return $activityFull;
+}
 
 if (!function_exists('logConsole')) {
  function logConsole($name, $data = NULL, $jsEval = FALSE) {

@@ -29,8 +29,10 @@
 						<input type="hidden" name="active" value="1">
 						<div class="row">
 							<div class="col-12 col-sm-12 col-md-4 align-self-center"><p class="input-spacer"><label class="w-100 d-none d-xs-block d-sm-block d-md-none">Bunk Name</label><input name="name" class="form-control" value="" placeholder="Bunk Name" data-rule-required="true" data-msg-required="Bunk Name is Required"></p></div>
-							<div class="col-12 col-sm-12 col-md-4 align-self-center "><p class="input-spacer"><label class="w-100 d-none d-xs-block d-sm-block d-md-none">Counselor</label>'. getCounselors('',$con) .'</p></div>
+							
 							<div class="col-12 col-sm-12 col-md-4 align-self-center"><p class="input-spacer"><label class="w-100 d-none d-xs-block d-sm-block d-md-none">Age Group</label>'. getAgeGroups('',false,true,$con) .'</p></div>
+							
+							<div class="col-12 col-sm-12 col-md-4 align-self-center "><p class="input-spacer"><label class="w-100 d-none d-xs-block d-sm-block d-md-none">Counselor</label>'. getCounselors('',$con) .'</p></div>
 						</div>
 					</div>
 					<div class="col-12 col-xs-12 col-sm-5 col-md-3 d-md-flex">
@@ -52,7 +54,9 @@
 					<input type="hidden" name="id" value="'. $bunk['id'] .'">
 					<div class="row flex-row">
 						<div class="col-12 col-sm-12 col-md-4 align-self-center"><p class="input-spacer"><label class="w-100 d-block d-xs-block d-sm-block d-md-none">Bunk Name</label><input name="name" class="form-control" value="'. $bunk['name'] .'" data-rule-required="true" data-msg-required="Bunk Name is Required"></p></div>
+						
 						<div class="col-12 col-sm-12 col-md-4 align-self-center "><p class="input-spacer"><label class="w-100 d-block d-xs-block d-sm-block d-md-none">Age Group</label>'. getAgeGroups($bunk['groups'],false,true,$con) .'</p></div>
+						
 						<div class="col-12 col-sm-12 col-md-4 align-self-center"><p class="input-spacer"><label class="w-100 d-block d-xs-block d-sm-block d-md-none">Counselor</label>'. getCounselors($bunk['counselor'],$con) .'</p></div>
 					</div>
 				</div>

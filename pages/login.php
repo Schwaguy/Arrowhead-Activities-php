@@ -17,7 +17,8 @@
 										<input class="form-control" placeholder="Username" name="uName" type="text" autofocus>
 									</div>
 									<div class="form-group">
-										<input class="form-control" placeholder="Password" name="uPass" type="password" value="">
+										<input class="form-control" placeholder="Password" name="uPass" id="loginPass" type="password" value="">
+										<input type="checkbox" class="showPW" data-pw-field="#loginPass"> Show Password
 									</div>
 									<div class="row">
 										<div class="col col-xs-12 col-sm-12 col-md-3 text-left">
@@ -43,30 +44,32 @@
 									<input type="hidden" name="new-registration" value="true">
 									<input type="hidden" name="access_level" value="4">
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="firstName">First Name</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="firstName">Camper\'s First Name</label></div>
 										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle">
-											<input type="text" class="form-control first-input" name="firstName" placeholder="Your First Name" required>
+											<input type="text" class="form-control first-input" name="firstName" placeholder="Camper\'s First Name" required>
 										</div>
 									</div>
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="lastName">Last Name</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="lastName" placeholder="Your Last Name" required></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="lastName">Camper\'s Last Name</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="lastName" placeholder="Camper\'s Last Name" required></div>
 									</div>
 									<div class="row form-row align-middle">
-										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="username">Username</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="username" placeholder="Your Username" required></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="username">Camper\'s Username</label></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="username" placeholder="Camper\'s Username" required></div>
 									</div>
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="email">Email</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="email" class="form-control" name="email" placeholder="Your Email Address" required></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="email" class="form-control" name="email" placeholder="example@email.com" required></div>
 									</div>
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="password">Password</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="password" class="form-control" id="password" name="password" placeholder="Enter Your Password" required></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="password" class="form-control" id="password" name="password" placeholder="Enter Your Password" required>
+										<input type="checkbox" class="showPW" data-pw-field="#password"> Show Password</div>
 									</div>
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="password_repeat">Repeat Password</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter Your Password Again" required></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter Your Password Again" required>
+										<input type="checkbox" class="showPW" data-pw-field="#password_repeat"> Show Password</div>
 									</div>
 									<div class="anti"><input type="text" name="anti" value=""></div>
 									<div class="text-right"><input type="submit" class="btn btn-default btn-lg" value="Register" /></div>

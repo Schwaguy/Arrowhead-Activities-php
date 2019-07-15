@@ -7,3 +7,7 @@ _notes/
 /BACKUP/
 /api/
 /MDB-Free/
+/ajax/schedule/error_log
+/ajax/report/error_log
+/ajax/bunks/error_log
+/ajax/admin/error_log

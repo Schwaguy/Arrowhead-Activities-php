@@ -28,7 +28,7 @@
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/js/addons/datatables.min.js"></script>
 <script type="text/javascript" src="/js/redirect.jquery.js"></script>
-<script type="text/javascript" src="/js/arrow-activities.js"></script>
+<script type="text/javascript" src="/js/arrow-activities.min.js"></script>
 <script src='https://vjs.zencdn.net/7.4.1/video.js'></script>
 
 <?php

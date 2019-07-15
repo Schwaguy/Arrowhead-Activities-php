@@ -23,12 +23,12 @@
 <link rel="shortcut icon" href="/icon/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/icon/favicon.ico" type="image/x-icon">
 
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-NJXGk7R+8gWGBdutmr+/d6XDokLwQhF1U3VA7FhvBDlOq7cNdI69z7NQdnXxcF7k" crossorigin="anonymous" media="all">
+<link rel="stylesheet" href="/font/fontawesome-pro-5.7.2-web/css/all.min.css" media="all">
 <link rel="stylesheet" href="/css/bootstrap.min.css" media="all">
 <!--<link rel="stylesheet" href="/css/mdb.lite.min.css">-->
 <link rel="stylesheet" href="/css/addons/datatables.min.css" media="all">
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-<link rel="stylesheet" href="/css/style.css" media="all"> 
+<link rel="stylesheet" href="/css/style.min.css" media="all"> 
 
 <link href="https://vjs.zencdn.net/7.4.1/video-js.css" rel="stylesheet">
 <script src="https://vjs.zencdn.net/ie8/ie8-version/videojs-ie8.min.js"></script>

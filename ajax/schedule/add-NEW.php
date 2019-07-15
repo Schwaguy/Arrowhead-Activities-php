@@ -6,7 +6,7 @@ $PATH = '../../';
 $phpself = basename(__FILE__);
 require_once($PATH  .'globals/globals.php');
 
-$ignore = array('PHPSESSID','userAuth');
+$ignore = array('PHPSESSID');
 $redirect = ''; 
 if ($_POST) {
 	foreach($_POST as $key => $value) {
@@ -26,22 +26,18 @@ if ($_POST) {
 					unset($value);
 				} elseif (strpos($key,'activity-') !== false) {
 					$actInfo = explode('-',$key);
+					$activities[] = array(
+						'id'=>$value,
+						'week'=>$actInfo[1],
+						'day'=>$actInfo[2],
+						'period'=>$actInfo[3]
+					);
 					
 					// Get Activity Type
-					$sql = "SELECT type, capacity, reg". $actInfo[2] ." AS regNumber FROM activities WHERE id=". $value ." LIMIT 1"; 
+					$sql = "SELECT type FROM activities WHERE id=". $value ." LIMIT 1"; 
 					$getType = mysqli_fetch_assoc(mysqli_query($con, $sql));
-					
-					if (($getType['regNumber'] >= $getType['capacity']) && (in_array($_POST['userAuth'],$camperAccessLevels))) {
-						$activitiesFull[] = $value; 	
-					} else {
-						$activities[] = array(
-							'id'=>$value,
-							'week'=>$actInfo[1],
-							'day'=>$actInfo[2],
-							'period'=>$actInfo[3]
-						);
-						$uActNew[] = $getType['type'];
-					}
+					$uActNew[] = $getType['type'];
+
 					unset($key);
 					unset($value);
 				} elseif (($key == 'startTime') || ($key == 'endTime')) {
@@ -64,7 +60,7 @@ if ($_POST) {
 	$uID = $fields['user'];
 	
 	if (count($activities)>0) {
-		unset($schedulingWeek);
+		unset($activitiesFull);
 		foreach ($activities as $act) {
 			$udKeys = $keys;
 			$udValues = $values;
@@ -76,20 +72,33 @@ if ($_POST) {
 			$udValues[] = "'". $act['day'] ."'";
 			$udKeys[] = 'period';
 			$udValues[] = $act['period'];
-			$sql = "INSERT INTO activity_signups (". implode(',',$udKeys) .") VALUES (". implode(',',$udValues) .")";
-			//echo '<p>'. $sql .'</p>';
-			if ($result = $con->query($sql)) {
-				// Update Activity Attendance
-				$var = 'reg'. $act['day']; 
-				$sql = "UPDATE activities SET ". $var ."=". $var ."+1 WHERE id=". $act['id']; 
-				$result = $con->query($sql);
-				$success = true;
+			$sqlCheck = "SELECT capacity, reg". $act['day'] ." AS signedUp FROM activities WHERE id=". $act['id'];
+			if ($check = $con->query($sqlCheck)) {
+				while ($row=$check->fetch_array(MYSQLI_ASSOC)) {
+					$capacity = $row['capacity'];
+					$signups = $row['signedUp'];
+				}
+				$actFull = (($signups >= $capacity) ? true : false);
+				$activitiesFull[] = $act['id'];
 			} else {
-				$success = false;
+				$actFull = false;
 			}
+			
+			if (!$actFull) {
+				$sql = "INSERT INTO activity_signups (". implode(',',$udKeys) .") VALUES (". implode(',',$udValues) .")";
+				//echo '<p>'. $sql .'</p>';
+				if ($result = $con->query($sql)) {
+					// Update Activity Attendance
+					$var = 'reg'. $act['day']; 
+					$sql = "UPDATE activities SET ". $var ."=". $var ."+1 WHERE id=". $act['id']; 
+					$result = $con->query($sql);
+					$success = true;
+				} else {
+					$success = false;
+				}
+			} 
 			unset($udKeys);
 			unset($udValues);
-			$schedulingWeek = 'week-'. $act['week'];
 		}
 	}
 	
@@ -129,13 +138,7 @@ if ($_POST) {
 		}
 		$result = $con->query($sql);
 		
-		if ($activitiesFull) {
-			$redirect = $redirect .'#'. $schedulingWeek;
-			$output = array('op'=>'add','feedback'=>'Some of the activities you selected are now full. Please try again.','full'=>$activitiesFull,'redirect'=>$redirect);
-		} else {
-			if ($_SESSION['userID'] != $uID) { $redirect = ''; }
-			$output = array('op'=>'add','feedback'=>'Schedule Complete','redirect'=>$redirect);
-		}
+		$output = array('op'=>'add','feedback'=>'Schedule Complete','redirect'=>$redirect);
 	} else {
 		$output = array('op'=>'add','feedback'=>'SCHEDULE ERROR','redirect'=>'');
 	}
@@ -143,7 +146,7 @@ if ($_POST) {
 	$output = array('op'=>'add','feedback'=>'ERROR','redirect'=>''); 	
 }
 
-if ($con) $con->close();
+if ($con) $con->close(); 
 header('Content-Type: application/json; charset=utf-8', true); 
 echo json_encode(array("output"=>$output));
 ?>
