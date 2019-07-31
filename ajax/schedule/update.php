@@ -173,8 +173,25 @@ if ($_REQUEST) {
 					
 				} else {
 					if (!$_POST) { echo '<p>NO SID</p>'; } 	
-					//$sql = "INSERT INTO activity_signups (id, activity, week, day, period, user, registered,  updated', updatedBy, active) VALUES ('', '". $newActID ."','". $act['week'] ."','". $act['day'] ."','". $act['period'] ."','". $uID ."','". $now ."', updatedBy='". $_SESSION['userID'] ."' WHERE id=". $schID)';
 					$registered = $now;
+					$udKeys[] = 'registered';
+					$udValues[] = "'". $registered ."'";
+					$udKeys[] = 'active';
+					$udValues[] = "'1'";
+
+					$sql = "INSERT INTO activity_signups (". implode(',',$udKeys) .") VALUES (". implode(',',$udValues) .")";
+					if (!$_POST) { echo 'Activity Signup: '. $sql; }
+					if ($result = $con->query($sql)) {
+						$var = 'reg'. $act['day']; 
+
+						// Adjust New Activity Attendance
+						$sql = "UPDATE activities SET ". $var ."=". $var ."+1 WHERE id=". $newActID;
+						if (!$_POST) { echo '<p>New Activity Update: '. $sql .'</p>'; } 
+						$result = $con->query($sql);
+						$success = true;
+					} else {
+						$success = false;
+					}
 				}
 				
 				// Update Activity Signup by ID
