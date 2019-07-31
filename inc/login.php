@@ -6,7 +6,7 @@
 		$uName = $_POST['uName'];
 		$uPass = $_POST['uPass'];
 		$pwCheck = checkPassword($uName,$uPass,$con);
-		if (logUserIn($uName,$pwCheck,$today,$con)) {
+		if (logUserIn($uName,$pwCheck,$today,$now,$con)) {
 			include('inc/pageContent.php');
 		} else { // Invalid Username or Password
 			$loginError = '<div class="alert alert-danger" role="alert">Invalid Username or Password</div>';

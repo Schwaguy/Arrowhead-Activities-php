@@ -49,7 +49,7 @@ if ($_REQUEST) {
 				} elseif (($key == 'startTime') || ($key == 'endTime')) {
 					$value = date('H:i:s', strtotime($today .' '. $value));
 				} elseif (isDate($value)) {
-					$value = date_format(date_create($value),'Y-m-d');
+					$value = date_format(date_create($value),'Y-m-d H:i:s');
 				}  elseif (is_array($value)) {
 					$value = implode(',',$value);
 				} else {
@@ -68,6 +68,7 @@ if ($_REQUEST) {
 	if (!$_POST) { echo '<p>Activity Count: '. count($activities) .'</p>'; } 
 	
 	if (count($activities)>0) {
+		
 		foreach ($activities as $k => $act) {
 			if (!$_POST) { echo '<p>----------</p>'; }
 			$schID = $schedules[$k];
@@ -134,9 +135,41 @@ if ($_REQUEST) {
 									}
 								}
 							}
+							
+							$udKeys[] = 'registered';
+							$udValues[] = "'". $registered ."'";
+							$udKeys[] = 'active';
+							$udValues[] = "'1'";
+
+							$sql = "REPLACE INTO activity_signups (". implode(',',$udKeys) .") VALUES (". implode(',',$udValues) .")";
+
+							if (!$_POST) { echo '<h2>SUPDATE: '. $sql .'</h2>'; } 
+
+							if ($result = $con->query($sql)) {
+								$var = 'reg'. $act['day']; 
+
+								// Adjust Old Activity Attendance
+								$sql = "UPDATE activities SET ". $var ."=". $var ."-1 WHERE id=". $oldActID;
+								if (!$_POST) { echo '<p>Old Activity Update: '. $sql .'</p>'; } 
+								$result = $con->query($sql);
+
+								// Adjust New Activity Attendance
+								$sql = "UPDATE activities SET ". $var ."=". $var ."+1 WHERE id=". $newActID;
+								if (!$_POST) { echo '<p>New Activity Update: '. $sql .'</p>'; } 
+								$result = $con->query($sql);
+								$success = true;
+							} else {
+								$success = false;
+							}
+							
+							unset($udKeys);
+							unset($udValues);
+							
 						}
 					}
 					//$sql = "UPDATE activity_signups SET activity=". $newActID .", updated='". $now ."', updatedBy='". $_SESSION['userID'] ."' WHERE id=". $schID;	
+					
+					
 					
 				} else {
 					if (!$_POST) { echo '<p>NO SID</p>'; } 	
@@ -147,7 +180,22 @@ if ($_REQUEST) {
 				// Update Activity Signup by ID
 				//$sql = "UPDATE activity_signups SET activity=". $newActID .", updated='". $now ."', updatedBy='". $_SESSION['userID'] ."' WHERE id=". $schID;
 				
-				$sql = "REPLACE INTO activity_signups (id, activity, week, day, period, user, registered,  updated, updatedBy, active) VALUES ('', ". $newActID .",". $act['week'] .",'". $act['day'] ."',". $act['period'] .",". $uID .",'". $now ."','". $registered ."',". $_SESSION['userID'] .",1 )";
+				//$sql = "REPLACE INTO activity_signups (id, activity, week, day, period, user, registered,  updated, updatedBy, active) VALUES ('', ". $newActID .",". $act['week'] .",'". $act['day'] ."',". $act['period'] .",". $uID .",'". $now ."','". $registered ."',". $_SESSION['userID'] .",1 )";
+				
+				
+				/*
+				$udKeys[] = 'user';
+				$udValues[] = "'". $uID ."'";
+				$udKeys[] = 'registered';
+				$udValues[] = "'". $registered ."'";
+				$udKeys[] = 'updated';
+				$udValues[] = "'". $now ."'";
+				$udKeys[] = 'updatedBy';
+				$udValues[] = "'". $_SESSION['userID'] ."'";
+				$udKeys[] = 'active';
+				$udValues[] = "'1'";
+				
+				$sql = "REPLACE INTO activity_signups (". implode(',',$udKeys) .") VALUES (". implode(',',$udValues) .")";
 				
 				if (!$_POST) { echo '<h2>SUPDATE: '. $sql .'</h2>'; } 
 				
@@ -167,9 +215,10 @@ if ($_REQUEST) {
 				} else {
 					$success = false;
 				}
+				*/
 			}
-			unset($udKeys);
-			unset($udValues);
+			//unset($udKeys);
+			//unset($udValues);
 			//$redirectHash = $schedulingWeek;
 		}
 		

@@ -64,7 +64,8 @@ if ($_REQUEST) {
 			}
 			
 			// Update signup status in activity_signups table
-			$sql = "UPDATE activity_signups SET active=0 WHERE id=". $sup['signupID'] ." LIMIT 1"; 
+			$sql = "UPDATE activity_signups SET active=0 WHERE id=". $sup['signupID'] ." LIMIT 1";
+			//$sql = "DELETE FROM activity_signups WHERE id=". $sup['signupID'] ." LIMIT 1";
 			$test .= '<p>SQL: '. $sql .'</p>';
 			$update = $con->query($sql);
 			

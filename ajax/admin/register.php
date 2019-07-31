@@ -33,7 +33,7 @@ if ($_POST) {
 			if ($result = $con->query($sql)) {
 				$id = mysqli_insert_id($con);
 				if ($newRegistration) {
-					$login = logUserIn($username,false,$today,$con); 
+					$login = logUserIn($username,false,$today,$now,$con); 
 					$addRow = ''; 
 				} else {
 					include('inc/addrow-users.php');

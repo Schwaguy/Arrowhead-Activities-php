@@ -520,6 +520,7 @@ jQuery(document).ready(function($) {
 		if (scheduleForm.valid()) {
 			$('#feedback').show();
 			$('#processing').show();
+			$(this).html('Schedule Complete').attr('disabled', true);	
 			var op = $(this).data('op');
 			var frm = $(this).closest('.scheduleForm');
 			var ajaxUrl = '/ajax/schedule/'+ op +'.php'; 

@@ -1,3 +1,10 @@
+# Enable the following lines for the Testing version of the site
+#AuthName "Restricted Area" 
+#AuthType Basic 
+#AuthUserFile /home/atoo/acd-sec/.htpasswd 
+#AuthGroupFile /dev/null 
+#require valid-user
+
 RewriteEngine on
 RewriteCond %{HTTPS} !=on
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE] 

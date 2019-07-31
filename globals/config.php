@@ -1,9 +1,8 @@
 <?php
 
-error_reporting(1);
-ini_set('display_errors', 1);
+/*ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
+error_reporting(E_ALL);*/
 
 date_default_timezone_set('America/New_York');
 global $today, $now;
@@ -16,5 +15,17 @@ $un = 'atoo_arrowhead_a';
 $pw = 'kidsH@veFun!active';
 $db = 'atoo_arrowhead_activities'; // LIVE
 //$db = 'atoo_arrowhead_activities_test'; // DEV
+
+// Global Element File
+global $URL, $ROOTPATH, $SITEURL;
+$URL = 'https://' .$_SERVER['SERVER_NAME'];
+$ROOTPATH = '.'; 
+$SITEURL = 'https://arrowheadclubday.com/'; // LIVE 
+//$SITEURL = 'https://dev.arrowheadclubday.com/'; // DEV
+
+global $comanyName, $formFrom, $formFromEmail;
+$companyName = 'Arrowhead Day Camp';
+$formFrom = $companyName;
+$formFromEmail = 'chiefarrowhead@comcast.net'; 
 
 ?>

@@ -32,7 +32,7 @@ function randomKey($length) {
 }
 
 // Get User Information for Valid Login
-function logUserIn($uName,$pwCheck,$today,$con) {
+function logUserIn($uName,$pwCheck,$today,$now,$con) {
 	$loggedin = false;
 	$query = 'SELECT u.*, a.super, a.admin, a.manage, a.edit, a.schedule, a.report FROM users u LEFT JOIN access_levels a ON (u.access_level = a.id) WHERE u.username="' . $uName . '"';
 	if ($pwCheck) { $query .= ' AND u.password="'. $pwCheck .'"'; }
@@ -58,7 +58,7 @@ function logUserIn($uName,$pwCheck,$today,$con) {
 			$_SESSION['userPrereqs'] = explode(',',$row['prerequisites']);
 			$_SESSION['bunkInfo'] = (!empty($_SESSION['userBunk']) ? getBunkInfo($_SESSION['userBunk'],'',$con) : getBunkInfo($_SESSION['userBunk'],$_SESSION['userID'],$con));
 			$result->free();
-			$query = 'UPDATE users SET lastLogin="' . $today . '" WHERE id="' . $_SESSION['userID'] . '"'; 
+			$query = 'UPDATE users SET lastLogin="' . $now . '" WHERE id="' . $_SESSION['userID'] . '"'; 
 			$result = $con->query($query);
 			//include('inc/pageContent.php');
 			$loggedin = true;

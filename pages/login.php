@@ -1,5 +1,4 @@
 <?php
-
 	$content .= '
     <div id="login" class="container main">
 		<div class="row justify-content-md-center">
