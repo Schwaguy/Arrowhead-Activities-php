@@ -152,7 +152,7 @@ function getAuth($selected,$required,$userAuth,$disabled,$con) {
 
 // Get Item Name
 function getName($id,$table,$con) {
-	$output = ''; 
+	$output = array(); 
 	$query = 'SELECT name FROM '. $table .' WHERE id='. $id .' LIMIT 1'; 
 	$result = $con->query($query);
 	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
@@ -163,7 +163,7 @@ function getName($id,$table,$con) {
 
 // Get Week Info
 function getWeekInfo($weekID,$con) {
-	$week = ''; 
+	$week = array(); 
 	$query = 'SELECT * FROM weeks WHERE id='. $weekID .' LIMIT 1'; 
 	if($result = $con->query($query)) {
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
@@ -229,7 +229,7 @@ function showCamperSchedule($weekID,$camper,$week,$showName,$bunkInfo,$periods,$
 										<span class="col-1"></span>
 									</h5>';
 		foreach ($periods as $period) {
-			if (in_array($bunkInfo['group'],$period['groups'])) {
+			/*if (in_array($bunkInfo['group'],$period['groups'])) {
 				if ($period['days'][$day['number']]==1) {
 					$content .= '<div class="period"><h6>'. $period['name'] .'</h6>';
 					if (!empty($schActivity[$period['id']])) {
@@ -239,7 +239,38 @@ function showCamperSchedule($weekID,$camper,$week,$showName,$bunkInfo,$periods,$
 					}
 					$content .= '</div><!-- /period -->';
 				}
+			}*/
+			
+			if (!empty($bunkInfo)) {
+				if (in_array($bunkInfo['group'],$period['groups'])) {
+					if ($period['days'][$day['number']]==1) {
+						$content .= '<div class="period"><h6>'. $period['name'] .'</h6>';
+						if (!empty($schActivity[$period['id']])) {
+							$content .= '<div class="event btn btn-block btn-light-green agenda-event-button d-block view-only">'. $schActivity[$period['id']]['name'] .'</div>';
+						} else {
+							$content .= '<div class="btn btn-block btn-light agenda-event-button d-block view-only disabled">Not Scheduled</div>';
+						}
+						$content .= '</div><!-- /period -->';
+					}
+				}
+			} else {
+				//if (in_array($bunkInfo['group'],$period['groups'])) {
+					if ($period['days'][$day['number']]==1) {
+						$content .= '<div class="period"><h6>'. $period['name'] .'</h6>';
+						if (!empty($schActivity[$period['id']])) {
+							$content .= '<div class="event btn btn-block btn-light-green agenda-event-button d-block view-only">'. $schActivity[$period['id']]['name'] .'</div>';
+						} else {
+							$content .= '<div class="btn btn-block btn-light agenda-event-button d-block view-only disabled">Not Scheduled</div>';
+						}
+						$content .= '</div><!-- /period -->';
+					}
+				//}
 			}
+			
+			
+			
+			
+			
 		} // foreach period
 		$content .= '</div><!-- /day -->';
 		$d++;
@@ -1050,10 +1081,16 @@ function showScheduledActivities($week,$user,$prereqs,$con) {
 // Get Bunk Roster
 function getBunkRoster($bunkID,$counselorID,$con) {
 	if ($bunkID==0) {
-		$getID = mysqli_fetch_assoc(mysqli_query($con, 'SELECT id FROM bunks WHERE counselor='. $counselorID));
-		$bunkID = $getID['id'];
+		if (!empty($counselorID)) {
+			$getID = mysqli_fetch_assoc(mysqli_query($con, 'SELECT id FROM bunks WHERE counselor='. $counselorID));
+			$bunkID = $getID['id'];
+		}
 	} 
-	$query = 'SELECT id, firstName, lastName, email, lastLogin, week, prerequisites, bunk FROM users WHERE bunk='. $bunkID .' AND active=1 AND access_level!=3 ORDER by lastName ASC, firstName ASC';
+	if ($bunkID) {
+		$query = 'SELECT id, firstName, lastName, email, lastLogin, week, prerequisites, bunk FROM users WHERE bunk='. $bunkID .' AND active=1 AND access_level!=3 ORDER by lastName ASC, firstName ASC';
+	} else {
+		$query = 'SELECT id, firstName, lastName, email, lastLogin, week, prerequisites, bunk FROM users WHERE active=1 AND access_level!=3 ORDER by lastName ASC, firstName ASC';
+	}
 	if ($result = $con->query($query)) {
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 			$user = array(
@@ -1186,7 +1223,7 @@ function get_time_difference( $start, $end )
 
 if (!function_exists('isDate')) {
 	function isDate($value) {
-		if (!$value) {
+		if ((!$value) || (is_array($value))) {
 			return false;
 		}
 		try {

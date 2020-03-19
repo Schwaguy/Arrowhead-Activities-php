@@ -5,7 +5,7 @@
 		$signups = getActivitySignups($_POST['id'],$con);
 	}
 
-	$clearBtn = (($_SESSION['userPermissions']['admin'] == 1) ? ' <a class="btn btn-danger btn-clear btn-clear-weeks" data-toggle="tooltip" data-placement="top" title="This will clear all '. $activity['name'] .' signups" data-op="clear" data-user="" data-week="" data-activity="'. $activity['id'] .'">Clear Signups</a>' : ''); 
+	$clearBtn = (($_SESSION['userPermissions']['admin'] == 1) ? ' <a class="btn btn-danger btn-clear btn-clear-weeks" data-toggle="tooltip" data-placement="top" title="This will clear all '. $activity['name'] .' signups" data-op="clear" data-funct="clearSchedule" data-alert="Are you sure you want to clear all Activity Signups? This cannot be undone!" data-user="" data-week="" data-activity="'. $activity['id'] .'">Clear Signups</a>' : ''); 
 
 	$content .= '<div class="container main">
 		<h1 class="page-title">'. siteVar('act','singular','capital') .' Signups</h1>

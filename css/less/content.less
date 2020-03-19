@@ -36,6 +36,15 @@
     -o-transition: 0.5s;
     transition: 0.5s; }
 
+.week-expand {
+	position: relative;
+	.btnInline {
+		position: absolute;
+		top: 0.25em;
+		right: 1em;
+	}
+}
+
 // Tables
 table th {
   font-size: 0.9rem;
@@ -287,6 +296,29 @@ table.dataTable thead .sorting_desc_disabled:after {
 
 .signupList {
 	padding-left: 1em;
+}
+
+// Alert Box 
+.annual-warning {
+	background-color: #ffff00;
+	background-color: rgb(255,255,0);
+	border: 5px solid #000;
+	-webkit-border-radius: 0;
+	   -moz-border-radius: 0;
+			border-radius: 0;
+	margin-bottom: 1em;
+	padding: 0;
+	.alert-icon {
+		background-color: #000;
+		color: #ffff00;
+		color: rgb(255,255,0);
+		padding: 1em;
+	}
+	.alert-message {
+		color: #000;
+		font-weight: 600;
+		padding: 0.5em 1em;
+	}
 }
 
 /* =Responsive iFrame

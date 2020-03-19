@@ -6,7 +6,9 @@ $PATH = '../../';
 $phpself = basename(__FILE__);
 require_once($PATH  .'globals/globals.php');
 
-$ignore = array('oneTime');
+//echo 'TEST'; 
+
+$ignore = array('oneTime', 'typeInput');
 $redirect = ''; 
 if ($_POST) {
 	foreach($_POST as $key => $value) {
@@ -106,8 +108,12 @@ if ($_POST) {
 } else {
 	$output = array('update'=>'0','op'=>'update','table'=>'','updateString'=>'NO INFO','feedback'=>'','redirect'=>''); 	
 }
-//exit;
-//end;
+
+/*foreach ($output as $k=>$v) {
+	echo $k .' : '. $v .'<br>'; 
+}
+exit;
+end;*/
 
 if ($con) $con->close(); 
 header('Content-Type: application/json; charset=utf-8', true); 

@@ -45,7 +45,7 @@
 					
 					<div class="col-12">
 						<p><label for="type">Activity Type</label><br>
-						<input type="text" list="typeList" id="typeInput" class="form-control combobox typeInput" placeholder="'. siteVar('act','singular','capital') .' Type" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Type is Required">
+						<input type="text" list="typeList" id="typeInput" name="typeInput" class="form-control combobox typeInput" placeholder="'. siteVar('act','singular','capital') .' Type" data-rule-required="true" data-msg-required="'. siteVar('act','singular','capital') .' Type is Required">
 						<datalist id="typeList">'. getActivityTypes($con) .'</datalist>
 						<input type="hidden" name="type" id="typeInput-hidden" class="hiddenInput"></p>
 						

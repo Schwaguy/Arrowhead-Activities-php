@@ -51,18 +51,13 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) { // Admin/Office
                         </div>
                     </a>
                 </div>
-                
-            <!--</div>
-            <!-- /.row -->';
-	$content .= '<!--<div class="row d-flex justify-content-around" id="dash-icons">-->
-				<div class="w-100 d-none d-md-block"></div>
 				<div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
 					<a class="panel panel-yellow" href="/admin/weeks/" title="Week Admin">
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-12 text-center">
-									<i class="far fa-calendar-alt fa-5x"></i>
-                                </div>
+									<i class="far fa-calendar-week fa-5x"></i>
+								</div>
                             </div>
                         </div>
 						<div class="panel-footer text-center">
@@ -71,6 +66,11 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) { // Admin/Office
                  		</div>
                     </a>
                 </div>
+                
+            <!--</div>
+            <!-- /.row -->';
+	$content .= '<!--<div class="row d-flex justify-content-around" id="dash-icons">-->
+				<div class="w-100 d-none d-md-block"></div>
 				<div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
 					<a class="panel panel-yellow" href="/admin/periods/" title="Period Admin">
                         <div class="panel-heading">
@@ -103,6 +103,21 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) { // Admin/Office
 							</div>
 						</a>
 					</form>
+                </div>
+				<div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
+					<a class="panel panel-yellow" href="/admin/annual/" title="Annual Admin">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-12 text-center">
+									<i class="far fa-cogs fa-5x"></i>
+                                </div>
+                            </div>
+                        </div>
+						<div class="panel-footer text-center">
+                        	<p class="clearfix"><span class="pull-left">Annual</span>
+                        	<span class="pull-right"><i class="far fa-arrow-circle-right"></i></span></p>
+                 		</div>
+                    </a>
                 </div>
                 <div class="col-12 col-xs-12 col-sm-6 col-md-4 col-lg-2">
 					<a class="panel panel-yellow" href="/logout/">

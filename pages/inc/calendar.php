@@ -6,13 +6,14 @@ $activityWeeks = '';
 if (!isset($userInfo)) { $userInfo = checkUser($con); }
 
 foreach ($weeks as $week) {
-	//if (in_array($week['id'],$_SESSION['userWeeks'])) {
+	//$content .= '<p>'. $now .' : '. $week['signupStartDate'] .'</p>';
+	
 	if (($now >= $week['signupStartDate']) || (in_array($_SESSION['userAuth'],$adminAccessLevels))) {
 		//$scheduledActivities = showScheduledActivities($week['id'],$userInfo['userID'],$_SESSION['userPrereqs'],$con);
 		$scheduledActivities = showScheduledActivities($week['id'],$userInfo['userID'],$userInfo['userInfo']['prerequisites'],$con);		
 		$weekdays = '';
 		
-		$clearBtn = (($_SESSION['userPermissions']['admin'] == 1) ? '<a class="btn btn-danger btn-clear btn-clear-weeks" data-toggle="tooltip" data-placement="top" title="This will clear all '. $userInfo['userName'] .'\'s '. $week['name'] .' signups" data-op="clear" data-user="'. $userInfo['userID'] .'" data-week="'. $week['id'] .'" data-activity="">Clear Signups</a>' : ''); 
+		$clearBtn = (($_SESSION['userPermissions']['admin'] == 1) ? '<a class="btn btn-danger btn-clear btn-clear-weeks" data-toggle="tooltip" data-placement="top" title="This will clear all '. $userInfo['userName'] .'\'s '. $week['name'] .' signups" data-op="clear" data-funct="clearSchedule" data-user="'. $userInfo['userID'] .'" data-week="'. $week['id'] .'" data-activity="">Clear Signups</a>' : ''); 
 		
 		$printBtn = '<a class="btn btn-light printLink btn-print-week" data-camper="'. $userInfo['userID'] .'" data-week="'. $week['id'] .'">Print '. $week['name'] .' Signups</a>'; 
 		

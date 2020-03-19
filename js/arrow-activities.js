@@ -1,6 +1,8 @@
 jQuery(document).ready(function($) {
     "use strict"; // Start of use strict
 	
+	var siteURL = '/'; 
+	
 	$('#feedback').hide();
 	$('#processing').hide();
 	$('#response').hide();
@@ -86,12 +88,12 @@ jQuery(document).ready(function($) {
 	// Check for existing username
 	$('body').on('blur', '.input-username', function() {
 		var username = $(this).val();
-		var ajaxUrl = '/ajax/admin/checkUsername.php'; 
+		var ajaxUrl = siteURL + 'ajax/admin/checkUsername.php'; 
 		var formData = 'username='+ username;
 		//console.log(ajaxUrl +'?'+ formData);
 		$.ajax({
 			type: 'POST',
-			url: ajaxUrl,
+			url: siteURL + ajaxUrl,
 			data: formData
 		})
 		.done(function(data){ // if getting done then call.
@@ -116,7 +118,7 @@ jQuery(document).ready(function($) {
 			}
 		},
 		submitHandler: function(form) {
-			var ajaxUrl = '/ajax/admin/register.php'; 
+			var ajaxUrl = siteURL + 'ajax/admin/register.php'; 
 			var formData = $(form).serialize();
 			$.ajax({
 				type: 'POST',
@@ -173,7 +175,7 @@ jQuery(document).ready(function($) {
 			}
 		},
 		submitHandler: function(form) {
-			var ajaxUrl = '/ajax/admin/password.php'; 
+			var ajaxUrl = siteURL + 'ajax/admin/password.php'; 
 			var formData = $(form).serialize();
 			$.ajax({
 				type: 'POST',
@@ -217,7 +219,7 @@ jQuery(document).ready(function($) {
 			}
 		},
 		submitHandler: function(form) {
-			var ajaxUrl = '/ajax/admin/password.php'; 
+			var ajaxUrl = siteURL + 'ajax/admin/password.php'; 
 			var formData = $(form).serialize();
 			$.ajax({
 				type: 'POST',
@@ -284,15 +286,17 @@ jQuery(document).ready(function($) {
 			$('#processing').show();
 			var op = $(this).data('op');
 			var frm = $(this).closest('.adminForm');
-			var ajaxUrl = '/ajax/admin/'+ op +'.php'; 
+			var ajaxUrl = siteURL + 'ajax/admin/'+ op +'.php'; 
 			var formData = 'op=' + op + '&' + $(frm).serialize();
+			//console.log(ajaxUrl);
+			//console.log(formData);
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
 				data: formData
 			})
 			.done(function(data){ // if getting done then call.
-				if (data.output.op){
+				if (data.output.op) {
 					if (data.output.op == 'update') {
 						$('#processing').hide();
 						$('#response').show().html(data.output.feedback);
@@ -356,8 +360,12 @@ jQuery(document).ready(function($) {
 		var week = ($(this).data('week') ? $(this).data('week') : '');
 		var activity = ($(this).data('activity') ? $(this).data('activity') : '');
 		var date = ($(this).data('date') ? $(this).data('date') : '');
-		var ajaxUrl = '/ajax/report/print-schedule.php'; 
+		var ajaxUrl = siteURL + 'ajax/report/print-schedule.php'; 
 		var formData = 'camper='+ camper +'&week='+ week +'&bunk='+ bunk +'&activity='+ activity +'&date='+ date;
+		
+		console.log(ajaxUrl);
+		console.log(formData);
+		
 		$.ajax({
 			type: 'POST',
 			url: ajaxUrl,
@@ -483,7 +491,7 @@ jQuery(document).ready(function($) {
 	// Update Groups when period changed on Activity Admin Froms
 	$('body').on('change','form.activity-admin .period-select', function() {
 		var selected = $(this).children("option:selected").val(); 
-		var ajaxUrl = '/ajax/admin/comparePeriodGroup.php'; 
+		var ajaxUrl = siteURL + 'ajax/admin/comparePeriodGroup.php'; 
 		var formData = "period=" + selected;
 		$.ajax({
 			type: 'POST',
@@ -523,7 +531,7 @@ jQuery(document).ready(function($) {
 			$(this).html('Schedule Complete').attr('disabled', true);	
 			var op = $(this).data('op');
 			var frm = $(this).closest('.scheduleForm');
-			var ajaxUrl = '/ajax/schedule/'+ op +'.php'; 
+			var ajaxUrl = siteURL + 'ajax/schedule/'+ op +'.php'; 
 			var formData = 'op=' + op + '&' + $(frm).serialize();
 			//console.log(ajaxUrl + '?' + formData);
 			$.ajax({
@@ -589,8 +597,16 @@ jQuery(document).ready(function($) {
 	$('.dataTables_length').addClass('bs-select');
 	
 	$('body').on('click', '.btn-clear', function() { 
-		if (confirm("Are you sure you want to delete this schedule?")) {
-			clearSchedule(this);
+		var clearFunction = $(this).data('funct'); 
+		var alertMessage = $(this).data('alert'); 
+		if (confirm(alertMessage)) {
+			if (clearFunction === 'clearBunks') {
+				clearBunks(this);
+			} else if (clearFunction === 'clearSchedule') {
+				clearSchedule(this);	
+			} else if (clearFunction === 'clearSignups') {
+				clearSignups(this);	
+			}
 		} 
 	});
 	
@@ -601,7 +617,7 @@ jQuery(document).ready(function($) {
 		var user = $(thisBtn).data('user');
 		var week = $(thisBtn).data('week');
 		var activity = $(thisBtn).data('activity');
-		var ajaxUrl = '/ajax/schedule/'+ op +'.php'; 
+		var ajaxUrl = siteURL + 'ajax/schedule/'+ op +'.php'; 
 		var formData = 'user=' + user + '&week=' + week + '&activity=' + activity;
 		$.ajax({
 			type: 'POST',
@@ -635,6 +651,86 @@ jQuery(document).ready(function($) {
 						}
 					}, 2000);
 				} else {
+					setTimeout(function() {
+						$('#feedback').fadeOut();
+					}, 2000);
+				}
+			} else {
+				$('#response').html('No Output');
+			}
+		})
+		.fail(function() { // if fail then getting message
+			$('#response').html('POST FAILED');
+		});
+		return false;
+	}
+	
+	// Clear All Bunk Assignments
+	function clearBunks(thisBtn) {
+		$('#feedback').show();
+		$('#processing').show();
+		var op = $(thisBtn).data('op');
+		//var user = $(thisBtn).data('user');
+		//var bunk = $(thisBtn).data('bunk');
+		var ajaxUrl = siteURL + 'ajax/bunks/'+ op +'.php'; 
+		var formData = 'op=' + op;
+		//console.log(ajaxUrl);
+		//console.log(formData);
+		$.ajax({
+			type: 'POST',
+			url: ajaxUrl,
+			data: formData
+		})
+		.done(function(data){ // if getting done then call.
+			if (data.output.op){
+				$('#processing').hide();
+				$('#response').show().html(data.output.feedback);
+				if (data.output.result == 'success') {
+					setTimeout(function() {
+						$('#feedback').fadeOut();
+						console.log(data.output.updateString);
+					}, 2000);
+				} else {
+					console.log('ERROR');
+					setTimeout(function() {
+						$('#feedback').fadeOut();
+					}, 2000);
+				}
+			} else {
+				$('#response').html('No Output');
+			}
+		})
+		.fail(function() { // if fail then getting message
+			$('#response').html('POST FAILED');
+		});
+		return false;
+	}
+	
+	// Clear All Activity Signups
+	function clearSignups(thisBtn) {
+		$('#feedback').show();
+		$('#processing').show();
+		var op = $(thisBtn).data('op');
+		var ajaxUrl = siteURL + 'ajax/schedule/'+ op +'.php'; 
+		var formData = 'op=' + op;
+		console.log(ajaxUrl);
+		console.log(formData);
+		$.ajax({
+			type: 'POST',
+			url: ajaxUrl,
+			data: formData
+		})
+		.done(function(data){ // if getting done then call.
+			if (data.output.op){
+				$('#processing').hide();
+				$('#response').show().html(data.output.feedback);
+				if (data.output.result == 'success') {
+					setTimeout(function() {
+						$('#feedback').fadeOut();
+						console.log(data.output.updateString);
+					}, 2000);
+				} else {
+					console.log('ERROR');
 					setTimeout(function() {
 						$('#feedback').fadeOut();
 					}, 2000);

@@ -13,8 +13,13 @@
 	$weeks = getWeeks('array','',false,false,$con);
 	if (is_array($weeks)) {
 		foreach($weeks as $week) {
+			$date = date_create($week['startDate']);
 			$content .= '<div id="list-group-edit" class="list-group list-group-flush list-group-admin">';
-			$content .= '<div id="week-'. $week['id'] .'" class="list-group-item"><a href="#panel-'. $week['id'] .'" title="'. $week['name'] .'" data-toggle="collapse" data-target="#panel-'. $week['id'] .'" aria-expanded="false" aria-controls="panel-'. $week['id'] .'"><h3>'. $week['name'] .' '. siteVar('act','plural','capital') .'</h3></a></div>';
+			$content .= '<div id="week-'. $week['id'] .'" class="list-group-item week-expand"><a href="#panel-'. $week['id'] .'" title="'. $week['name'] .'" data-toggle="collapse" data-target="#panel-'. $week['id'] .'" aria-expanded="false" aria-controls="panel-'. $week['id'] .'"><h3>'. $week['name'] .' '. siteVar('act','plural','capital') .'</h3></a>';
+			if ($_SESSION['userPermissions']['report'] == 1) {
+				$content .= '<a class="btn btn-light btnInline printLink" data-camper="" data-week="'. $week['id'] .'" data-activity="">Print All Week '. $week['id'] .' Signups</a>';
+			}
+			$content .= '</div>';
 			$content .= '<div class="collapse" id="panel-'. $week['id'] .'">';
 			include($ROOT .'/pages/inc/agenda.php');
 			$content .= '</div>'; 

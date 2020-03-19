@@ -58,6 +58,10 @@ if (in_array($_SESSION['userAuth'],$adminAccessLevels)) {
 		// Period Admin
 		$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'periods') : array('li'=>'','sr'=>''));
 		$content .= '<a class="dropdown-item '. $linkInfo['li'] .'" href="/admin/periods/" title="Period Admin">Periods</a>';
+	
+		// Annual Admin
+		$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'annual') : array('li'=>'','sr'=>''));
+		$content .= '<a class="dropdown-item '. $linkInfo['li'] .'" href="/admin/annual/" title="Annual Admin">Annual</a>';
 
 	$content .= '</div></li>'; 
 }

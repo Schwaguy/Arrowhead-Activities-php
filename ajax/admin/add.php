@@ -6,7 +6,7 @@ $PATH = '../../';
 $phpself = basename(__FILE__);
 require_once($PATH  .'globals/globals.php');
 
-$ignore = array('oneTime');
+$ignore = array('oneTime', 'typeInput');
 $redirect = ''; 
 if ($_POST) {
 	foreach($_POST as $key => $value) {

@@ -115,6 +115,26 @@ if ($_REQUEST) {
 				}
 			}
 		}
+	} elseif (!empty($weekID)) {
+		// Return Single Week Activities for all Campers
+		$week = getWeekInfo($weekID,$con);
+		$campers = getBunkRoster('','',$con);
+		$periods = getPeriods('',false,false,'array',$con);	
+		
+		$title = $week['name'];
+		$content .= '<h2>'. $title .'</h2>';
+		$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white"><h5 class="col-sm p-1 text-center camper">Camper</h5>';
+		foreach ($week['days'] as $day) {
+			$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
+		}
+		$content .= '</div>'; 
+		if (is_array($campers)) {
+			foreach ($campers as $camper) {
+				$content .= '<div class="schedule-wrap">';
+				$content .= showCamperSchedule($weekID,$camper,$week,true,$bunkInfo,$periods,$con);
+				$content .= '</div>';
+			}
+		}
 	}
 	$customCSS .= '}';
 	

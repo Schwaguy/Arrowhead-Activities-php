@@ -42,12 +42,12 @@
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="password">New Password</label>
 							<input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" data-rule-required="false" data-msg-required="Password is Required">
-							<input type="checkbox" class="showPW" data-pw-field="#password"> Show Password
+							<input type="checkbox" class="showPW" data-pw-field="#password" name="showPW"> Show Password
 						</div>
 						<div class="col-12 col-xs-12 col-sm-12 col-md-4 align-middle">
 							<label for="password_repeat">Repeat New Password</label>
 							<input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter Password Again" data-rule-required="false" data-msg-required="Password Confirmation is Required">
-							<input type="checkbox" class="showPW" data-pw-field="#password_repeat"> Show Password
+							<input type="checkbox" class="showPW" data-pw-field="#password_repeat" name="showPW"> Show Password
 						</div>
 					</div>';
 	$prereqDisplay = (($_SESSION['userPermissions']['edit']==1) ? '' : 'style="display: none"');
