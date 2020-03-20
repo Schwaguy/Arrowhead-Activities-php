@@ -28,6 +28,6 @@
 <!--<link rel="stylesheet" href="/css/mdb.lite.min.css">-->
 <link rel="stylesheet" href="/css/addons/datatables.min.css" media="all">
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-<link rel="stylesheet" href="/css/style.css" media="all"> 
+<link rel="stylesheet" href="/css/style.min.css" media="all"> 
 
 <link href="/css/video-js.min.css" rel="stylesheet">

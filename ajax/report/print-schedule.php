@@ -12,77 +12,144 @@ if ($_REQUEST) {
 	$weekID = ((isset($_REQUEST['week'])) ? $_REQUEST['week'] : '');
 	$bunkID = ((isset($_REQUEST['bunk'])) ? $_REQUEST['bunk'] : '');
 	$activityID = ((isset($_REQUEST['activity'])) ? $_REQUEST['activity'] : '');
+	$signup = ((isset($_REQUEST['signup'])) ? $_REQUEST['signup'] : true);
 	$date = ((isset($_REQUEST['date'])) ? $_REQUEST['date'] : '');
 	
 	$title = ''; 
 	$content = ''; 
-	if (!empty($activityID)) {
-		// Return Single Activity Signups
-		$activity = getActivityinfo($activityID,$con);
-		$signups = getActivitySignups($activityID,$con);
-		$title = $activity['name'] .' - '. $activity['weekname'];
-		$content .= '<div class="schedule-wrap print-page">';
-		$content .= '<h2>'. $title .'</h2>';
-		$content .= showActivitySignups($activity,'',$signups,$con);
-		$content .= '</div>';
-		$customCSS .= '@page { size: landscape !important; }';
-	} elseif (!empty($date)) {
-		// Return All Activity Signups for Specified Day 
-		$day = date('l', strtotime($date));
-		$activities = getDayActivities($_REQUEST['week'],$day,$con);
-		$title = 'Activities for '. date('l, F jS Y', strtotime($date)); 
-		foreach($activities as $activity) {
-			$signups = getActivitySignups($activity['id'],$con);
-			$content .= '<div class="schedule-wrap print-page">';
-			$content .= '<h2>'. $activity['name'] .' - '. date('l, F jS Y', strtotime($date)) .'</h2>';
-			$content .= showActivitySignups($activity['id'],$day,$signups,$con);
-			$content .= '</div>';
-		}
-	} elseif (!empty($camperID)) {
-		$camper = getUserInfo($camperID,$con);
-		$periods = getPeriods('',false,false,'array',$con);	
-		$bunkInfo = getBunkInfo($camper['bunk'],'',$con);
+	
 		
-		if (!empty($weekID)) {
-			// Return Camper  Activities for Single Week
-			$week = getWeekInfo($weekID,$con);
-			$title = $camper['firstName'] .' '. $camper['lastName'] .'\'s '. $week['name'] .' Activities'; 
-			$content .= '<div class="schedule-wrap print-page">';
-			$content .= '<h2>'. $title .'</h2>'; 
-			$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white">';
-			foreach ($week['days'] as $day) {
-				$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<span class="nicedate">'. $day['nicedate'] .'</span></h5></a>';
+	if ($signup == 'false') {
+		// Campers not sugned up for any Activities for Single Week
+		$week = getWeekInfo($weekID,$con);
+		$title = $week['name'];
+		
+		if (!empty($bunkID)) {
+			$bunk = getBunkInfo($bunkID,'',$con);
+			$title .= ' - '. $bunk['name'];
+		}
+		
+		$content .= '<h2>'. $title .' - Campers Not Signed up for Activities</h2>';
+		$notSignedUp = showUnscheduledCampers($weekID,$bunkID,$con);
+		if (count($notSignedUp) > 0) {
+			foreach ($notSignedUp as $camper) {
+				$content .= $camper['lastName'] .', '. $camper['firstName'];
+				if (!isset($bunk)) {
+					$content .= (!empty($camper['bunkName']) ? ' ('. $camper['bunkName'] .')' : '');
+				}
+				$content .= ' - <a href="mailto:'. $camper['email'] .'">'. $camper['email'] .'</a><br>'; 
 			}
-			$content .= '</div>'; 
-			$content .= showCamperSchedule($weekID,$camper,$week,false,$bunkInfo,$periods,$con);
-			$content .= '</div>';
 		} else {
-			// Return Camper Activities for All Weeks
-			$weeks = getWeeks('array','',false,false,$con);
-			$title = $camper['firstName'] .' '. $camper['lastName'] .'\'s Activities';
-			$content .= '<h1>'. $title .'</h1>';
-			foreach ($weeks as $week) {
-				$content .= '<div class="schedule-wrap">';
-				$content .= '<h2>'. $week['name'] .'</h2>';
+			$content .= 'All campers have signed up'; 
+		}
+	} else {
+		if (!empty($activityID)) {
+			// Return Single Activity Signups
+			$activity = getActivityinfo($activityID,$con);
+			$signups = getActivitySignups($activityID,$con);
+			$title = $activity['name'] .' - '. $activity['weekname'];
+			$content .= '<div class="schedule-wrap print-page">';
+			$content .= '<h2>'. $title .'</h2>';
+			$content .= showActivitySignups($activity,'',$signups,$con);
+			$content .= '</div>';
+			$customCSS .= '@page { size: landscape !important; }';
+		} elseif (!empty($date)) {
+			// Return All Activity Signups for Specified Day 
+			$day = date('l', strtotime($date));
+			$activities = getDayActivities($_REQUEST['week'],$day,$con);
+			$title = 'Activities for '. date('l, F jS Y', strtotime($date)); 
+			foreach($activities as $activity) {
+				$signups = getActivitySignups($activity['id'],$con);
+				$content .= '<div class="schedule-wrap print-page">';
+				$content .= '<h2>'. $activity['name'] .' - '. date('l, F jS Y', strtotime($date)) .'</h2>';
+				$content .= showActivitySignups($activity['id'],$day,$signups,$con);
+				$content .= '</div>';
+			}
+		} elseif (!empty($camperID)) {
+			$camper = getUserInfo($camperID,$con);
+			$periods = getPeriods('',false,false,'array',$con);	
+			$bunkInfo = getBunkInfo($camper['bunk'],'',$con);
+
+			if (!empty($weekID)) {
+				// Return Camper  Activities for Single Week
+				$week = getWeekInfo($weekID,$con);
+				$title = $camper['firstName'] .' '. $camper['lastName'] .'\'s '. $week['name'] .' Activities'; 
+				$content .= '<div class="schedule-wrap print-page">';
+				$content .= '<h2>'. $title .'</h2>'; 
 				$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white">';
+				foreach ($week['days'] as $day) {
+					$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<span class="nicedate">'. $day['nicedate'] .'</span></h5></a>';
+				}
+				$content .= '</div>'; 
+				$content .= showCamperSchedule($weekID,$camper,$week,false,$bunkInfo,$periods,$con);
+				$content .= '</div>';
+			} else {
+				// Return Camper Activities for All Weeks
+				$weeks = getWeeks('array','',false,false,$con);
+				$title = $camper['firstName'] .' '. $camper['lastName'] .'\'s Activities';
+				$content .= '<h1>'. $title .'</h1>';
+				foreach ($weeks as $week) {
+					$content .= '<div class="schedule-wrap">';
+					$content .= '<h2>'. $week['name'] .'</h2>';
+					$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white">';
+					foreach ($week['days'] as $day) {
+						$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
+					}
+					$content .= '</div>'; 
+					$content .= showCamperSchedule($week['id'],$camper,$week,false,$bunkInfo,$periods,$con);
+					$content .= '</div>';
+				}
+			}
+		} elseif (!empty($bunkID)) {
+			$campers = getBunkRoster($bunkID,'',$con);
+			$periods = getPeriods('',false,false,'array',$con);	
+			$bunkInfo = getBunkInfo($bunkID,'',$con);
+
+			if (!empty($weekID)) {
+				// Return Single Week Activities for all Campers in Bunk
+				$week = getWeekInfo($weekID,$con);
+				$title = $bunkInfo['name'] .' - '. $week ['name'];
+				$content .= '<h2>'. $title .'</h2>';
+				$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white"><h5 class="col-sm p-1 text-center camper">Camper</h5>';
 				foreach ($week['days'] as $day) {
 					$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
 				}
 				$content .= '</div>'; 
-				$content .= showCamperSchedule($week['id'],$camper,$week,false,$bunkInfo,$periods,$con);
-				$content .= '</div>';
+				if (is_array($campers)) {
+					foreach ($campers as $camper) {
+						$content .= '<div class="schedule-wrap">';
+						$content .= showCamperSchedule($weekID,$camper,$week,true,$bunkInfo,$periods,$con);
+						$content .= '</div>';
+					}
+				}
+			} else {
+				// Return Activities for All Weeks for All Campers in Bunk
+				$weeks = getWeeks('array','',false,false,$con);
+				$title = $bunkInfo['name'] .' Activities'; 
+				foreach ($weeks as $week) {
+					$content .= '<h2>'. $bunkInfo['name'] .' - '. $week['name'] .'</h2>';
+					$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white"><h5 class="col-sm p-1 text-center camper">Camper</h5>';
+					foreach ($week['days'] as $day) {
+						$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
+					}
+					$content .= '</div>'; 
+					if (is_array($campers)) {
+						foreach ($campers as $camper) {
+							$content .= '<div class="schedule-wrap">';
+							$content .= showCamperSchedule($week['id'],$camper,$week,true,$bunkInfo,$periods,$con);
+							$content .= '</div>';
+						}
+					}
+				}
 			}
-		}
-	} elseif (!empty($bunkID)) {
-		$campers = getBunkRoster($bunkID,'',$con);
-		$periods = getPeriods('',false,false,'array',$con);	
-		$bunkInfo = getBunkInfo($bunkID,'',$con);
-		
-		if (!empty($weekID)) {
-			// Return Single Week Activities for all Campers in Bunk
-			$week = getWeekInfo($weekID,$con);
-			$title = $bunkInfo['name'] .' - '. $week ['name'];
+		} elseif (!empty($weekID)) {
+			$title = $week['name'];
 			$content .= '<h2>'. $title .'</h2>';
+			// Return Single Week Activities for all Campers
+			$week = getWeekInfo($weekID,$con);
+			$campers = getBunkRoster('','',$con);
+			$periods = getPeriods('',false,false,'array',$con);	
+
 			$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white"><h5 class="col-sm p-1 text-center camper">Camper</h5>';
 			foreach ($week['days'] as $day) {
 				$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
@@ -94,45 +161,6 @@ if ($_REQUEST) {
 					$content .= showCamperSchedule($weekID,$camper,$week,true,$bunkInfo,$periods,$con);
 					$content .= '</div>';
 				}
-			}
-		} else {
-			// Return Activities for All Weeks for All Campers in Bunk
-			$weeks = getWeeks('array','',false,false,$con);
-			$title = $bunkInfo['name'] .' Activities'; 
-			foreach ($weeks as $week) {
-				$content .= '<h2>'. $bunkInfo['name'] .' - '. $week['name'] .'</h2>';
-				$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white"><h5 class="col-sm p-1 text-center camper">Camper</h5>';
-				foreach ($week['days'] as $day) {
-					$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
-				}
-				$content .= '</div>'; 
-				if (is_array($campers)) {
-					foreach ($campers as $camper) {
-						$content .= '<div class="schedule-wrap">';
-						$content .= showCamperSchedule($week['id'],$camper,$week,true,$bunkInfo,$periods,$con);
-						$content .= '</div>';
-					}
-				}
-			}
-		}
-	} elseif (!empty($weekID)) {
-		// Return Single Week Activities for all Campers
-		$week = getWeekInfo($weekID,$con);
-		$campers = getBunkRoster('','',$con);
-		$periods = getPeriods('',false,false,'array',$con);	
-		
-		$title = $week['name'];
-		$content .= '<h2>'. $title .'</h2>';
-		$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white"><h5 class="col-sm p-1 text-center camper">Camper</h5>';
-		foreach ($week['days'] as $day) {
-			$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
-		}
-		$content .= '</div>'; 
-		if (is_array($campers)) {
-			foreach ($campers as $camper) {
-				$content .= '<div class="schedule-wrap">';
-				$content .= showCamperSchedule($weekID,$camper,$week,true,$bunkInfo,$periods,$con);
-				$content .= '</div>';
 			}
 		}
 	}

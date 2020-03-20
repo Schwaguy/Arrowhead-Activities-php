@@ -45,20 +45,23 @@
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="firstName">Camper\'s First Name</label></div>
 										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle">
-											<input type="text" class="form-control first-input" name="firstName" placeholder="Camper\'s First Name" required>
+											<div class="feedback error"></div>
+											<input type="text" class="form-control first-input input-firstName" name="firstName" placeholder="Camper\'s First Name" required>
 										</div>
 									</div>
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="lastName">Camper\'s Last Name</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="lastName" placeholder="Camper\'s Last Name" required></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control input-lastName" name="lastName" placeholder="Camper\'s Last Name" required></div>
+										<div class="col-12"><div id="name-exists" class="alert alert-warning login-alert"></div></div>
 									</div>
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="username">Camper\'s Username</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control" name="username" placeholder="Camper\'s Username" required></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="text" class="form-control input-username" name="username" placeholder="Camper\'s Username" required></div>
+										<div class="col-12"><div id="username-exists" class="alert alert-danger login-alert"></div></div>
 									</div>
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="email">Email</label></div>
-										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="email" class="form-control" name="email" placeholder="example@email.com" required></div>
+										<div class="col-12 col-xs-12 col-sm-12 col-md-7 align-middle"><input type="email" class="form-control input-email" name="email" placeholder="example@email.com" required></div>
 									</div>
 									<div class="row form-row align-middle">
 										<div class="col-12 col-xs-12 col-sm-12 col-md-5 align-middle"><label for="password">Password</label></div>
@@ -71,7 +74,7 @@
 										<input type="checkbox" class="showPW" data-pw-field="#password_repeat"> Show Password</div>
 									</div>
 									<div class="anti"><input type="text" name="anti" value=""></div>
-									<div class="text-right"><input type="submit" class="btn btn-default btn-lg" value="Register" /></div>
+									<div class="text-right"><input type="submit" class="btn btn-default btn-lg" id="register-submit" value="Register" /></div>
 								</form>
 							</div>
 						</div><!-- / register -->

@@ -12,7 +12,10 @@ foreach ($weeks as $week) {
 	$header = '<div id="week-'. $week['id'] .'" class="list-group-item"><div class="row">';
 	$header .= '<div class="col-12 col-xs-12 col-sm-6 col-md-6 col-lg-6"><a href="#panel-'. $week['id'] .'" title="'. $week['name'] .'" data-toggle="collapse" data-target="#panel-'. $week['id'] .'" aria-expanded="false" aria-controls="panel-'. $week['id'] .'"><h2>'. $week['name'] .'</h2></a></div>';
 	if ($_SESSION['userPermissions']['report'] == 1) {
-		$header .= '<div class="col-12 col-xs-12 col-sm-6 col-md-6 col-lg-6 text-right"><a class="btn btn-light printLink" data-week="'. $week['id'] .'" data-bunk="'. $bunk .'">Print Bunk Schedule</a></div>'; 
+		$header .= '<div class="col-12 col-xs-12 col-sm-6 col-md-6 col-lg-6 text-right">
+			<a class="btn btn-light printLink" data-week="'. $week['id'] .'" data-bunk="'. $bunk .'" data-signup="yes"><i class="fal fa-print btnIcon"></i> <span class="btnText"> Bunk Schedule</span></a>
+			<a class="btn btn-light printLink" data-camper="" data-week="'. $week['id'] .'" data-bunk="'. $bunk .'" data-activity="" data-signup="no"><i class="fal fa-print btnIcon"></i> <span class="btnText"> Not Signed Up</span></a>
+		</div>'; 
 	}
 	$header .= '</div></div>';
 	

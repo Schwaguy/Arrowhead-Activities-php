@@ -229,18 +229,6 @@ function showCamperSchedule($weekID,$camper,$week,$showName,$bunkInfo,$periods,$
 										<span class="col-1"></span>
 									</h5>';
 		foreach ($periods as $period) {
-			/*if (in_array($bunkInfo['group'],$period['groups'])) {
-				if ($period['days'][$day['number']]==1) {
-					$content .= '<div class="period"><h6>'. $period['name'] .'</h6>';
-					if (!empty($schActivity[$period['id']])) {
-						$content .= '<div class="event btn btn-block btn-light-green agenda-event-button d-block view-only">'. $schActivity[$period['id']]['name'] .'</div>';
-					} else {
-						$content .= '<div class="btn btn-block btn-light agenda-event-button d-block view-only disabled">Not Scheduled</div>';
-					}
-					$content .= '</div><!-- /period -->';
-				}
-			}*/
-			
 			if (!empty($bunkInfo)) {
 				if (in_array($bunkInfo['group'],$period['groups'])) {
 					if ($period['days'][$day['number']]==1) {
@@ -254,29 +242,36 @@ function showCamperSchedule($weekID,$camper,$week,$showName,$bunkInfo,$periods,$
 					}
 				}
 			} else {
-				//if (in_array($bunkInfo['group'],$period['groups'])) {
-					if ($period['days'][$day['number']]==1) {
-						$content .= '<div class="period"><h6>'. $period['name'] .'</h6>';
-						if (!empty($schActivity[$period['id']])) {
-							$content .= '<div class="event btn btn-block btn-light-green agenda-event-button d-block view-only">'. $schActivity[$period['id']]['name'] .'</div>';
-						} else {
-							$content .= '<div class="btn btn-block btn-light agenda-event-button d-block view-only disabled">Not Scheduled</div>';
-						}
-						$content .= '</div><!-- /period -->';
+				if ($period['days'][$day['number']]==1) {
+					$content .= '<div class="period"><h6>'. $period['name'] .'</h6>';
+					if (!empty($schActivity[$period['id']])) {
+						$content .= '<div class="event btn btn-block btn-light-green agenda-event-button d-block view-only">'. $schActivity[$period['id']]['name'] .'</div>';
+					} else {
+						$content .= '<div class="btn btn-block btn-light agenda-event-button d-block view-only disabled">Not Scheduled</div>';
 					}
-				//}
+					$content .= '</div><!-- /period -->';
+				}
 			}
-			
-			
-			
-			
-			
 		} // foreach period
 		$content .= '</div><!-- /day -->';
 		$d++;
 	} // foreach day
 	$content .= '</div><!-- /camper row -->';
 	return $content;
+}
+
+function showUnscheduledCampers($weekID,$bunkID,$con) {
+	// Get ID's for campers that have not scheduled for the week
+	$notSignedUp = array();
+	$query = 'SELECT u.id, u.firstName, u.lastName, u.email, u.bunk, b.name AS bunkName FROM users u LEFT JOIN bunks b ON (u.bunk = b.id) WHERE u.active=1 AND u.access_level IN (4,7) ';
+	$query .= ((!empty($bunkID)) ? 'AND u.bunk='. $bunkID .' ' : '');
+	$query .= 'AND u.id NOT IN (SELECT user FROM activity_signups s WHERE s.week='. $weekID .' AND s.active=1) ORDER BY u.lastName, u.firstName';
+	
+	$result = $con->query($query);
+	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+		$notSignedUp[] = array('id'=>$row['id'], 'firstName'=>$row['firstName'], 'lastName'=>$row['lastName'], 'email'=>$row['email'], 'bunk'=>$row['bunk'], 'bunkName'=>$row['bunkName']); 
+	}
+	return $notSignedUp;
 }
 
 // Show Activity Signups

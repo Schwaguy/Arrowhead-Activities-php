@@ -88,24 +88,63 @@ jQuery(document).ready(function($) {
 	// Check for existing username
 	$('body').on('blur', '.input-username', function() {
 		var username = $(this).val();
+		var fb = $(this).closest('.feedback');
 		var ajaxUrl = siteURL + 'ajax/admin/checkUsername.php'; 
 		var formData = 'username='+ username;
 		//console.log(ajaxUrl +'?'+ formData);
 		$.ajax({
 			type: 'POST',
-			url: siteURL + ajaxUrl,
-			data: formData
+			url: ajaxUrl,
+			data: formData,
+			dataType: 'json'
 		})
 		.done(function(data){ // if getting done then call.
-			if (data.output.usernameExists > 0) {
-				$('.unExist').html(data.output.feedback);
+			//console.log('FEEDBACK: '+ data.output.usernameExists);
+			if (data.output.usernameExists == 'yes') {
+				$('#username-exists').html(data.output.feedback);
+				$('#username-exists').show('slow');
+				$('#register-submit').prop('disabled', true);
 			} else {
-				$('.unExist').html('');
+				$('#username-exists').hide('slow');
+				$('#register-submit').prop('disabled', false);
 			}
 		})
-		.fail(function() { // if fail then getting message
-			$('#response').html('POST FAILED');
+		.fail(function(xhr, ajaxOptions, thrownError) { // if fail then getting message
+			console.log(xhr.status);
+        	console.log(thrownError);
 		});
+		return false;
+	});
+	
+	// Check for existing User
+	$('body').on('blur', '.input-firstName, .input-lastName', function() {
+		var form = $(this).parents('.registerForm');
+		var firstName = $(form).find('.input-firstName').val();
+		var lastName = $(form).find('.input-lastName').val();
+		var email = $(form).find('.input-email').val();
+		var ajaxUrl = siteURL + 'ajax/admin/checkUserExist.php'; 
+		var formData = 'firstName='+ firstName +'&lastName='+ lastName +'&email='+ email;
+		if ((firstName) && (lastName)) {
+			//console.log(ajaxUrl +'?'+ formData);
+			$.ajax({
+				type: 'POST',
+				url: ajaxUrl,
+				data: formData,
+				dataType: 'json'
+			})
+			.done(function(data){ // if getting done then call.
+				if (data.output.userExists == 'yes') {
+					$('#name-exists').html(data.output.feedback);
+					$('#name-exists').show('slow');
+				} else {
+					$('#name-exists').hide ('slow');
+				}
+			})
+			.fail(function(xhr, ajaxOptions, thrownError) { // if fail then getting message
+        		console.log(xhr.status);
+        		console.log(thrownError);
+			});
+		}
 		return false;
 	});
 	
@@ -123,7 +162,8 @@ jQuery(document).ready(function($) {
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
-				data: formData
+				data: formData,
+				dataType: 'json'
 			})
 			.done(function(data){ // if getting done then call.
 				$('#feedback').show();
@@ -180,7 +220,8 @@ jQuery(document).ready(function($) {
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
-				data: formData
+				data: formData,
+				dataType: 'json'
 			})
 			.done(function(data){ // if getting done then call.
 				$('#feedback').show();
@@ -224,7 +265,8 @@ jQuery(document).ready(function($) {
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
-				data: formData
+				data: formData,
+				dataType: 'json'
 			})
 			.done(function(data){ // if getting done then call.
 				$('#feedback').show();
@@ -293,7 +335,8 @@ jQuery(document).ready(function($) {
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
-				data: formData
+				data: formData,
+				dataType: 'json'
 			})
 			.done(function(data){ // if getting done then call.
 				if (data.output.op) {
@@ -359,17 +402,15 @@ jQuery(document).ready(function($) {
 		var bunk = ($(this).data('bunk') ? $(this).data('bunk') : '');
 		var week = ($(this).data('week') ? $(this).data('week') : '');
 		var activity = ($(this).data('activity') ? $(this).data('activity') : '');
+		var signup = ($(this).data('signup') ? (($(this).data('signup') == 'no') ? 'false' : 'true') : 'true');
 		var date = ($(this).data('date') ? $(this).data('date') : '');
 		var ajaxUrl = siteURL + 'ajax/report/print-schedule.php'; 
-		var formData = 'camper='+ camper +'&week='+ week +'&bunk='+ bunk +'&activity='+ activity +'&date='+ date;
-		
-		console.log(ajaxUrl);
-		console.log(formData);
-		
+		var formData = 'camper='+ camper +'&week='+ week +'&bunk='+ bunk +'&activity='+ activity +'&date='+ date +'&signup='+ signup;
 		$.ajax({
 			type: 'POST',
 			url: ajaxUrl,
-			data: formData
+			data: formData,
+			dataType: 'json'
 		})
 		.done(function(data){ // if getting done then call.
 			if (data.output){
@@ -496,7 +537,8 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			type: 'POST',
 			url: ajaxUrl,
-			data: formData
+			data: formData,
+			dataType: 'json'
 		})
 		.done(function(data){ 
 			if (data.output.groups){
@@ -537,7 +579,8 @@ jQuery(document).ready(function($) {
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
-				data: formData
+				data: formData,
+				dataType: 'json'
 			})
 			.done(function(data){ // if getting done then call.
 				if (data.output.op){
@@ -622,7 +665,8 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			type: 'POST',
 			url: ajaxUrl,
-			data: formData
+			data: formData,
+			dataType: 'json'
 		})
 		.done(function(data){ // if getting done then call.
 			if (data.output.op){
@@ -679,7 +723,8 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			type: 'POST',
 			url: ajaxUrl,
-			data: formData
+			data: formData,
+			dataType: 'json'
 		})
 		.done(function(data){ // if getting done then call.
 			if (data.output.op){
@@ -718,7 +763,8 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			type: 'POST',
 			url: ajaxUrl,
-			data: formData
+			data: formData,
+			dataType: 'json'
 		})
 		.done(function(data){ // if getting done then call.
 			if (data.output.op){
