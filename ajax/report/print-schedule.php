@@ -3,6 +3,7 @@ session_start();
 global $ROOT, $PATH, $phpself;
 $ROOT = $_SERVER['DOCUMENT_ROOT'];
 $PATH = '../../';  
+$logfile = '../ajax-log.txt';
 $phpself = basename(__FILE__);
 require_once($PATH  .'globals/globals.php');
 
@@ -44,6 +45,9 @@ if ($_REQUEST) {
 		}
 	} else {
 		if (!empty($activityID)) {
+			
+			//logToFile($logfile, 'Activity Report: '. $activityID);
+			
 			// Return Single Activity Signups
 			$activity = getActivityinfo($activityID,$con);
 			$signups = getActivitySignups($activityID,$con);
@@ -54,6 +58,9 @@ if ($_REQUEST) {
 			$content .= '</div>';
 			$customCSS .= '@page { size: landscape !important; }';
 		} elseif (!empty($date)) {
+			
+			//logToFile($logfile, 'Date Report: '. $date);
+			
 			// Return All Activity Signups for Specified Day 
 			$day = date('l', strtotime($date));
 			$activities = getDayActivities($_REQUEST['week'],$day,$con);
@@ -66,6 +73,9 @@ if ($_REQUEST) {
 				$content .= '</div>';
 			}
 		} elseif (!empty($camperID)) {
+			
+			//logToFile($logfile, 'Camper Report: '. $camperID);
+			
 			$camper = getUserInfo($camperID,$con);
 			$periods = getPeriods('',false,false,'array',$con);	
 			$bunkInfo = getBunkInfo($camper['bunk'],'',$con);
@@ -93,7 +103,7 @@ if ($_REQUEST) {
 					$content .= '<h2>'. $week['name'] .'</h2>';
 					$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white">';
 					foreach ($week['days'] as $day) {
-						$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
+						$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</div></h5></a>';
 					}
 					$content .= '</div>'; 
 					$content .= showCamperSchedule($week['id'],$camper,$week,false,$bunkInfo,$periods,$con);
@@ -101,6 +111,9 @@ if ($_REQUEST) {
 				}
 			}
 		} elseif (!empty($bunkID)) {
+			
+			//logToFile($logfile, 'Bunk Report: '. $bunkID);
+			
 			$campers = getBunkRoster($bunkID,'',$con);
 			$periods = getPeriods('',false,false,'array',$con);	
 			$bunkInfo = getBunkInfo($bunkID,'',$con);
@@ -112,7 +125,7 @@ if ($_REQUEST) {
 				$content .= '<h2>'. $title .'</h2>';
 				$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white"><h5 class="col-sm p-1 text-center camper">Camper</h5>';
 				foreach ($week['days'] as $day) {
-					$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
+					$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</div></h5></a>';
 				}
 				$content .= '</div>'; 
 				if (is_array($campers)) {
@@ -130,7 +143,7 @@ if ($_REQUEST) {
 					$content .= '<h2>'. $bunkInfo['name'] .' - '. $week['name'] .'</h2>';
 					$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white"><h5 class="col-sm p-1 text-center camper">Camper</h5>';
 					foreach ($week['days'] as $day) {
-						$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
+						$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</div></h5></a>';
 					}
 					$content .= '</div>'; 
 					if (is_array($campers)) {
@@ -143,6 +156,9 @@ if ($_REQUEST) {
 				}
 			}
 		} elseif (!empty($weekID)) {
+			
+			//logToFile($logfile, 'Week Report: '. $weekID);
+			
 			$title = $week['name'];
 			$content .= '<h2>'. $title .'</h2>';
 			// Return Single Week Activities for all Campers
@@ -152,7 +168,7 @@ if ($_REQUEST) {
 
 			$content .= '<div class="row d-none d-sm-flex p-1 bg-dark text-white"><h5 class="col-sm p-1 text-center camper">Camper</h5>';
 			foreach ($week['days'] as $day) {
-				$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</h5></a>';
+				$content .= '<h5 class="col-sm p-1 text-center dayname">'. $day['name'] .'<div class="nicedate">'. $day['nicedate'] .'</div></h5>';
 			}
 			$content .= '</div>'; 
 			if (is_array($campers)) {
@@ -169,18 +185,23 @@ if ($_REQUEST) {
 	$headerContent = '<title>'. $title .'</title>
 		<link rel="stylesheet" href="/css/bootstrap.min.css" media="all">
 		<link rel="stylesheet" href="/css/style.css" media="all"> 
-		<style type="text/css">'. $customCSS .'</style>'; 
+		<style type="text/css">'. $customCSS .'</style>
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+		<link rel="icon" href="/favicon.ico" type="image/x-icon">'; 
 	
 	$bodyContent = '<div class="container print">'. $content .'</div>'; 
 	
 	$reportContent = '<!doctype html><html><head><meta charset="utf-8">'. $headerContent .'</head>
-	<body>'.$bodyContent .'</body></html>';
+	<body>'. $bodyContent .'</body></html>';
 	
-	$result = array('full'=>$reportContent,'header'=>$headerContent,'body'=>$bodyContent);
+	//$result = array('full'=>$reportContent,'header'=>$headerContent,'body'=>$bodyContent);
+	$result = array('header'=>$headerContent,'body'=>$bodyContent);
 	$output = $result;
 } else {
 	$output = 'NO INFO'; 	
 }
+
+//logToFile($logfile, $output['body']);
 
 if ($con) $con->close(); 
 if ($_POST) {

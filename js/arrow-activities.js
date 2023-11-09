@@ -6,6 +6,11 @@ jQuery(document).ready(function($) {
 	$('#feedback').hide();
 	$('#processing').hide();
 	$('#response').hide();
+	
+	// Stop video PLayback on modal close
+	$('body').on('hidden.bs.modal', '.video-modal', function () { 
+		$('.video-modal').find('video').trigger('pause'); 
+	});
 		
 	// Mobile Menu Button
 	$('.navbar-toggle').click(function(){
@@ -159,6 +164,10 @@ jQuery(document).ready(function($) {
 		submitHandler: function(form) {
 			var ajaxUrl = siteURL + 'ajax/admin/register.php'; 
 			var formData = $(form).serialize();
+			//console.log(ajaxUrl);
+			//console.log(formData);
+			$('#feedback').show();
+			$('#processing').show();
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
@@ -166,9 +175,10 @@ jQuery(document).ready(function($) {
 				dataType: 'json'
 			})
 			.done(function(data){ // if getting done then call.
-				$('#feedback').show();
-				$('#processing').show();
+				//$('#feedback').show();
+				//$('#processing').show();
 				if (data.output.accountCreated) {
+					//console.log('Account Created!!!');
 					$('#processing').hide();
 					$('#response').show().html(data.output.feedback);
 					if (data.output.accountCreated == 'true') {
@@ -217,6 +227,10 @@ jQuery(document).ready(function($) {
 		submitHandler: function(form) {
 			var ajaxUrl = siteURL + 'ajax/admin/password.php'; 
 			var formData = $(form).serialize();
+			//console.log(ajaxUrl);
+			//console.log(formData);
+			$('#feedback').show();
+			$('#processing').show();
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
@@ -224,8 +238,8 @@ jQuery(document).ready(function($) {
 				dataType: 'json'
 			})
 			.done(function(data){ // if getting done then call.
-				$('#feedback').show();
-				$('#processing').show();
+				//$('#feedback').show();
+				//$('#processing').show();
 				if (data.output.feedback) {
 					$('#processing').hide();
 					$('#response').show().html(data.output.feedback);
@@ -236,7 +250,7 @@ jQuery(document).ready(function($) {
 					}
 					setTimeout(function() {
 						$('#feedback').fadeOut();
-					}, 3000);
+					}, 2000);
 				} else {
 					console.log('NO ACCOUNT');
 				}
@@ -262,6 +276,8 @@ jQuery(document).ready(function($) {
 		submitHandler: function(form) {
 			var ajaxUrl = siteURL + 'ajax/admin/password.php'; 
 			var formData = $(form).serialize();
+			$('#feedback').show();
+			$('#processing').show();
 			$.ajax({
 				type: 'POST',
 				url: ajaxUrl,
@@ -269,8 +285,8 @@ jQuery(document).ready(function($) {
 				dataType: 'json'
 			})
 			.done(function(data){ // if getting done then call.
-				$('#feedback').show();
-				$('#processing').show();
+				//$('#feedback').show();
+				//$('#processing').show();
 				if (data.output.feedback) {
 					$('#processing').hide();
 					$('#response').show().html(data.output.feedback);
@@ -281,7 +297,7 @@ jQuery(document).ready(function($) {
 					}
 					setTimeout(function() {
 						$('#feedback').fadeOut();
-					}, 3000);
+					}, 2000);
 				} else {
 					console.log('NO ACCOUNT');
 				}
@@ -323,6 +339,7 @@ jQuery(document).ready(function($) {
 	var form = $('.adminForm');
 	form.validate();
 	$('body').on('click', '.adminForm .adminBtn', function() {
+		//console.log('Admin Link');
 		if (form.valid()) {
 			$('#feedback').show();
 			$('#processing').show();
@@ -396,6 +413,7 @@ jQuery(document).ready(function($) {
 	
 	// Print Report
 	$('body').on('click', '.printLink', function() {
+		//console.log('PRINT LINK');
 		$('#feedback').show();
 		$('#processing').show();
 		var camper = ($(this).data('camper') ? $(this).data('camper') : '');
@@ -413,14 +431,14 @@ jQuery(document).ready(function($) {
 			dataType: 'json'
 		})
 		.done(function(data){ // if getting done then call.
+			//console.log('Data Returned');
 			if (data.output){
+				//console.log('Output Returned');
 				var myWindow=window.open('','','');
-				
 				var isChrome = false;
 				if (navigator.userAgent.toLowerCase().indexOf("chrome") > -1) {
 					isChrome = true;
 				}
-				
 				myWindow.document.write('<!doctype html><html><head><meta charset="utf-8">');
 				myWindow.document.write(data.output.header);
 				myWindow.document.write('</head><body>');
@@ -442,10 +460,12 @@ jQuery(document).ready(function($) {
 				$('#processing').hide();
 				return true;
 			} else {
+				//console.log('No Output');
 				$('#response').html('No Output');
 			}
 		})
 		.fail(function() { // if fail then getting message
+			//console.log('POST FAILED');
 			$('#response').html('POST FAILED');
 		});
 		return false;
@@ -583,8 +603,11 @@ jQuery(document).ready(function($) {
 				dataType: 'json'
 			})
 			.done(function(data){ // if getting done then call.
-				if (data.output.op){
+				//console.log('Done');
+				if (data.output.op) {
+					//console.log('Op');
 					if (data.output.op == 'update') {
+						//console.log('Update');
 						$('#processing').hide();
 						$('#response').show().html(data.output.feedback);
 						if (data.output.redirect) {
@@ -611,10 +634,12 @@ jQuery(document).ready(function($) {
 						}
 					} 
 				} else {
+					//console.log('ELSE');
 					$('#response').html('No Output');
 				}
 			})
 			.fail(function() { // if fail then getting message
+				//console.log('FAIL');
 				$('#response').html('POST FAILED');
 			});
 			return false;
@@ -660,8 +685,10 @@ jQuery(document).ready(function($) {
 		var user = $(thisBtn).data('user');
 		var week = $(thisBtn).data('week');
 		var activity = $(thisBtn).data('activity');
-		var ajaxUrl = siteURL + 'ajax/schedule/'+ op +'.php'; 
+		var ajaxUrl = siteURL + 'ajax/schedule/'+ op +'.php';
+		//console.log(ajaxUrl);
 		var formData = 'user=' + user + '&week=' + week + '&activity=' + activity;
+		//console.log(formData);
 		$.ajax({
 			type: 'POST',
 			url: ajaxUrl,
@@ -681,6 +708,7 @@ jQuery(document).ready(function($) {
 									$(this).html('<p class="text-muted"><em>No Signups Yet</em></p>');
 								});
 							} else if (data.output.info.week) {
+								//console.log('WEEK');
 								$('#week-' + data.output.info.week).find('.period').each(function() {
 									$(this).children('form').removeClass('scheduled-activity');
 									var $thisInput = $(this).find('input.event');
@@ -733,10 +761,10 @@ jQuery(document).ready(function($) {
 				if (data.output.result == 'success') {
 					setTimeout(function() {
 						$('#feedback').fadeOut();
-						console.log(data.output.updateString);
+						//console.log(data.output.updateString);
 					}, 2000);
 				} else {
-					console.log('ERROR');
+					//console.log('ERROR');
 					setTimeout(function() {
 						$('#feedback').fadeOut();
 					}, 2000);
@@ -758,8 +786,8 @@ jQuery(document).ready(function($) {
 		var op = $(thisBtn).data('op');
 		var ajaxUrl = siteURL + 'ajax/schedule/'+ op +'.php'; 
 		var formData = 'op=' + op;
-		console.log(ajaxUrl);
-		console.log(formData);
+		//console.log(ajaxUrl);
+		//console.log(formData);
 		$.ajax({
 			type: 'POST',
 			url: ajaxUrl,
@@ -773,10 +801,10 @@ jQuery(document).ready(function($) {
 				if (data.output.result == 'success') {
 					setTimeout(function() {
 						$('#feedback').fadeOut();
-						console.log(data.output.updateString);
+						//console.log(data.output.updateString);
 					}, 2000);
 				} else {
-					console.log('ERROR');
+					//console.log('ERROR');
 					setTimeout(function() {
 						$('#feedback').fadeOut();
 					}, 2000);

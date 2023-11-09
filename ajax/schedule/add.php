@@ -11,6 +11,7 @@ $redirect = '';
 if ($_POST) {
 	foreach($_POST as $key => $value) {
 		if (!in_array($key,$ignore)) {
+			//echo $key .': '. $value .'<br>';
 			if ($key == 'op') {
 				$op = $value;
 			} elseif ($key == 'table') {
@@ -18,7 +19,11 @@ if ($_POST) {
 			} elseif ($key == 'redirect') {
 				$redirect = $value;
 			} else {
-				if (strpos($key,'schedule-') !== false) {
+				if ($key == 'user') {
+					$fields['user'] = $value;
+				} elseif ($key == 'updatedBy') {
+					$fields['updatedBy'] = $value;
+				} elseif (strpos($key,'schedule-') !== false) {
 					$schInfo = explode('-',$key);
 					$arrID = $schInfo[1] .'-'. $schInfo[2] .'-'. $schInfo[3];
 					$schedules[$arrID] = $value;
@@ -54,6 +59,7 @@ if ($_POST) {
 					$value = mysqli_real_escape_string($con, $value);
 				}
 				if (isset($key)) {
+					//echo $key .': '. $value .'<br>';
 					$fields[$key] = $value; 
 					$keys[] = $key;
 					$values[] = "'". $value ."'";
@@ -100,7 +106,7 @@ if ($_POST) {
 		$sql = 'SHOW COLUMNS FROM '. $table;
 		if ($result = $con->query($sql)) {
 			while ($values = $result->fetch_array(MYSQLI_ASSOC)) {
-				$column_names[] = $values['field'];
+				$column_names[] = $values['Field'];
 			} 
 		} else {
 			$column_names = array();
@@ -108,6 +114,7 @@ if ($_POST) {
 		$userActCurrent = array();
 		if (in_array($column, $column_names)) {
 			$sql = "SELECT * FROM ". $table ." WHERE user=". $fields['user']; 
+			//echo '<p>SQL: '. $sql .'</p>';
 			if ($result = $con->query($sql)) {
 				$userActAll = $result->fetch_array(MYSQLI_ASSOC);
 				$userActCurrent = explode(',',$userActAll[$column]);
@@ -129,7 +136,7 @@ if ($_POST) {
 		}
 		$result = $con->query($sql);
 		
-		if ($activitiesFull) {
+		if (isset($activitiesFull)) {
 			$redirect = $redirect .'#'. $schedulingWeek;
 			$output = array('op'=>'add','feedback'=>'Some of the activities you selected are now full. Please try again.','full'=>$activitiesFull,'redirect'=>$redirect);
 		} else {
@@ -142,6 +149,9 @@ if ($_POST) {
 } else {
 	$output = array('op'=>'add','feedback'=>'ERROR','redirect'=>''); 	
 }
+
+//print_r($output);
+//exit;
 
 if ($con) $con->close();
 header('Content-Type: application/json; charset=utf-8', true); 

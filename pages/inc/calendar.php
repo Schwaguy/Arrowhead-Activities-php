@@ -6,9 +6,14 @@ $activityWeeks = '';
 if (!isset($userInfo)) { $userInfo = checkUser($con); }
 
 foreach ($weeks as $week) {
-	//$content .= '<p>'. $now .' : '. $week['signupStartDate'] .'</p>';
 	
-	if (($now >= $week['signupStartDate']) || (in_array($_SESSION['userAuth'],$adminAccessLevels))) {
+	//$content .= '<p>sgvar: '. $_SESSION['bunkInfo']['sgvar'] .'</p>'; 
+	//$content .= '<p>'. $now .' : '. $week[$_SESSION['bunkInfo']['sgvar']] .'</p>';
+	
+	$scheduleStart = ((isset($_SESSION['bunkInfo']['sgvar'])) ? $week[$_SESSION['bunkInfo']['sgvar']] : $week['signupStartDate']);
+	
+	//if (($now >= $week['signupStartDate']) || (in_array($_SESSION['userAuth'],$adminAccessLevels))) {
+	if (($now >= $scheduleStart) || (in_array($_SESSION['userAuth'],$adminAccessLevels))) {	
 		//$scheduledActivities = showScheduledActivities($week['id'],$userInfo['userID'],$_SESSION['userPrereqs'],$con);
 		$scheduledActivities = showScheduledActivities($week['id'],$userInfo['userID'],$userInfo['userInfo']['prerequisites'],$con);		
 		$weekdays = '';
@@ -93,8 +98,9 @@ foreach ($weeks as $week) {
 		$weekdays .= '</div>';
 	} else {
 		$header = '<header><h4 class="display-4 mb-1 text-center">'. $week['name'] .'</h4></header>';
-		$signupDates[$week['id']] = $week['signupStartDate'];
-		$startDate =  strtotime($week['signupStartDate']);
+		//$signupDates[$week['id']] = $week['signupStartDate'];
+		$startDate =  strtotime($scheduleStart);
+		//$startDate =  strtotime($week['signupStartDate']);
 		$weekdays = '<h5 class="text-muted text-center"><em>Scheduling for '. $week['name'] .' will be available on '. date('l, F jS',$startDate) .' at '. date('g:ia',$startDate) .'</em></h5>'; 
 	}
 	$activityWeeks .= '<div id="week-'. $week['id'] .'" class="container-fluid week-view">'. $header . $weekdays .'</div><!-- /week-view -->';

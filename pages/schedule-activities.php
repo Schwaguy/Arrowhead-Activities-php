@@ -6,6 +6,12 @@
 	
 	$redirect = (isset($_POST['redirect']) ? $_POST['redirect'] : '/');
 	$weeks = getWeeks('array','',false,false,$con);
+	
+/*
+	foreach ($_POST as $k=>$v) {
+		echo $k .': '. $v .'<br>';
+	}*/
+
 
 	if (isset($_POST['weekID'])) {
 		$week = $weeks[$_POST['weekID']];

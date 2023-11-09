@@ -23,11 +23,6 @@
 <link rel="shortcut icon" href="/icon/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/icon/favicon.ico" type="image/x-icon">
 
-<link rel="stylesheet" href="/font/fontawesome-pro-5.7.2-web/css/all.min.css" media="all">
-<link rel="stylesheet" href="/css/bootstrap.min.css" media="all">
-<!--<link rel="stylesheet" href="/css/mdb.lite.min.css">-->
-<link rel="stylesheet" href="/css/addons/datatables.min.css" media="all">
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-<link rel="stylesheet" href="/css/style.min.css" media="all"> 
-
-<link href="/css/video-js.min.css" rel="stylesheet">
+<link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
+<link rel="stylesheet" href="/css/style.combined.min.css" media="all"> 

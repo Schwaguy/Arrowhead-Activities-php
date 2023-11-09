@@ -10,6 +10,7 @@
 	require_once('globals/globals.php');
 	require_once('globals/currentPage.php');
 	include('inc/login.php');
+	//echo '<pre>' . print_r($_SESSION, TRUE) . '</pre>';
 	if ($con) $con->close();
 ?>
 <!DOCTYPE html>

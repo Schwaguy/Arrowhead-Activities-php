@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL);
+
 global $ROOT, $PATH, $phpself, $id, $addRow;
 $ROOT = $_SERVER['DOCUMENT_ROOT'];
 $PATH = '../../';  
@@ -12,7 +16,7 @@ $redirect = '';
 $test = ''; 
 $info[] = '';
 if ($_REQUEST) {
-	$redirect = $_REQUEST['redirect'];
+	$redirect = ((isset($_REQUEST['redirect'])) ? $_REQUEST['redirect'] : '');
 	$sql = "SELECT s.id AS signupID, s.user, s.activity, s.week, s.day, t.id AS typeID, t.oneTime FROM activity_signups s LEFT JOIN activities a ON (a.id = s.activity) LEFT JOIN activity_types t ON (t.id = a.type) WHERE s.active=1";
 	if (!empty($_REQUEST['user'])) {
 		$sql .= " AND s.user='". $_REQUEST['user'] ."'";
@@ -39,8 +43,14 @@ if ($_REQUEST) {
 	
 	$test .= '<p>SQL: '. $sql .'</p>'; 
 	
-	if($result = $con->query($sql)) {
+	if ($result = $con->query($sql)) {
+		
+		$test .= '<p>RESULT!</p>';
+		
 		while ($sup=$result->fetch_array(MYSQLI_ASSOC)) {
+			
+			$test .= '<p>sup</p>';
+			
 			// Update user_activities table IF this is a once-a-summer activity being removed
 			if ($sup['oneTime'] > 0) {
 				$column = date('Y'); // Camp Year Column
@@ -65,7 +75,6 @@ if ($_REQUEST) {
 			
 			// Update signup status in activity_signups table
 			$sql = "UPDATE activity_signups SET active=0 WHERE id=". $sup['signupID'] ." LIMIT 1";
-			//$sql = "DELETE FROM activity_signups WHERE id=". $sup['signupID'] ." LIMIT 1";
 			$test .= '<p>SQL: '. $sql .'</p>';
 			$update = $con->query($sql);
 			
@@ -83,6 +92,10 @@ if ($_REQUEST) {
 	$output = (($success) ? array('op'=>'clear','feedback'=>'Schdule Cleared','redirect'=>$redirect,'result'=>'success','info'=>$info) : array('op'=>'clear','feedback'=>'UPDATE ERROR','redirect'=>'','result'=>'error'));
 } else {
 	$output = array('op'=>'clear','feedback'=>'ERROR','redirect'=>'','result'=>'error'); 	
+}
+
+if (!$_POST) {
+	print_r($output);
 }
 
 if ($con) $con->close(); 

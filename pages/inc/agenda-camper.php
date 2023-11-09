@@ -9,7 +9,11 @@ $content .='<h2 class="text-center">'. getName($weekID,'weeks',$con) .' Availabl
 
 $scheduledActivities = getScheduledActivities($weekID,$userInfo['userID'],$con);
 $formRows = ''; 
-
+/*
+foreach ($_POST as $k=>$v) {
+	echo $k .': '. $v .'<br>';
+}
+*/
 $actScheduled = 0;
 for ($d=1;$d<=5;$d++) {
 	$agenda = '';
@@ -32,8 +36,11 @@ for ($d=1;$d<=5;$d++) {
 	// Show first Activity Period
 	$count = 1;
 	if (isset($userInfo['bunkInfo'])) {
+		
+		$bunkGroup = $userInfo['bunkInfo']['group']; 
+		
 		for ($v=1;$v<=count($periods);$v++) {
-			if ((!isset($p)) && (in_array($userInfo['bunkInfo']['group'],$periods[$v]['groups']))) {
+			if ((!isset($p)) && (in_array($bunkGroup,$periods[$v]['groups']))) {
 				$p = $v;
 			}
 		}
@@ -52,10 +59,22 @@ for ($d=1;$d<=5;$d++) {
 			
 		$agenda .= '</td></tr>';
 
+		
+		//$agenda .= '<tr><td colspan="3">-</td></tr>';
+		
 		// Show additional Activity Periods
-		for ($r=$p+1;$r<=2;$r++) {
-			if (in_array($userInfo['bunkInfo']['group'],$periods[$r]['groups'])) {
+		for ($r=$p+1;$r<=3;$r++) {
+			
+			//$agenda .= '<tr><td colspan="3">-'. print_r($periods[$r]['groups']) .'-</td></tr>';
+			
+			if (in_array($bunkGroup,$periods[$r]['groups'])) {
+				
+				//$agenda .= '<tr><td colspan="3">---</td></tr>';
+				
 				if ($periods[$r]['days'][$d] == 1) {
+					
+					//$agenda .= '<tr><td colspan="3">----</td></tr>';
+					
 					$agenda .= '<tr>
 							<td class="agenda-time">
 								'. $periods[$r]['name'] .'

@@ -26,7 +26,9 @@ if (!empty($_REQUEST['op'])) {
 		}
 	}
 } else {
-	if (!empty($tp)) {
+	if ($pg == 'reset') {
+		include($ROOT .'/pages/reset.php');
+	} elseif (!empty($tp)) {
 		include('pages/'. $pg .'/'. $sp .'/'. $tp .'.php');
 	} elseif (!empty($sp)) {
 		include('pages/'. $pg .'/'. $sp .'.php');

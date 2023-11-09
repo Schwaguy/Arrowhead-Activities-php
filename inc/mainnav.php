@@ -9,7 +9,7 @@ $content .= '<!--Navbar-->
 	<div class="container">
 
 	  <!-- Navbar brand -->
-	  <a class="navbar-brand" href="/" title="Arrowhead Club Days"><img src="/img/logo-arrow-activities-50-min.png" class="logo img-responsive img-fluid" atl="Arrohead Day Camp Club Day Scheduling"></a>
+	  <a class="navbar-brand" href="/dashboard/" title="Arrowhead Club Days"><img src="/img/logo-arrow-activities-50-min.png" class="logo img-responsive img-fluid" atl="Arrohead Day Camp Club Day Scheduling"></a>
   
 	  	<button type="button" id="nav-icon" class="navbar-toggle navbar-toggler collapsed" data-toggle="collapse-side" data-target=".side-collapse" data-target-2=".side-collapse-container" data-target="#navbarCollapse" aria-expanded="false" aria-controls="navbar">
 			<span class="icon-bar"></span>
@@ -26,7 +26,7 @@ $content .= '<!--Navbar-->
 $linkInfo = checkPageLink($thisPg,'home');
 $content .= '<!-- Links -->
 		<ul class="navbar-nav mr-auto">
-			<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/">Dashboard'. $linkInfo['sr'] .'</a></li>';
+			<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/dashboard/">Dashboard'. $linkInfo['sr'] .'</a></li>';
 if (in_array($_SESSION['userAuth'],$camperArray)) {
 	$linkInfo = (!empty($thisPg) ? checkPageLink($thisPg,'my-activities') : array('li'=>'','sr'=>''));
 	$content .= '<li class="nav-item '. $linkInfo['li'] .'"><a class="nav-link" href="/my-activities/">My Activities'. $linkInfo['sr'] .'</a></li>';

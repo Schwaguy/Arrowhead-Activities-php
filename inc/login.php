@@ -15,10 +15,15 @@
 	} elseif (!empty($_SESSION['userName'])) { 
 		include('inc/pageContent.php');
 	} elseif (isset($_REQUEST['pg'])) {
+		
 		if ($_REQUEST['pg'] == 'reset') { 
 			include('pages/reset.php');
 		} elseif ($_REQUEST['pg'] == 'reset-message') { 
 			include('pages/reset-message.php');
+		} elseif ($_REQUEST['pg'] == 'welcome') { 
+			include('pages/welcome.php');
+		} else {
+			include('inc/pageContent.php');
 		}
 	} else {
 		include('pages/login.php');

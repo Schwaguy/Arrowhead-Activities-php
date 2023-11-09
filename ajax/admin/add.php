@@ -6,7 +6,7 @@ $PATH = '../../';
 $phpself = basename(__FILE__);
 require_once($PATH  .'globals/globals.php');
 
-$ignore = array('oneTime', 'typeInput');
+$ignore = array('id','oneTime', 'typeInput');
 $redirect = ''; 
 if ($_POST) {
 	foreach($_POST as $key => $value) {
@@ -20,20 +20,37 @@ if ($_POST) {
 			} else {
 				if (($_POST['table']=='activities') && ($key == 'type') && !is_numeric($value)) {
 					$oneTime = ($_POST['oneTime'] ? $_POST['oneTime'] : 0);
-					$sql = "INSERT INTO activity_types (id,name,oneTime,active) VALUES ('','". $value ."','". $oneTime ."',1)"; 
+					$sql = "INSERT INTO activity_types (`name`,`oneTime`,`active`) VALUES ('". $value ."','". $oneTime ."',1)"; 
 					$result = $con->query($sql);
 					$value = mysqli_insert_id($con);
+				} elseif ($key == 'id') {
+					$value = $value;
 				} elseif (($key == 'startTime') || ($key == 'endTime')) {
 					$value = date('H:i:s', strtotime($today .' '. $value));
 				} elseif (isDate($value)) {
 					if ($key == 'startDate') {
-						$scheduleDates = scheduleCheck($_POST['table'],$key,$value);
+						$scheduleDates = scheduleCheck($_POST['table'],$key,$value,$con);
 						if (is_array($scheduleDates)) {
 							if (!empty($scheduleDates['start'])) {
-								$updates[] = "signupStartDate='". $scheduleDates['start'] ."'";
+								//$updates[] = "`signupStartDate`='". $scheduleDates['start'] ."'";
+								$keys[] = "`signupStartDate`";
+								$values[] = "'". $scheduleDates['start'] ."'";
+								
 							}
 							if (!empty($scheduleDates['end'])) {
-								$updates[] = "signupEndDate='". $scheduleDates['end'] ."'";
+								//$updates[] = "`signupEndDate`='". $scheduleDates['end'] ."'";
+								$keys[] = "`signupEndDate`";
+								$values[] = "'". $scheduleDates['end'] ."'";
+							}
+							if (!empty($scheduleDates['signupStartDateGrp1'])) {
+								//$updates[] = "`signupStartDate-int`='". $scheduleDates['startInt'] ."'";
+								$keys[] = "`signupStartDateGrp1`";
+								$values[] = "'". $scheduleDates['signupStartDateGrp1'] ."'";
+							}
+							if (!empty($scheduleDates['signupStartDateGrp2'])) {
+								//$updates[] = "`signupStartDate-senior`='". $scheduleDates['startSenior'] ."'";
+								$keys[] = "`signupStartDateGrp2`";
+								$values[] = "'". $scheduleDates['signupStartDateGrp2'] ."'";
 							}
 						}
 					}
@@ -44,7 +61,7 @@ if ($_POST) {
 					$value = mysqli_real_escape_string($con, $value);
 				}
 				$fields[$key] = $value; 
-				$keys[] = $key;
+				$keys[] = "`". $key ."`";
 				$values[] = "'". $value ."'";	
 			}
 		}

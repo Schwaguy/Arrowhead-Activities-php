@@ -43,7 +43,27 @@ for ($d=1;$d<=5;$d++) {
 	$agenda .= '</td></tr>';
 	
 	// Show additional Activity Periods
+	//$fudgeArray = array(3,2); // HACK hack Hack - Fudge fix for out-of-order period ID's - cannot easily change Period ID's without messing up schedules - Removed 2023-05-10 JSC
+	//foreach ($fudgeArray as $r) {
 	for ($r=$p+1;$r<=count($periods);$r++) {
+		$period = $periods[$r];
+		if ($periods[$r]['days'][$d] == 1) {
+			$agenda .= '<tr>
+					<td class="agenda-time">
+						'. $period['name'] .'
+						<div class="text-muted">'. date_format((date_create($week['startDate'] .' '. $period['startTime'])),'g:iA')  .' - '. date_format((date_create($week['startDate'] .' '. $period['endTime'])),'g:iA')  .'</div>
+					</td>
+					<td class="agenda-events">';
+			$agenda .= showAgendaActivities($week['id'],$dayOfWeek,$actArray,$period['id'],true,'','',$con);
+			if ($_SESSION['userPermissions']['admin'] == 1) {
+				$agenda .= '<form class="agenda-form" method="post" action="/admin/activities/add/">
+					<input type="hidden" name="week" value="'. $week['id'] .'"><input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $period['id'] .'"><input type="submit" class="btn btn-light-green agenda-event-button" value="Add New '. siteVar('act','singular','capital') .'"></form>'; 
+			}
+			$agenda .= '</td></tr>';
+			$count++;
+		}
+		
+		/*
 		if ($periods[$r]['days'][$d] == 1) {
 			$agenda .= '<tr>
 					<td class="agenda-time">
@@ -57,8 +77,15 @@ for ($d=1;$d<=5;$d++) {
 					<input type="hidden" name="week" value="'. $week['id'] .'"><input type="hidden" name="day" value="'. $d .'"><input type="hidden" name="period" value="'. $periods[$r]['id'] .'"><input type="submit" class="btn btn-light-green agenda-event-button" value="Add New '. siteVar('act','singular','capital') .'"></form>'; 
 			}
 			$agenda .= '</td></tr>';
+			
+			$periodArray[$r] = $agenda; 
+			
+			
 			$count++;
 		}
+
+		*/
+		
 	}
 	$content .= '<tr>
 				<td class="agenda-date" class="active" rowspan="'. $count .'">

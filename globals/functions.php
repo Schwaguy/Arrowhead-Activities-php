@@ -1,5 +1,25 @@
 <?php
 
+// Console Log
+if (!function_exists('console_log')) {
+	function console_log($output, $with_script_tags = true) {
+		$js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) .');';
+		if ($with_script_tags) {
+			$js_code = '<script>' . $js_code . '</script>';
+		}
+		echo $js_code;
+	}
+}
+
+// Error Log
+if (!function_exists('logToFile')) {
+	function logToFile($filename, $msg) {  
+	   $fd = fopen($filename, "a"); 
+	   fwrite($fd, $msg . "\n"); 
+	   fclose($fd); 
+	}
+}
+
 // Generate Secure Password
 function generateHashWithSalt($password) {
 	define("MAX_LENGTH", 25);
@@ -13,7 +33,8 @@ function generateHashWithSalt($password) {
 // Check Password
 function checkPassword($uName,$uPass,$con) {
 	$pwCheck = '';
-	$query = 'SELECT salt FROM users WHERE username="' . $uName . '"';
+	$query = 'SELECT salt FROM users WHERE username="' . $uName . '" and active=1';
+	logConsole('QUERY: ', $query, FALSE);
 	if ($result = $con->query($query)) {
 		$row = mysqli_fetch_assoc($result);
 		$pwCheck =  hash("sha256", $uPass . $row['salt']);
@@ -417,7 +438,7 @@ function getUsers($selected,$return,$con) {
 
 // Get Counselors
 function getCounselors($selected,$con) {
-	$output = '<select name="counselor" class="form-control browser-default custom-select" data-rule-required="false" data-msg-required="Please Select a Counselor"><option value="">&lt; select counselor &gt;</option>'; 
+	$output = '<select name="counselor" class="form-control browser-default custom-select" data-rule-required="false" data-msg-required="Please Select a Counselor"><option value="0">&lt; select counselor &gt;</option>'; 
 	$query = 'SELECT id, firstName, lastName FROM users WHERE active=1 and access_level=3 ORDER BY lastName, firstName';
 	$result = $con->query($query);
 	while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
@@ -465,7 +486,7 @@ function getBunks($selected,$return,$con) {
 		$result = $con->query($query);
 		$bunkSelDisable = (($_SESSION['userPermissions']['edit']==1) ? '' : 'readonly="readonly"');
 		$bunkSelDisableClass = (($_SESSION['userPermissions']['edit']==1) ? '' : 'readonly');
-		$output = '<select name="bunk" class="form-control browser-default custom-select '. $bunkSelDisableClass .'" data-rule-required="false" data-msg-required="Please Select Bunk" '. $bunkSelDisable .'><option value="">&lt; select bunk &gt;</option>'; 
+		$output = '<select name="bunk" class="form-control browser-default custom-select '. $bunkSelDisableClass .'" data-rule-required="false" data-msg-required="Please Select Bunk" '. $bunkSelDisable .'><option value="0">&lt; select bunk &gt;</option>'; 
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 			$output .= '<option value="'. $row['bunkID'] .'"';
 			if ($row['bunkID'] == $selected)
@@ -523,6 +544,8 @@ function getWeeks($return,$selected,$multi,$required,$con) {
 			$week['startDate'] = $row['startDate'];
 			$week['endDate'] = $row['endDate'];
 			$week['signupStartDate'] = $row['signupStartDate'];
+			$week['signupStartDateGrp1'] = $row['signupStartDateGrp1'];
+			$week['signupStartDateGrp2'] = $row['signupStartDateGrp2'];
 			$week['signupEndDate'] = $row['signupEndDate'];
 			$week['days'] = array(
 				array(
@@ -566,7 +589,7 @@ function getWeeks($return,$selected,$multi,$required,$con) {
 
 // Get Periods
 function getPeriods($selected,$multi,$required,$return,$con) {
-	$query = 'SELECT * FROM periods WHERE active=1 ORDER BY name ASC';
+	$query = 'SELECT * FROM periods WHERE active=1 ORDER BY startTime ASC';
 	$result = $con->query($query);
 	if ($return == 'select') {
 		if ($multi) {
@@ -667,15 +690,18 @@ function getRestrictionInfo($restID,$con) {
 function getBunkInfo($bunkID,$counselorID,$con) {
 	if ($bunkID==0) {
 		$getID = mysqli_fetch_assoc(mysqli_query($con, 'SELECT id FROM bunks WHERE counselor='. $counselorID));
-		$bunkID = $getID['id'];
+		$bunkID = ((isset($getID['id'])) ? $getID['id'] : '');
 	} 
 	unset($outputArray);
-	$query = 'SELECT b.*, u.firstName, u.lastName FROM bunks b LEFT JOIN users u ON (b.counselor = u.id) WHERE b.id='. $bunkID .' LIMIT 1'; 
+	$query = 'SELECT b.*, sg.id AS sgid, sg.var AS sgvar, u.firstName, u.lastName FROM bunks b LEFT JOIN users u ON (b.counselor = u.id) LEFT JOIN bunk_age_groups bag ON (b.groups = bag.id) LEFT JOIN  scheduling_groups sg ON (bag.scheduling_group = sg.id) WHERE b.id='. $bunkID .' LIMIT 1';
+	
 	if($result = $con->query($query)) {
 		while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
 			$outputArray['id'] = $row['id'];
 			$outputArray['name'] = $row['name'];
 			$outputArray['group'] = $row['groups'];
+			$outputArray['sgid'] = $row['sgid'];
+			$outputArray['sgvar'] = $row['sgvar'];
 			$outputArray['counselor'] = $row['firstName'] .' '. $row['lastName'];
 		}
 	}
@@ -888,11 +914,16 @@ function getScheduledActivities($week,$user,$con) {
 			}
 		}
 		$scheduledActivities = array(
-			1=>(isset($mon) && count($mon>0)) ? $mon : '',
-			2=>(isset($tues) && count($tues>0)) ? $tues : '',
-			3=>(isset($wed) && count($wed>0)) ? $wed : '',
-			4=>(isset($thurs) && count($thurs>0)) ? $thurs : '',
-			5=>(isset($fri) && count($fri>0)) ? $fri : ''
+			//1=>(isset($mon) && count($mon>0)) ? $mon : '',
+			//2=>(isset($tues) && count($tues>0)) ? $tues : '',
+			//3=>(isset($wed) && count($wed>0)) ? $wed : '',
+			//4=>(isset($thurs) && count($thurs>0)) ? $thurs : '',
+			//5=>(isset($fri) && count($fri>0)) ? $fri : ''
+			1=>((isset($mon) && is_array($mon)) ? ((count($mon)>0) ? $mon : '') : ''),
+			2=>((isset($tues) && is_array($tues)) ? ((count($tues)>0) ? $tues : '') : ''),
+			3=>((isset($wed) && is_array($wed)) ? ((count($wed)>0) ? $wed : '') : ''),
+			4=>((isset($thurs) && is_array($thurs)) ? ((count($thurs)>0) ? $thurs : '') : ''),
+			5=>((isset($fri) && is_array($fri)) ? ((count($fri)>0) ? $fri : '') : '')
 		);
 		unset($mon);
 		unset($tues);
@@ -1055,11 +1086,16 @@ function showScheduledActivities($week,$user,$prereqs,$con) {
 			}
 		}
 		$scheduledActivities = array(
-			1=>(isset($mon) && count($mon>0)) ? $mon : '',
-			2=>(isset($tues) && count($tues>0)) ? $tues : '',
-			3=>(isset($wed) && count($wed>0)) ? $wed : '',
-			4=>(isset($thurs) && count($thurs>0)) ? $thurs : '',
-			5=>(isset($fri) && count($fri>0)) ? $fri : ''
+			//1=>(isset($mon) && count($mon>0)) ? $mon : '',
+			//2=>(isset($tues) && count($tues>0)) ? $tues : '',
+			//3=>(isset($wed) && count($wed>0)) ? $wed : '',
+			//4=>(isset($thurs) && count($thurs>0)) ? $thurs : '',
+			//5=>(isset($fri) && count($fri>0)) ? $fri : ''
+			1=>((isset($mon) && is_array($mon)) ? ((count($mon)>0) ? $mon : '') : ''),
+			2=>((isset($tues) && is_array($tues)) ? ((count($tues)>0) ? $tues : '') : ''),
+			3=>((isset($wed) && is_array($wed)) ? ((count($wed)>0) ? $wed : '') : ''),
+			4=>((isset($thurs) && is_array($thurs)) ? ((count($thurs)>0) ? $thurs : '') : ''),
+			5=>((isset($fri) && is_array($fri)) ? ((count($fri)>0) ? $fri : '') : '')
 		);
 		unset($mon);
 		unset($tues);
@@ -1108,17 +1144,41 @@ function getBunkRoster($bunkID,$counselorID,$con) {
 
 
 // Update scheduling start date when week is edited
-function scheduleCheck($table,$field,$date) {
+function scheduleCheck($table,$field,$date,$con) {
 	if (($table=='weeks') && ($field=='startDate')) {
+		
+		// Add General Schedule Start/End Dates
 		$date = date_format(date_create($date),'Y-m-d 00:00:00');
-		$lastTuesday = date('Y-m-d', strtotime('previous tuesday', strtotime($date)));
+		$lastTuesday = date('Y-m-d', strtotime('previous wednsday', strtotime($date)));
 		$scheduleDateStart = date_format(date_create($lastTuesday),'Y-m-d 19:00:00');
 		$lastSunday = date('Y-m-d', strtotime('previous sunday', strtotime($date)));
 		$scheduleDateEnd = date_format(date_create($lastSunday),'Y-m-d 23:59:59');
 		$scheduleDates = array(
 			'start'=>$scheduleDateStart,
-			'end'=>$scheduleDateEnd
+			'end'=>$scheduleDateEnd,
 		);
+		
+		// Add Group-Specific Schedule Start Dates
+		$schGroups = array();
+		$query = 'SELECT id, var, start_day, start_time FROM scheduling_groups'; 
+		if ($result = $con->query($query)) {
+			while ($row=$result->fetch_array(MYSQLI_ASSOC)) {
+				$group = array(
+					'var'=>$row['var'],
+					'start_day'=>$row['start_day'],
+					'start_time'=>$row['start_time']
+				);
+				$schGroups[$row['id']] = $group;
+				unset($group);
+			}
+		}
+		foreach ($schGroups as $grp) {
+			$var = $grp['var'];
+			$startDay = date('Y-m-d', strtotime($grp['start_day'], strtotime($date)));
+			$startTime = $grp['start_time'];
+			$scheduleDates[$var] = date_format(date_create($startDay),"Y-m-d $startTime"); 
+		}
+		
 	} else {
 		$scheduleDates = ''; 
 	}

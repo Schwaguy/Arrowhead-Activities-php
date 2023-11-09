@@ -37,17 +37,25 @@ if ($_POST) {
 					$sql = "INSERT INTO activity_types (id,name,oneTime,active) VALUES ('','". $value ."','". $oneTime ."',1)"; 
 					$result = $con->query($sql);
 					$value = mysqli_insert_id($con);
+				} elseif ($key == 'id') {
+					$value = $value;
 				} elseif (($key == 'startTime') || ($key == 'endTime')) {
 					$value = date('H:i:s', strtotime($today .' '. $value));
 				} elseif (isDate($value)) {
 					if ($key == 'startDate') {
-						$scheduleDates = scheduleCheck($_POST['table'],$key,$value);
+						$scheduleDates = scheduleCheck($_POST['table'],$key,$value,$con);
 						if (is_array($scheduleDates)) {
 							if (!empty($scheduleDates['start'])) {
-								$updates[] = "signupStartDate='". $scheduleDates['start'] ."'";
+								$updates[] = "`signupStartDate`='". $scheduleDates['start'] ."'";
 							}
 							if (!empty($scheduleDates['end'])) {
-								$updates[] = "signupEndDate='". $scheduleDates['end'] ."'";
+								$updates[] = "`signupEndDate`='". $scheduleDates['end'] ."'";
+							}
+							if (!empty($scheduleDates['signupStartDateGrp1'])) {
+								$updates[] = "`signupStartDateGrp1`='". $scheduleDates['signupStartDateGrp1'] ."'";
+							}
+							if (!empty($scheduleDates['signupStartDateGrp2'])) {
+								$updates[] = "`signupStartDateGrp2`='". $scheduleDates['signupStartDateGrp2'] ."'";
 							}
 						}
 					}
@@ -57,7 +65,7 @@ if ($_POST) {
 				} else {
 					$value = mysqli_real_escape_string($con, $value);
 				}
-				$updates[] = $key ."='". $value ."'";		
+				$updates[] = "`". $key ."`='". $value ."'";		
 			}
 		}
 	}
@@ -66,7 +74,7 @@ if ($_POST) {
 	if (($table=='users') && ($_POST['access_level']==3)) { 
 		if ($_POST['bunk']>0) {
 			// Check to see if a councelor is already assigned to this bunk, if so, update old counselor
-			$sql = "SELECT counselor FROM bunks WHERE id=". $_POST['bunk'] ." LIMIT 1" ; 
+			$sql = "SELECT counselor FROM bunks WHERE id=". $_POST['bunk'] ." LIMIT 1"; 
 			if ($result = $con->query($sql)) {
 				$row = mysqli_fetch_assoc($result);
 				if ($row['counselor']>0) {
@@ -111,9 +119,9 @@ if ($_POST) {
 
 /*foreach ($output as $k=>$v) {
 	echo $k .' : '. $v .'<br>'; 
-}
-exit;
-end;*/
+}*/
+//exit;
+//end;
 
 if ($con) $con->close(); 
 header('Content-Type: application/json; charset=utf-8', true); 

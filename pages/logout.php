@@ -1,7 +1,7 @@
 <?php
 
 session_destroy();
-header("Location: ". $SITEURL);
+header("Location: $SITEURL");
 die();
 
 ?>

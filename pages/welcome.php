@@ -1,4 +1,5 @@
 <?php
+	$content .= '<div class="side-collapse-container">';
 	$content .= '
     <div id="login" class="container main">
 		<div class="row justify-content-md-center">
@@ -7,8 +8,8 @@
 				<p>This website will give you scheduling access to your Club Day activities throughout the summer.  Please see below video for a demonstration.</p>';
 
 				include('inc/video-demo.php');
-	$content .= '<p class="text-center"><a href="/dashboard/" class="btn btn-default">Proceed to your Dashboard</a></p>';
+	$content .= '<p class="text-center"><a href="/" class="btn btn-default">Log in to proceed to your Dashboard</a></p>';
 	$content .= '</div>
         </div>
     </div>';
-?>	
+?>

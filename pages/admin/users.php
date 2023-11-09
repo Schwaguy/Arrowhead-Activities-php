@@ -114,7 +114,7 @@
 								<input type="hidden" name="uID" value="'. $user['id'] .'">
 								<input type="hidden" name="thisUserName" value="'. $user['firstName'] .' '. $user['lastName'] .'">
 								<input type="hidden" name="bunkID" value="'. $user['bunk'] .'">
-								'. ((in_array($user['access_level'],$camperAccessLevels)) ? '<button class="btn btn-mdb-color btn-sm adminBtn">Activities</button>' : '') .'
+								'. ((in_array($user['access_level'],$camperAccessLevels)) ? (($user['bunk'] > 0) ? '<button class="btn btn-mdb-color btn-sm adminBtn">Activities</button>' : '<button class="btn btn-mdb-color btn-sm adminBtn disabled" data-toggle="tooltip" data-placement="left" title="Camper must be assigned to a bunk before activites can be scheduled.">Activities</button>') : '') .'
 							</form>
 						</div>
 						
