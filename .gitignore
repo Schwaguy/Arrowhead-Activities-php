@@ -18,3 +18,4 @@ _notes/
 /inc/PHPMailer/
 /inc/sendgrid-php/
 /20190722 - Export/
+/globals/config.php
